@@ -1,0 +1,10 @@
+Django==4.2
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-phonenumber-field[phonenumberslite]
+django-storages
+django-extensions
+psycopg2-binary
+cryptography
+redis
