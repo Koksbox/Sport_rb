@@ -133,3 +133,46 @@ class EnrollmentRequestSerializer(serializers.ModelSerializer):
             status='pending',
             **validated_data
         )
+
+
+# apps/athletes/api/serializers.py
+from apps.attendance.models import AttendanceRecord
+from apps.events.models import EventParticipation, EventResult
+from apps.achievements.models import Achievement
+
+class AttendanceProgressSerializer(serializers.ModelSerializer):
+    date = serializers.DateField()
+    status = serializers.CharField()
+
+    class Meta:
+        model = AttendanceRecord
+        fields = ['date', 'status']
+
+class EventProgressSerializer(serializers.ModelSerializer):
+    event_title = serializers.CharField(source='event.title')
+    event_date = serializers.DateTimeField(source='event.start_date')
+    result = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventParticipation
+        fields = ['event_title', 'event_date', 'result']
+
+    def get_result(self, obj):
+        try:
+            result = obj.event.results.get(athlete=obj.athlete)
+            return {
+                'place': result.place,
+                'value': result.result_value
+            }
+        except EventResult.DoesNotExist:
+            return None
+
+class AchievementProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Achievement
+        fields = ['title', 'date', 'achievement_type']
+
+class AthleteProgressSerializer(serializers.Serializer):
+    attendance = AttendanceProgressSerializer(many=True)
+    events = EventProgressSerializer(many=True)
+    achievements = AchievementProgressSerializer(many=True)

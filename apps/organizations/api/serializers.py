@@ -1,6 +1,46 @@
 # apps/organizations/api/serializers.py
 from rest_framework import serializers
-from apps.organizations.models import Organization
+from apps.organizations.models import Organization, OrganizationDocument
+from apps.geography.models import City
+
+
+class OrganizationDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationDocument
+        fields = ['doc_type', 'file_path']
+
+
+class OrganizationCreateSerializer(serializers.ModelSerializer):
+    documents = OrganizationDocumentSerializer(many=True, required=False)
+    city_id = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all(),
+        source='city',
+        write_only=True
+    )
+
+    class Meta:
+        model = Organization
+        fields = [
+            'name', 'org_type', 'city_id', 'address',
+            'latitude', 'longitude', 'website', 'inn',
+            'documents'
+        ]
+
+    def create(self, validated_data):
+        documents_data = validated_data.pop('documents', [])
+        organization = Organization.objects.create(
+            created_by=self.context['request'].user,
+            status='pending',
+            **validated_data
+        )
+
+        for doc in documents_data:
+            OrganizationDocument.objects.create(
+                organization=organization,
+                **doc
+            )
+        return organization
+
 
 class OrganizationModerationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,5 +52,3 @@ class OrganizationModerationSerializer(serializers.ModelSerializer):
         if value not in ['approved', 'rejected']:
             raise serializers.ValidationError("Статус должен быть 'approved' или 'rejected'")
         return value
-
-

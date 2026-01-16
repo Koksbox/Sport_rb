@@ -2,7 +2,7 @@
 from .base import *
 
 # MinIO / S3
-MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', 'http://localhost:9000')
+MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT', 'http:152.114.192.9:2007')
 MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY')
 MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
 MINIO_BUCKET_NAME = os.getenv('MINIO_BUCKET_NAME', 'sportbash-files')

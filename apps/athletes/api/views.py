@@ -135,3 +135,53 @@ def request_enrollment(request):
             )
         return Response({"message": "Заявка отправлена. Ожидайте подтверждения."}, status=201)
     return Response(serializer.errors, status=400)
+
+
+# apps/athletes/api/views.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+from .serializers import AthleteProgressSerializer
+from apps.attendance.models import AttendanceRecord
+from apps.events.models import EventParticipation
+from apps.achievements.models import Achievement
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_athlete_progress(request):
+    """Прогресс спортсмена за последние 6 месяцев"""
+    try:
+        athlete = request.user.athlete_profile
+        end_date = timezone.now().date()
+        start_date = end_date - timedelta(days=180)
+
+        # Посещаемость
+        attendance = AttendanceRecord.objects.filter(
+            athlete=athlete,
+            date__range=[start_date, end_date]
+        ).order_by('date')
+
+        # Участие в мероприятиях
+        events = EventParticipation.objects.filter(
+            athlete=athlete,
+            event__start_date__range=[start_date, end_date]
+        ).select_related('event', 'event__results').order_by('event__start_date')
+
+        # Достижения
+        achievements = Achievement.objects.filter(
+            athlete=athlete,
+            date__range=[start_date, end_date]
+        ).order_by('date')
+
+        data = {
+            'attendance': attendance,
+            'events': events,
+            'achievements': achievements
+        }
+
+        serializer = AthleteProgressSerializer(data)
+        return Response(serializer.data)
+    except Exception:
+        return Response({"error": "Профиль спортсмена не найден"}, status=404)

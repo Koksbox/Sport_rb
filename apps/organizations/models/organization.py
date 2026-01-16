@@ -23,7 +23,7 @@ class Organization(TimeStampedModel):
     website = models.URLField(blank=True)
     inn = models.CharField(max_length=12, unique=True)
     status = models.CharField(max_length=20, choices=ORG_STATUS_CHOICES, default='pending')  # ← ДОБАВЛЕНО
-    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_organizations')
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_organizations', null=True, blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
