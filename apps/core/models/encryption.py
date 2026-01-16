@@ -1,26 +1,29 @@
+# apps/core/models/encryption.py
 from django.db import models
 from cryptography.fernet import Fernet
-import os
+from django.conf import settings
+import base64
 
-FERNET_KEY = os.environ.get("FERNET_KEY")
-if not FERNET_KEY:
-    raise ValueError("FERNET_KEY must be set in environment")
+class EncryptedFieldMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._fernet = Fernet(base64.urlsafe_b64encode(settings.SECRET_KEY[:32].encode()))
 
-fernet = Fernet(FERNET_KEY.encode())
-
-class EncryptedTextField(models.TextField):
-    def from_db_value(self, value, expression, connection):
-        if value is None:
+    def to_python(self, value):
+        if value is None or not isinstance(value, str):
             return value
         try:
-            return fernet.decrypt(value.encode()).decode()
+            return self._fernet.decrypt(value.encode()).decode()
         except Exception:
             return value
 
-    def to_python(self, value):
-        return value
+    def from_db_value(self, value, expression, connection):
+        return self.to_python(value)
 
     def get_prep_value(self, value):
         if value is None:
             return value
-        return fernet.encrypt(value.encode()).decode()
+        return self._fernet.encrypt(str(value).encode()).decode()
+
+class EncryptedTextField(EncryptedFieldMixin, models.TextField):
+    pass
