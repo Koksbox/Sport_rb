@@ -236,3 +236,7 @@ INFO 2026-01-16 21:55:50,672 autoreload 8656 5780 C:\Users\Aza\PycharmProjects\S
 INFO 2026-01-16 21:55:51,877 autoreload 20444 10792 Watching for file changes with StatReloader
 INFO 2026-01-16 21:55:58,545 autoreload 20444 10792 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\urls.py changed, reloading.
 INFO 2026-01-16 21:55:59,706 autoreload 4756 16052 Watching for file changes with StatReloader
+INFO 2026-01-16 22:12:25,873 autoreload 4756 16052 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
+INFO 2026-01-16 22:12:27,491 autoreload 16760 19248 Watching for file changes with StatReloader
+INFO 2026-01-16 22:14:30,585 autoreload 16760 19248 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
+INFO 2026-01-16 22:14:31,698 autoreload 17868 19888 Watching for file changes with StatReloader

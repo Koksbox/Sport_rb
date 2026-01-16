@@ -10,7 +10,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-must-be-at-least-32-chars-
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1,152.114.192.9'
+).split(',')
+
 
 # Приложения
 INSTALLED_APPS = [
