@@ -1,15 +1,19 @@
+# config/settings/dev.py
+from .base import *
+
 DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-DATABASES['default'] = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': BASE_DIR / 'db.sqlite3',
-}
-
+# CORS
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Для разработки - упрощённые настройки
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Добавляем консольный вывод в логи
+LOGGING['handlers']['console'] = {
+    'level': 'DEBUG',
+    'class': 'logging.StreamHandler',
+    'formatter': 'verbose',
+}
 
-# Отключаем некоторые проверки безопасности для разработки
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# Добавляем 'console' в обработчики Django
+if 'console' not in LOGGING['loggers']['django']['handlers']:
+    LOGGING['loggers']['django']['handlers'].append('console')

@@ -1,28 +1,20 @@
-import os
+# config/settings/auth.py
+from datetime import timedelta
+from .base import *
 
-# JWT Settings
-JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
-JWT_ALGORITHM = 'HS256'
-JWT_ACCESS_TOKEN_LIFETIME = timedelta(hours=2)
-JWT_REFRESH_TOKEN_LIFETIME = timedelta(days=7)
+# JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
 
-# OAuth Settings
-VK_OAUTH_CLIENT_ID = os.getenv('VK_OAUTH_CLIENT_ID', '')
-VK_OAUTH_CLIENT_SECRET = os.getenv('VK_OAUTH_CLIENT_SECRET', '')
-VK_OAUTH_REDIRECT_URI = os.getenv('VK_OAUTH_REDIRECT_URI', 'http://localhost:8000/auth/vk/callback')
+# OAuth2 (VK)
+VK_OAUTH2_CLIENT_ID = os.getenv('VK_OAUTH2_CLIENT_ID')
+VK_OAUTH2_CLIENT_SECRET = os.getenv('VK_OAUTH2_CLIENT_SECRET')
+VK_OAUTH2_REDIRECT_URI = os.getenv('VK_OAUTH2_REDIRECT_URI', 'https://sportbash.ru/auth/vk/callback/')
 
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
-TELEGRAM_BOT_USERNAME = os.getenv('TELEGRAM_BOT_USERNAME', '')
-
-# Email verification
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
-
-# 2FA Settings
-TWO_FACTOR_ENABLED = os.getenv('TWO_FACTOR_ENABLED', 'False') == 'True'
-TWO_FACTOR_ISSUER_NAME = 'SportBash'
+# Telegram
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_WEBAPP_DOMAIN = os.getenv('TELEGRAM_WEBAPP_DOMAIN', 'https://sportbash.ru')

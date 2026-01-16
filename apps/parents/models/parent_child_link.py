@@ -10,4 +10,5 @@ class ParentChildLink(TimeStampedModel):
     is_confirmed = models.BooleanField(default=False)
 
     class Meta:
+        db_table = 'parents_parentchildlink'
         unique_together = ('parent', 'child_profile')

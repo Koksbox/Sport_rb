@@ -1,10 +1,9 @@
-from .base import *
-from .auth import *
-from .security import *
-from .logging import *
-from .integrations import *
+# config/settings/__init__.py
+import os
 
-try:
-    from .local import *
-except ImportError:
-    pass
+env = os.getenv("DJANGO_ENV", "dev")
+
+if env == "prod":
+    from .prod import *
+else:
+    from .dev import *

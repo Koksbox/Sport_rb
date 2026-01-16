@@ -1,18 +1,24 @@
+# apps/notifications/models/notification.py
 from django.db import models
 from apps.core.models.base import TimeStampedModel
 from apps.users.models.user import CustomUser
 
-NOTIFICATION_TYPES = [
+NOTIFICATION_TYPE_CHOICES = [
     ('medical_review', 'Ознакомьтесь с мед. данными'),
-    ('child_linked', 'Подтверждение связи с ребёнком'),
-    ('event_registered', 'Регистрация на мероприятие'),
-    ('attendance_missed', 'Пропуск тренировки'),
+    ('enrollment_approved', 'Зачисление одобрено'),
+    ('event_result', 'Результаты соревнований'),
+    ('mass_notification', 'Массовое уведомление'),
 ]
 
 class Notification(TimeStampedModel):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
-    message = models.TextField()
+    recipient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    body = models.TextField()
     is_read = models.BooleanField(default=False)
-    sent_via = models.CharField(max_length=20)  # 'telegram', 'email', 'system'
-    related_object_id = models.PositiveIntegerField(null=True, blank=True)
+    related_object_id = models.PositiveBigIntegerField(null=True, blank=True)  # Generic FK если нужно
+
+    class Meta:
+        db_table = 'notifications_notification'
+        ordering = ['-created_at']
