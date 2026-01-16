@@ -8,7 +8,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-API_URL = "http://127.0.0.1:8000"  # локальный Django сервер
+API_URL = "http://152.114.192.9:2007"  # локальный Django сервер
 
 # Состояния для ConversationHandler
 REGISTER, LOGIN, SELECT_ROLE, COMPLETE_PROFILE = range(4)

@@ -14,4 +14,7 @@ urlpatterns = [
     path('api/parents/', include('apps.parents.api.urls')),
     # Тренер
     path('api/coaches/', include('apps.coaches.api.urls')),
+    # Клуб
+    path('api/attendance/', include('apps.attendance.api.urls')),
+
 ]

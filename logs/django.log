@@ -222,3 +222,17 @@ INFO 2026-01-16 21:27:07,322 autoreload 12324 10672 C:\Users\Aza\PycharmProjects
 INFO 2026-01-16 21:27:08,622 autoreload 17700 20432 Watching for file changes with StatReloader
 INFO 2026-01-16 21:27:24,202 autoreload 17700 20432 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\api\views.py changed, reloading.
 INFO 2026-01-16 21:27:25,390 autoreload 2068 20716 Watching for file changes with StatReloader
+INFO 2026-01-16 21:53:22,518 autoreload 2068 20716 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 21:53:23,798 autoreload 8040 5604 Watching for file changes with StatReloader
+INFO 2026-01-16 21:54:37,886 autoreload 8040 5604 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:54:39,126 autoreload 20688 16028 Watching for file changes with StatReloader
+INFO 2026-01-16 21:55:00,224 autoreload 20688 16028 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-16 21:55:01,458 autoreload 21160 20972 Watching for file changes with StatReloader
+INFO 2026-01-16 21:55:31,369 autoreload 21160 20972 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:55:32,544 autoreload 18036 1908 Watching for file changes with StatReloader
+INFO 2026-01-16 21:55:42,604 autoreload 18036 1908 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-16 21:55:43,870 autoreload 8656 5780 Watching for file changes with StatReloader
+INFO 2026-01-16 21:55:50,672 autoreload 8656 5780 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-16 21:55:51,877 autoreload 20444 10792 Watching for file changes with StatReloader
+INFO 2026-01-16 21:55:58,545 autoreload 20444 10792 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-16 21:55:59,706 autoreload 4756 16052 Watching for file changes with StatReloader
