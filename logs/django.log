@@ -14,3 +14,211 @@ WARNING 2026-01-16 19:37:11,033 log 17924 7600 Not Found: /sw.js
 WARNING 2026-01-16 19:37:11,034 log 17924 7600 "GET /sw.js HTTP/1.1" 404 2190
 WARNING 2026-01-16 19:37:41,179 log 17924 7600 Not Found: /sw.js
 WARNING 2026-01-16 19:37:41,179 log 17924 7600 "GET /sw.js HTTP/1.1" 404 2190
+INFO 2026-01-16 19:58:48,136 autoreload 14064 14852 Watching for file changes with StatReloader
+WARNING 2026-01-16 19:58:50,542 log 14064 3268 "GET /static/css/style.css HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:50,542 log 14064 4576 "GET /static/img/loggo.png HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:50,543 log 14064 1848 "GET /static/js/service.js HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:50,560 log 14064 684 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 404 1913
+WARNING 2026-01-16 19:58:50,593 log 14064 12756 "GET /static/manifest.json HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:52,216 log 14064 19572 Not Found: /sw.js
+WARNING 2026-01-16 19:58:52,217 log 14064 19572 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:58:52,289 log 14064 19572 "GET /static/css/style.css HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:52,303 log 14064 18748 "GET /static/js/service.js HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:52,305 log 14064 15656 "GET /static/img/loggo.png HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:52,313 log 14064 18020 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 404 1913
+WARNING 2026-01-16 19:58:52,342 log 14064 21076 "GET /static/manifest.json HTTP/1.1" 404 1853
+WARNING 2026-01-16 19:58:53,518 log 14064 3088 Not Found: /
+WARNING 2026-01-16 19:58:53,519 log 14064 3088 "GET / HTTP/1.1" 404 2462
+WARNING 2026-01-16 19:58:53,581 log 14064 3088 Not Found: /favicon.ico
+WARNING 2026-01-16 19:58:53,583 log 14064 3088 "GET /favicon.ico HTTP/1.1" 404 2513
+WARNING 2026-01-16 19:58:53,898 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:58:53,899 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:58:58,550 log 14064 3088 Not Found: /api/v1/
+WARNING 2026-01-16 19:58:58,551 log 14064 3088 "GET /api/v1/ HTTP/1.1" 404 2501
+WARNING 2026-01-16 19:59:00,413 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:00,414 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:01,513 log 14064 3088 Not Found: /api/
+WARNING 2026-01-16 19:59:01,514 log 14064 3088 "GET /api/ HTTP/1.1" 404 2492
+WARNING 2026-01-16 19:59:03,325 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:03,326 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:03,880 log 14064 3088 Not Found: /api
+WARNING 2026-01-16 19:59:03,881 log 14064 3088 "GET /api HTTP/1.1" 404 2489
+WARNING 2026-01-16 19:59:05,595 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:05,595 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:10,294 log 14064 3088 Not Found: /api/auth
+WARNING 2026-01-16 19:59:10,295 log 14064 3088 "GET /api/auth HTTP/1.1" 404 2504
+WARNING 2026-01-16 19:59:12,156 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:12,157 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:13,615 log 14064 3088 Not Found: /api/auth/
+WARNING 2026-01-16 19:59:13,616 log 14064 3088 "GET /api/auth/ HTTP/1.1" 404 2895
+WARNING 2026-01-16 19:59:15,271 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:15,272 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+INFO 2026-01-16 19:59:20,841 log 14064 3088 "GET /api/auth/register HTTP/1.1" 301 0
+WARNING 2026-01-16 19:59:20,848 log 14064 3088 Method Not Allowed: /api/auth/register/
+WARNING 2026-01-16 19:59:20,850 log 14064 3088 "GET /api/auth/register/ HTTP/1.1" 405 54
+WARNING 2026-01-16 19:59:22,653 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:22,654 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:24,588 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:24,589 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 19:59:54,091 log 14064 3088 Not Found: /sw.js
+WARNING 2026-01-16 19:59:54,091 log 14064 3088 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 20:03:46,445 log 14064 3088 "GET /static/css/style.css HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:46,457 log 14064 16136 "GET /static/js/service.js HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:46,458 log 14064 21228 "GET /static/img/loggo.png HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:46,470 log 14064 5792 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 404 1913
+WARNING 2026-01-16 20:03:46,491 log 14064 16852 "GET /static/manifest.json HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:47,812 log 14064 7392 Not Found: /
+WARNING 2026-01-16 20:03:47,813 log 14064 7392 "GET / HTTP/1.1" 404 2462
+WARNING 2026-01-16 20:03:47,870 log 14064 7392 Not Found: /favicon.ico
+WARNING 2026-01-16 20:03:47,870 log 14064 7392 "GET /favicon.ico HTTP/1.1" 404 2513
+WARNING 2026-01-16 20:03:48,063 log 14064 7392 Not Found: /sw.js
+WARNING 2026-01-16 20:03:48,063 log 14064 7392 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 20:03:51,810 log 14064 7392 "GET /static/css/style.css HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:51,822 log 14064 19196 "GET /static/js/service.js HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:51,822 log 14064 14060 "GET /static/img/loggo.png HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:51,831 log 14064 12896 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 404 1913
+WARNING 2026-01-16 20:03:51,849 log 14064 17444 "GET /static/manifest.json HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:03:53,488 log 14064 2876 Not Found: /sw.js
+WARNING 2026-01-16 20:03:53,489 log 14064 2876 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 20:03:53,591 log 14064 2876 Not Found: /
+WARNING 2026-01-16 20:03:53,591 log 14064 2876 "GET / HTTP/1.1" 404 2462
+WARNING 2026-01-16 20:03:53,634 log 14064 2876 Not Found: /favicon.ico
+WARNING 2026-01-16 20:03:53,635 log 14064 2876 "GET /favicon.ico HTTP/1.1" 404 2513
+WARNING 2026-01-16 20:04:16,707 log 14064 4664 Bad Request: /api/auth/register/
+WARNING 2026-01-16 20:04:16,708 log 14064 4664 "POST /api/auth/register/ HTTP/1.1" 400 252
+WARNING 2026-01-16 20:04:22,955 log 14064 2876 Not Found: /sw.js
+WARNING 2026-01-16 20:04:22,955 log 14064 2876 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 20:09:49,469 log 14064 12928 Not Found: /api/auth/
+WARNING 2026-01-16 20:09:49,470 log 14064 12928 "GET /api/auth/ HTTP/1.1" 404 2895
+WARNING 2026-01-16 20:09:51,129 log 14064 12928 Not Found: /sw.js
+WARNING 2026-01-16 20:09:51,131 log 14064 12928 "GET /sw.js HTTP/1.1" 404 2495
+WARNING 2026-01-16 20:10:21,049 log 14064 12928 Not Found: /sw.js
+WARNING 2026-01-16 20:10:21,050 log 14064 12928 "GET /sw.js HTTP/1.1" 404 2495
+INFO 2026-01-16 20:11:53,301 autoreload 14064 14852 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\models\organization.py changed, reloading.
+INFO 2026-01-16 20:11:54,458 autoreload 6492 12988 Watching for file changes with StatReloader
+INFO 2026-01-16 20:12:07,567 autoreload 20756 10672 Watching for file changes with StatReloader
+INFO 2026-01-16 20:21:44,848 autoreload 20756 10672 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:21:46,033 autoreload 1236 14148 Watching for file changes with StatReloader
+INFO 2026-01-16 20:24:02,305 autoreload 1236 14148 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 20:24:03,488 autoreload 11556 4532 Watching for file changes with StatReloader
+INFO 2026-01-16 20:24:28,741 autoreload 11556 4532 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 20:24:30,181 autoreload 17676 13676 Watching for file changes with StatReloader
+INFO 2026-01-16 20:27:13,013 autoreload 3312 18040 Watching for file changes with StatReloader
+WARNING 2026-01-16 20:27:15,332 log 3312 11088 "GET /static/css/style.css HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:27:15,333 log 3312 18920 "GET /static/img/loggo.png HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:27:15,334 log 3312 13488 "GET /static/js/service.js HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:27:15,349 log 3312 20956 "GET /static/img/photo_2025-01-24_01-36-25.jpg HTTP/1.1" 404 1913
+WARNING 2026-01-16 20:27:15,380 log 3312 10080 "GET /static/manifest.json HTTP/1.1" 404 1853
+WARNING 2026-01-16 20:27:16,824 log 3312 13856 Not Found: /
+WARNING 2026-01-16 20:27:16,825 log 3312 13856 "GET / HTTP/1.1" 404 2623
+WARNING 2026-01-16 20:27:16,897 log 3312 13856 Not Found: /favicon.ico
+WARNING 2026-01-16 20:27:16,899 log 3312 13856 "GET /favicon.ico HTTP/1.1" 404 2674
+WARNING 2026-01-16 20:27:16,995 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:27:16,996 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:27:23,929 log 3312 13856 Not Found: /api/v1/
+WARNING 2026-01-16 20:27:23,930 log 3312 13856 "GET /api/v1/ HTTP/1.1" 404 2662
+WARNING 2026-01-16 20:27:25,802 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:27:25,803 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:27:25,961 log 3312 13856 Not Found: /api/
+WARNING 2026-01-16 20:27:25,962 log 3312 13856 "GET /api/ HTTP/1.1" 404 2653
+WARNING 2026-01-16 20:27:27,836 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:27:27,837 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:27:31,582 log 3312 13856 Not Found: /api/users
+WARNING 2026-01-16 20:27:31,583 log 3312 13856 "GET /api/users HTTP/1.1" 404 2668
+WARNING 2026-01-16 20:27:33,446 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:27:33,446 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:27:35,523 log 3312 13856 Not Found: /api/users/
+WARNING 2026-01-16 20:27:35,524 log 3312 13856 "GET /api/users/ HTTP/1.1" 404 2798
+WARNING 2026-01-16 20:27:37,400 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:27:37,401 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:28:06,671 log 3312 13856 Not Found: /sw.js
+WARNING 2026-01-16 20:28:06,671 log 3312 13856 "GET /sw.js HTTP/1.1" 404 2656
+INFO 2026-01-16 20:30:07,523 autoreload 3312 18040 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:30:08,962 autoreload 1848 18216 Watching for file changes with StatReloader
+INFO 2026-01-16 20:30:37,660 autoreload 1848 18216 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:30:38,949 autoreload 18288 6452 Watching for file changes with StatReloader
+INFO 2026-01-16 20:31:03,416 autoreload 18288 6452 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\urls.py changed, reloading.
+INFO 2026-01-16 20:31:04,759 autoreload 11988 14804 Watching for file changes with StatReloader
+INFO 2026-01-16 20:31:08,898 autoreload 11988 14804 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\urls.py changed, reloading.
+INFO 2026-01-16 20:31:10,058 autoreload 6268 20628 Watching for file changes with StatReloader
+INFO 2026-01-16 20:32:36,609 autoreload 6268 20628 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:32:38,092 autoreload 10424 10656 Watching for file changes with StatReloader
+INFO 2026-01-16 20:32:50,963 autoreload 10424 10656 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\views.py changed, reloading.
+INFO 2026-01-16 20:32:52,374 autoreload 20956 10004 Watching for file changes with StatReloader
+INFO 2026-01-16 20:32:59,457 autoreload 20956 10004 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\urls.py changed, reloading.
+INFO 2026-01-16 20:33:00,880 autoreload 15500 18104 Watching for file changes with StatReloader
+INFO 2026-01-16 20:33:20,683 autoreload 15500 18104 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\views.py changed, reloading.
+INFO 2026-01-16 20:33:21,932 autoreload 18788 14472 Watching for file changes with StatReloader
+INFO 2026-01-16 20:34:51,188 autoreload 18144 1544 Watching for file changes with StatReloader
+WARNING 2026-01-16 20:34:52,070 log 18144 17644 Not Found: /api/auth/
+WARNING 2026-01-16 20:34:52,071 log 18144 17644 "GET /api/auth/ HTTP/1.1" 404 3592
+WARNING 2026-01-16 20:34:53,717 log 18144 17644 Not Found: /sw.js
+WARNING 2026-01-16 20:34:53,718 log 18144 17644 "GET /sw.js HTTP/1.1" 404 2656
+WARNING 2026-01-16 20:35:23,511 log 18144 17644 Not Found: /sw.js
+WARNING 2026-01-16 20:35:23,511 log 18144 17644 "GET /sw.js HTTP/1.1" 404 2656
+INFO 2026-01-16 20:36:38,907 autoreload 18144 1544 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\models\organization.py changed, reloading.
+INFO 2026-01-16 20:36:40,129 autoreload 6804 19024 Watching for file changes with StatReloader
+INFO 2026-01-16 20:49:17,481 autoreload 6804 19024 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
+INFO 2026-01-16 20:49:18,685 autoreload 10744 19820 Watching for file changes with StatReloader
+INFO 2026-01-16 20:50:18,641 autoreload 10744 19820 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:50:19,961 autoreload 21160 7036 Watching for file changes with StatReloader
+INFO 2026-01-16 20:50:24,705 autoreload 21160 7036 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:50:26,103 autoreload 9928 2152 Watching for file changes with StatReloader
+INFO 2026-01-16 20:51:15,670 autoreload 9928 2152 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:51:17,153 autoreload 11300 14984 Watching for file changes with StatReloader
+INFO 2026-01-16 20:51:23,297 autoreload 11300 14984 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:51:24,294 autoreload 12248 2356 Watching for file changes with StatReloader
+INFO 2026-01-16 20:52:05,172 autoreload 12248 2356 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\views.py changed, reloading.
+INFO 2026-01-16 20:52:06,373 autoreload 19644 19888 Watching for file changes with StatReloader
+INFO 2026-01-16 20:52:41,535 autoreload 19644 19888 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-16 20:52:42,738 autoreload 2476 20884 Watching for file changes with StatReloader
+INFO 2026-01-16 20:56:35,169 autoreload 2476 20884 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\views.py changed, reloading.
+INFO 2026-01-16 20:56:36,553 autoreload 19012 21008 Watching for file changes with StatReloader
+INFO 2026-01-16 20:56:43,367 autoreload 19012 21008 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\views.py changed, reloading.
+INFO 2026-01-16 20:56:44,968 autoreload 20692 14804 Watching for file changes with StatReloader
+INFO 2026-01-16 20:58:12,891 autoreload 20692 14804 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 20:58:14,231 autoreload 10820 13452 Watching for file changes with StatReloader
+INFO 2026-01-16 20:58:16,735 autoreload 10820 13452 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 20:58:18,089 autoreload 10456 15400 Watching for file changes with StatReloader
+INFO 2026-01-16 21:03:36,809 autoreload 10456 15400 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 21:03:37,945 autoreload 9280 5856 Watching for file changes with StatReloader
+INFO 2026-01-16 21:06:12,654 autoreload 9280 5856 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:06:14,224 autoreload 21212 4300 Watching for file changes with StatReloader
+INFO 2026-01-16 21:06:30,855 autoreload 21212 4300 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-16 21:06:32,170 autoreload 18832 11136 Watching for file changes with StatReloader
+INFO 2026-01-16 21:06:52,338 autoreload 18832 11136 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-16 21:06:53,590 autoreload 13968 6484 Watching for file changes with StatReloader
+INFO 2026-01-16 21:07:02,533 autoreload 13968 6484 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-16 21:07:03,703 autoreload 11372 620 Watching for file changes with StatReloader
+INFO 2026-01-16 21:07:24,608 autoreload 11372 620 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-16 21:07:25,812 autoreload 10500 720 Watching for file changes with StatReloader
+INFO 2026-01-16 21:20:28,401 autoreload 10500 720 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-16 21:20:29,773 autoreload 11596 6132 Watching for file changes with StatReloader
+INFO 2026-01-16 21:21:12,607 autoreload 11596 6132 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:21:13,979 autoreload 19888 13452 Watching for file changes with StatReloader
+INFO 2026-01-16 21:21:15,922 autoreload 19888 13452 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:21:17,351 autoreload 8292 9168 Watching for file changes with StatReloader
+INFO 2026-01-16 21:21:28,708 autoreload 8292 9168 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-16 21:21:30,173 autoreload 20832 5176 Watching for file changes with StatReloader
+INFO 2026-01-16 21:21:58,796 autoreload 20832 5176 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:22:00,087 autoreload 14904 20092 Watching for file changes with StatReloader
+INFO 2026-01-16 21:22:09,523 autoreload 14904 20092 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-16 21:22:10,820 autoreload 20680 17076 Watching for file changes with StatReloader
+INFO 2026-01-16 21:22:21,921 autoreload 20680 17076 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\urls.py changed, reloading.
+INFO 2026-01-16 21:22:23,225 autoreload 18288 21220 Watching for file changes with StatReloader
+INFO 2026-01-16 21:22:39,808 autoreload 18288 21220 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:22:41,057 autoreload 16648 2396 Watching for file changes with StatReloader
+INFO 2026-01-16 21:22:48,612 autoreload 16648 2396 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:22:49,720 autoreload 16080 12796 Watching for file changes with StatReloader
+INFO 2026-01-16 21:23:04,199 autoreload 16080 12796 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\api\urls.py changed, reloading.
+INFO 2026-01-16 21:23:05,531 autoreload 19560 4752 Watching for file changes with StatReloader
+INFO 2026-01-16 21:25:02,778 autoreload 19560 4752 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:25:04,117 autoreload 20656 1844 Watching for file changes with StatReloader
+INFO 2026-01-16 21:26:06,456 autoreload 20656 1844 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:26:07,589 autoreload 11716 20688 Watching for file changes with StatReloader
+INFO 2026-01-16 21:26:36,123 autoreload 11716 20688 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\models\club_request.py changed, reloading.
+INFO 2026-01-16 21:26:37,507 autoreload 12324 10672 Watching for file changes with StatReloader
+INFO 2026-01-16 21:27:07,322 autoreload 12324 10672 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-16 21:27:08,622 autoreload 17700 20432 Watching for file changes with StatReloader
+INFO 2026-01-16 21:27:24,202 autoreload 17700 20432 C:\Users\Aza\PycharmProjects\Sport_rb_db\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-16 21:27:25,390 autoreload 2068 20716 Watching for file changes with StatReloader

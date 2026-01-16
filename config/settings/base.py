@@ -2,6 +2,8 @@
 import os
 from pathlib import Path
 
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-must-be-at-least-32-chars-long-for-encryption')
