@@ -4,9 +4,9 @@ from apps.users.models import UserRole
 from apps.geography.models import City, Region
 
 class RoleSelectionSerializer(serializers.Serializer):
-    ROLE_CHOICES = ['athlete', 'parent', 'organization']
+    ROLE_CHOICES = ['athlete', 'parent', 'organization', 'coach']  # ← ДОБАВИЛ 'coach'
     role = serializers.ChoiceField(choices=ROLE_CHOICES)
-    city = serializers.CharField(max_length=100, required=False)  # только для athlete
+    city = serializers.CharField(max_length=100, required=False)
 
     def validate(self, attrs):
         user = self.context['request'].user
@@ -18,7 +18,6 @@ class RoleSelectionSerializer(serializers.Serializer):
         user = self.context['request'].user
         role = self.validated_data['role']
 
-        # Создаём только запись о роли
         UserRole.objects.create(user=user, role=role)
 
         if role == 'athlete':
@@ -32,6 +31,16 @@ class RoleSelectionSerializer(serializers.Serializer):
             from apps.parents.models import ParentProfile
             ParentProfile.objects.create(user=user)
 
-        # НЕ СОЗДАЁМ ОРГАНИЗАЦИЮ!
-        # Пользователь перейдёт на форму создания
+        elif role == 'coach':
+            from apps.coaches.models import CoachProfile
+            region, _ = Region.objects.get_or_create(name="Республика Башкортостан")
+            city, _ = City.objects.get_or_create(name="Уфа", region=region)
+            CoachProfile.objects.create(
+                user=user,
+                city=city,
+                specialization_id=1,  # временно
+                experience_years=0
+            )
+
+        # organization остаётся без создания org
         return user

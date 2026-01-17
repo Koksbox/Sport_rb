@@ -89,7 +89,7 @@ async def login_step(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def role_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🎭 Выбор роли\nФормат: роль, город\n"
-        "Роли: athlete, parent, organization\n"  # ← УДАЛИЛ 'coach'
+        "Роли: athlete, parent, organization, coach\n"  # ← УДАЛИЛ 'coach'
         "Пример: athlete, Уфа"
     )
     return SELECT_ROLE
