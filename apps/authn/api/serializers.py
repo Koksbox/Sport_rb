@@ -4,6 +4,8 @@ from sqlite3 import IntegrityError
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from apps.authn.models import AuthProvider
 from apps.users.models import CustomUser
 from apps.authn.services.telegram_webapp import validate_telegram_init_data
 from django.conf import settings
@@ -30,15 +32,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
-        try:
-            user = CustomUser.objects.create_user(
-                email=validated_data['email'],
-                first_name=validated_data['first_name'],
-                last_name=validated_data['last_name'],
-                password=validated_data['password']
-            )
-        except IntegrityError:
-            raise serializers.ValidationError("Пользователь с таким email уже существует.")
+        user = CustomUser.objects.create_user(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            password=validated_data['password']
+        )
+
+        # Привязываем только email-провайдер
+        AuthProvider.objects.create(
+            user=user,
+            provider='email',
+            external_id=validated_data['email']
+        )
         return user
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -50,38 +56,57 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+# apps/authn/api/serializers.py
 class VKAuthSerializer(serializers.Serializer):
     access_token = serializers.CharField()
 
     def validate_access_token(self, value):
-        # Проверяем токен через VK API
-        response = requests.get(
-            'https://api.vk.com/method/users.get',
-            params={
-                'access_token': value,
-                'v': '5.131'
-            }
-        )
-        if response.status_code != 200 or 'error' in response.json():
-            raise serializers.ValidationError("Неверный VK access_token")
+        try:
+            # Убираем пробелы в URL
+            response = requests.get(
+                'https://api.vk.com/method/users.get',
+                params={
+                    'access_token': value,
+                    'v': '5.131'
+                },
+                timeout=10
+            )
 
-        user_data = response.json()['response'][0]
-        self.context['vk_user'] = user_data
-        return value
+            if response.status_code != 200:
+                raise serializers.ValidationError("Ошибка VK API")
+
+            data = response.json()
+            if 'error' in data:
+                raise serializers.ValidationError(f"VK Error: {data['error']['error_msg']}")
+
+            user_data = data['response'][0]
+            self.context['vk_user'] = user_data
+            return value
+
+        except requests.RequestException:
+            raise serializers.ValidationError("Не удалось подключиться к VK API")
 
     def save(self):
         vk_user = self.context['vk_user']
         vk_id = vk_user['id']
 
-        # Ищем или создаём пользователя
+        # Создаём ТОЛЬКО если нет аккаунта с таким vk_id
         user, created = CustomUser.objects.get_or_create(
             vk_id=vk_id,
             defaults={
                 'first_name': vk_user.get('first_name', ''),
                 'last_name': vk_user.get('last_name', ''),
-                'email': None,  # будет запрошен позже
+                'email': None,
             }
         )
+
+        # Привязываем VK-провайдер (только если новый аккаунт)
+        if created:
+            AuthProvider.objects.create(
+                user=user,
+                provider='vk',
+                external_id=str(vk_id)
+            )
         return user
 
 
@@ -99,15 +124,22 @@ class TelegramAuthSerializer(serializers.Serializer):
     def save(self):
         tg_user = self.context['tg_user']
         telegram_id = int(tg_user['user']['id'])
-        first_name = tg_user['user'].get('first_name', '')
-        last_name = tg_user['user'].get('last_name', '')
 
+        # Создаём ТОЛЬКО если нет аккаунта с таким telegram_id
         user, created = CustomUser.objects.get_or_create(
             telegram_id=telegram_id,
             defaults={
-                'first_name': first_name,
-                'last_name': last_name,
+                'first_name': tg_user['user'].get('first_name', ''),
+                'last_name': tg_user['user'].get('last_name', ''),
                 'email': None,
             }
         )
+
+        # Привязываем Telegram-провайдер (только если новый аккаунт)
+        if created:
+            AuthProvider.objects.create(
+                user=user,
+                provider='telegram',
+                external_id=str(telegram_id)
+            )
         return user
