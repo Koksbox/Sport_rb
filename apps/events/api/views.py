@@ -77,16 +77,14 @@ def register_for_event(request, event_id):
 def create_event(request):
     """Создать мероприятие"""
     # Определяем организатора
-    if hasattr(request.user, 'director_role'):
-        org = request.user.director_role.organization
-        serializer = EventCreateSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            event = serializer.save(organization=org, organizer_user=None)
+    serializer = EventCreateSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        if hasattr(request.user, 'director_role'):
+            org = request.user.director_role.organization
+            event = serializer.save(organizer_org=org, organizer_user=None)
             return Response(EventSerializer(event).data, status=201)
-    elif hasattr(request.user, 'committee_role'):
-        serializer = EventCreateSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            event = serializer.save(organizer_user=request.user, organization=None)
+        elif hasattr(request.user, 'committee_role'):
+            event = serializer.save(organizer_user=request.user, organizer_org=None)
             return Response(EventSerializer(event).data, status=201)
 
     return Response({"error": "Недостаточно прав"}, status=403)
@@ -101,11 +99,11 @@ def upload_event_results(request, event_id):
         event = Event.objects.get(id=event_id)
         # Проверка прав: только организатор или тренер из той же организации
         allowed = False
-        if event.organization and hasattr(request.user, 'coach_profile'):
+        if event.organizer_org and hasattr(request.user, 'coach_profile'):
             coach = request.user.coach_profile
-            if event.organization.coach_memberships.filter(coach=coach).exists():
+            if event.organizer_org.coach_memberships.filter(coach=coach).exists():
                 allowed = True
-        if event.organizer_user == request.user or event.organization.director.user == request.user:
+        if event.organizer_user == request.user or (event.organizer_org and hasattr(event.organizer_org, 'director') and event.organizer_org.director.user == request.user):
             allowed = True
 
         if not allowed:

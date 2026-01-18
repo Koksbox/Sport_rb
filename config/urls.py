@@ -1,43 +1,41 @@
 # config/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+# Импортируем админки для регистрации моделей
+import apps.core.admin  # Кастомизация админ-сайта
+import apps.users.admin
+import apps.geography.admin
+import apps.sports.admin
+import apps.organizations.admin
+import apps.athletes.admin
+import apps.coaches.admin
+import apps.parents.admin
+import apps.events.admin
+import apps.training.admin
+import apps.attendance.admin
+import apps.achievements.admin
+import apps.files.admin
+import apps.notifications.admin
+import apps.city_committee.admin
+import apps.admin_rb.admin
+import apps.audit.admin
+import apps.authn.admin
 
 urlpatterns = [
-    # Регистрация и вход, выбор роли
+    # Админ панель Django
     path('admin/', admin.site.urls),
-    path('api/auth/', include('apps.authn.api.urls')),
-    path('api/users/', include('apps.users.api.urls')),
-    # Создание организации, модератор
-    path('api/organizations/', include('apps.organizations.api.urls')),
-    path('api/athletes/', include('apps.athletes.api.urls')),
-    # Родитель
-    path('api/parents/', include('apps.parents.api.urls')),
-    # Тренер
-    path('api/coaches/', include('apps.coaches.api.urls')),
-    # Клуб
-    path('api/attendance/', include('apps.attendance.api.urls')),
-    # Мероприятия
-    path('api/events/', include('apps.events.api.urls')),
-    # Госскомитет
-    path('api/city-committee/', include('apps.city_committee.api.urls')),
-    # География
-    path('api/geography/', include('apps.geography.api.urls')),
-    # Спорт категории и список
-    path('api/sports/', include('apps.sports.api.urls')),
-    # Админ РБ
-    path('api/admin-rb/', include('apps.admin_rb.api.urls')),
-    # Группы
-    path('api/training/', include('apps.training.api.urls')),
-    # Файлы
-    path('api/files/', include('apps.files.api.urls')),
-    # Достижения
-    path('api/achievements/', include('apps.achievements.api.urls')),
-    # Core
-    path('api/core/', include('apps.core.api.urls')),
-    # Логи
-    path('api/audit/', include('apps.audit.api.urls')),
-    # Статистика
-    path('api/analytics/', include('apps.analytics.api.urls')),
-    # Уведомления
-    path('api/notifications/', include('apps.notifications.api.urls')),
+    
+    # API - все endpoints под /api/
+    path('api/', include('apps.api.urls')),
+    
+    # Frontend - все остальные пути
+    path('', include('apps.frontend.urls')),
 ]
+
+# Раздача статических и медиа файлов в режиме разработки
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

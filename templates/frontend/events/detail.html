@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мероприятие - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div id="eventDetail" hx-get="/api/events/{{ event_id }}/" hx-trigger="load">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+document.body.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'eventDetail') {
+        const data = JSON.parse(event.detail.xhr.response);
+        renderEventDetail(data);
+    }
+});
+
+function renderEventDetail(event) {
+    const container = document.getElementById('eventDetail');
+    const date = event.date ? new Date(event.date).toLocaleDateString('ru-RU') : 'Дата не указана';
+    
+    let html = `
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">${event.name || 'Без названия'}</h1>
+            </div>
+            <div class="card-body">
+                <p><strong>Дата:</strong> ${date}</p>
+                ${event.city ? '<p><strong>Город:</strong> ' + event.city + '</p>' : ''}
+                ${event.sport ? '<p><strong>Вид спорта:</strong> ' + event.sport + '</p>' : ''}
+                ${event.description ? '<p><strong>Описание:</strong><br>' + event.description + '</p>' : ''}
+                
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function registerForEvent(eventId) {
+    fetch(`/api/events/${eventId}/register/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+        } else {
+            alert('Ошибка: ' + JSON.stringify(data));
+        }
+    })
+    .catch(error => {
+        alert('Ошибка: ' + error);
+    });
+}
+</script>
+{% endblock %}

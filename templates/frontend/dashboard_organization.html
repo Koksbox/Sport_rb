@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет организации - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🏢 Личный кабинет организации</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Мой профиль</h2>
+        </div>
+        <div class="card-body">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Быстрые действия -->
+    <div class="section-header" style="margin-top: 2rem;">
+        <h2 class="section-title">Быстрые действия</h2>
+    </div>
+    <div class="grid grid-2">
+        <a href="{% url 'frontend-organization-create' %}" class="item-card">
+            <div class="item-icon">➕</div>
+            <h3 class="item-card-title">Создать организацию</h3>
+            <p class="item-card-description">Создать новую спортивную организацию</p>
+        </a>
+        
+        <a href="#" class="item-card">
+            <div class="item-icon">📊</div>
+            <h3 class="item-card-title">Мои организации</h3>
+            <p class="item-card-description">Управление организациями</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

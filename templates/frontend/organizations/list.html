@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Организации - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h1 class="section-title">Спортивные организации</h1>
+        <p class="section-subtitle">Найдите подходящую секцию для занятий спортом</p>
+    </div>
+    
+    <!-- Фильтры -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <form id="filterForm" hx-get="/api/organizations/" hx-target="#organizationsList" hx-swap="innerHTML">
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label class="form-label" for="city">Город</label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Например: Уфа">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="sport">Вид спорта</label>
+                    <input type="text" class="form-control" id="sport" name="sport" placeholder="Например: Футбол">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Найти</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Список организаций -->
+    <div id="organizationsList" class="items-list" 
+         hx-get="/api/organizations/" 
+         hx-trigger="load"
+         hx-swap="innerHTML"
+         hx-indicator=".loading-indicator">
+        <div class="loading loading-indicator" style="margin: 2rem auto; display: block;"></div>
+    </div>
+    
+    <!-- Кнопка создания организации -->
+    {% if user.is_authenticated %}
+        {% if user.roles.exists %}
+            {% with role=user.roles.first.role %}
+                {% if role == 'organization' or role == 'director' %}
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="{% url 'frontend-organization-create' %}" class="btn btn-primary">Создать организацию</a>
+                </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    {% else %}
+    <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: var(--secondary-blue); border-radius: var(--border-radius);">
+        <p style="margin-bottom: 1rem;">Хотите создать свою организацию?</p>
+        <a href="{% url 'frontend-register' %}" class="btn btn-primary">Зарегистрироваться</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Обработка загрузки организаций через HTMX
+document.body.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'organizationsList') {
+        try {
+            const response = event.detail.xhr.response;
+            let organizations;
+            
+            if (typeof response === 'string') {
+                organizations = JSON.parse(response);
+            } else {
+                organizations = response;
+            }
+            
+            renderOrganizations(organizations);
+        } catch (e) {
+            console.error('Ошибка парсинга данных:', e);
+            document.getElementById('organizationsList').innerHTML = 
+                '<div class="card"><p class="text-center">Ошибка загрузки данных</p></div>';
+        }
+    }
+});
+
+function renderOrganizations(organizations) {
+    const container = document.getElementById('organizationsList');
+    
+    if (!organizations || organizations.length === 0) {
+        container.innerHTML = `
+            <div class="card" style="grid-column: 1 / -1;">
+                <p class="text-center" style="color: var(--text-light);">
+                    Организации не найдены. Попробуйте изменить фильтры поиска.
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    organizations.forEach(org => {
+        const sports = Array.isArray(org.sport_directions) 
+            ? org.sport_directions.join(', ') 
+            : (org.sport_directions || '');
+        
+        html += `
+            <div class="item-card" onclick="window.location.href='/organizations/${org.id}/'" style="cursor: pointer;">
+                <h3 class="item-card-title">${escapeHtml(org.name || 'Без названия')}</h3>
+                <p class="item-card-description">${org.address || 'Адрес не указан'}</p>
+                <div class="item-card-meta">
+                    ${org.city ? '<span>📍 ' + escapeHtml(org.city) + '</span>' : ''}
+                    ${sports ? '<span>⚽ ' + escapeHtml(sports) + '</span>' : ''}
+                    ${org.org_type ? '<span>🏢 ' + (org.org_type === 'state' ? 'Государственная' : 'Частная') + '</span>' : ''}
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}

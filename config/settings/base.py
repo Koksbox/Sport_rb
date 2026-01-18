@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     'apps.files',
     'apps.audit',
     'apps.admin_rb',
+    
+    # Разделенные приложения
+    'apps.api',        # Централизованное API приложение
+    'apps.frontend',   # Frontend приложение
 ]
 
 MIDDLEWARE = [
@@ -112,6 +116,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# Настройки входа и редиректа
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
 # Пароли
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -129,6 +138,9 @@ USE_TZ = True
 # Статика и медиа
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

@@ -42,6 +42,20 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
         return organization
 
 
+class OrganizationListSerializer(serializers.ModelSerializer):
+    city = serializers.CharField(source='city.name', read_only=True)
+    sport_directions = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Organization
+        fields = ['id', 'name', 'org_type', 'city', 'address', 'website', 'sport_directions']
+    
+    def get_sport_directions(self, obj):
+        from apps.organizations.models import SportDirection
+        directions = SportDirection.objects.filter(organization=obj)
+        return [sd.sport.name for sd in directions]
+
+
 class OrganizationModerationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization

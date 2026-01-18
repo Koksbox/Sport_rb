@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Личный кабинет</h1>
+    
+    {% if not has_role %}
+    <!-- Выбор роли -->
+    <div class="card" style="max-width: 800px; margin: 2rem auto;">
+        <div class="card-header">
+            <h2 class="card-title">Добро пожаловать в СпортБаш!</h2>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 2rem;">Как вы хотите использовать СпортБаш?</p>
+            
+            <div class="grid grid-3">
+                <div class="item-card" onclick="selectRole('athlete')" style="cursor: pointer;">
+                    <div class="sport-icon">✅</div>
+                    <h3>Я хочу заниматься спортом</h3>
+                    <p>Спортсмен/ученик</p>
+                </div>
+                
+                <div class="item-card" onclick="selectRole('parent')" style="cursor: pointer;">
+                    <div class="sport-icon">👨‍👩‍👧</div>
+                    <h3>Я родитель</h3>
+                    <p>Ребёнок занимается спортом</p>
+                </div>
+                
+                <div class="item-card" onclick="selectRole('organization')" style="cursor: pointer;">
+                    <div class="sport-icon">🏢</div>
+                    <h3>Я представляю организацию</h3>
+                    <p>Спортивная организация</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Информация о пользователе -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">👤 Профиль</h2>
+        </div>
+        <div class="card-body">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
+                {% endif %}
+                {% if user.city %}
+                <div class="profile-item">
+                    <span class="profile-label">Город:</span>
+                    <span class="profile-value">{{ user.city }}</span>
+                </div>
+                {% endif %}
+                {% if user.get_full_name %}
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Роли пользователя -->
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">🎭 Ваши роли</h2>
+        </div>
+        <div class="card-body">
+            <div class="roles-list">
+                {% for role in user.roles.all %}
+                <span class="role-badge role-{{ role.role }}">{{ role.get_role_display }}</span>
+                {% empty %}
+                <p style="color: var(--text-light);">Роли не назначены</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Быстрые действия -->
+    <div class="section-header" style="margin-top: 3rem;">
+        <h2 class="section-title">Быстрые действия</h2>
+    </div>
+    <div class="grid grid-2" style="margin-top: 1rem;">
+        <a href="{% url 'frontend-organizations' %}" class="item-card">
+            <div class="item-icon">🏢</div>
+            <h3 class="item-card-title">Найти секцию</h3>
+            <p class="item-card-description">Записаться в спортивную организацию</p>
+        </a>
+        
+        <a href="{% url 'frontend-events' %}" class="item-card">
+            <div class="item-icon">🏆</div>
+            <h3 class="item-card-title">Мероприятия</h3>
+            <p class="item-card-description">Посмотреть предстоящие события</p>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function selectRole(role) {
+    const roleNames = {
+        'athlete': 'Спортсмен',
+        'parent': 'Родитель',
+        'organization': 'Организация'
+    };
+    
+    if (confirm('Выбрать роль "' + roleNames[role] + '"?')) {
+        fetch('/api/users/select-role/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ role: role })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert('Ошибка: ' + JSON.stringify(data));
+            }
+        })
+        .catch(error => {
+            alert('Ошибка: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %}

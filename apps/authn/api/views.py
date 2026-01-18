@@ -17,10 +17,19 @@ def register(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+        role = serializer.validated_data.get('role', '')
+        role_names = {
+            'athlete': 'Спортсмен',
+            'parent': 'Родитель',
+            'coach': 'Тренер',
+            'organization': 'Организация'
+        }
+        role_name = role_names.get(role, 'Пользователь')
         return Response({
-            "message": "Регистрация успешна. Выберите роль в личном кабинете.",
+            "message": f"Регистрация успешна! Создан кабинет: {role_name}.",
             "user_id": user.id,
-            "email": user.email
+            "email": user.email,
+            "role": role
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

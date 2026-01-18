@@ -1,16 +1,39 @@
 # apps/organizations/api/views.py
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import (
     OrganizationCreateSerializer,
-    OrganizationModerationSerializer
+    OrganizationModerationSerializer,
+    OrganizationListSerializer
 )
 from apps.organizations.models import Organization
 from apps.organizations.services.moderation import approve_organization
 from apps.coaches.models import ClubRequest, CoachProfile
 from apps.organizations.staff.coach_membership import CoachMembership
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def list_organizations(request):
+    """Список одобренных организаций"""
+    organizations = Organization.objects.filter(status='approved')
+    
+    # Фильтры
+    city = request.query_params.get('city')
+    sport = request.query_params.get('sport')
+    
+    if city:
+        organizations = organizations.filter(city__name__icontains=city)
+    
+    if sport:
+        from apps.organizations.models import SportDirection
+        organizations = organizations.filter(
+            sport_directions__sport__name__icontains=sport
+        ).distinct()
+    
+    serializer = OrganizationListSerializer(organizations, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

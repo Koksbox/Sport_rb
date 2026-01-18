@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}СпортБаш - Единая цифровая спортивная экосистема{% endblock %}</title>
+    
+    {% load static %}
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{% url 'frontend-index' %}">
+                    <span class="logo-icon">🏃</span>
+                    <span class="logo-text">СпортБаш</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'frontend-dashboard' %}" class="nav-link">
+                        {% if user.roles.exists %}
+                            {% with role=user.roles.first.role %}
+                                {% if role == 'athlete' %}👤 Спортсмен
+                                {% elif role == 'parent' %}👨‍👩‍👧 Родитель
+                                {% elif role == 'coach' %}🏋️ Тренер
+                                {% elif role == 'organization' or role == 'director' %}🏢 Организация
+                                {% else %}Личный кабинет{% endif %}
+                            {% endwith %}
+                        {% else %}
+                            Личный кабинет
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
+                    <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>
+                    <a href="{% url 'admin:logout' %}" class="nav-link">Выход</a>
+                {% else %}
+                    <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
+                    <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>
+                    <a href="{% url 'frontend-login' %}" class="nav-link">Вход</a>
+                    <a href="{% url 'frontend-register' %}" class="nav-link btn-primary">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>СпортБаш</h4>
+                    <p>Единая цифровая спортивная экосистема Республики Башкортостан</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <p>Email: info@sportbash.ru</p>
+                    <p>Телефон: +7 (347) 000-00-00</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Полезные ссылки</h4>
+                    <a href="#">О проекте</a>
+                    <a href="#">Помощь</a>
+                    <a href="#">Политика конфиденциальности</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СпортБаш. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

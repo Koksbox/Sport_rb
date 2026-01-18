@@ -15,10 +15,18 @@ import requests
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    role = serializers.ChoiceField(
+        choices=['athlete', 'parent', 'coach', 'organization'],
+        write_only=True,
+        required=True,
+        help_text='Выберите тип кабинета: athlete (спортсмен), parent (родитель), coach (тренер), organization (организация)'
+    )
+    phone = serializers.CharField(required=False, allow_blank=True)
+    city = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'password', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'password', 'password2', 'role', 'phone', 'city')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
@@ -31,12 +39,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        validated_data.pop('password2')
+        password2 = validated_data.pop('password2', None)
+        role = validated_data.pop('role')
+        phone = validated_data.pop('phone', None)
+        city = validated_data.pop('city', None)
+        password = validated_data.pop('password')
+        
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            password=validated_data['password']
+            password=password,
+            phone=phone if phone else None,
+            city=city if city else ''
         )
 
         # Привязываем только email-провайдер
@@ -45,6 +60,61 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             provider='email',
             external_id=validated_data['email']
         )
+        
+        # Создаем роль и профиль сразу
+        from apps.users.models import UserRole
+        from apps.geography.models import Region, City as CityModel
+        from apps.sports.models import Sport
+        
+        UserRole.objects.create(user=user, role=role)
+        
+        # Создаем профиль в зависимости от роли
+        if role == 'athlete':
+            from apps.athletes.models import AthleteProfile
+            # Создаем город если указан
+            city_obj = None
+            if city:
+                region, _ = Region.objects.get_or_create(name="Республика Башкортостан")
+                city_obj, _ = CityModel.objects.get_or_create(name=city, defaults={'region': region})
+            elif CityModel.objects.exists():
+                city_obj = CityModel.objects.first()
+            
+            if city_obj:
+                sport = Sport.objects.first()
+                if sport:
+                    AthleteProfile.objects.create(
+                        user=user,
+                        city=city_obj,
+                        main_sport=sport,
+                        health_group='I',
+                        goals=['ЗОЖ']
+                    )
+        
+        elif role == 'parent':
+            from apps.parents.models import ParentProfile
+            ParentProfile.objects.create(user=user)
+        
+        elif role == 'coach':
+            from apps.coaches.models import CoachProfile
+            city_obj = None
+            if city:
+                region, _ = Region.objects.get_or_create(name="Республика Башкортостан")
+                city_obj, _ = CityModel.objects.get_or_create(name=city, defaults={'region': region})
+            elif CityModel.objects.exists():
+                city_obj = CityModel.objects.first()
+            
+            if city_obj:
+                sport = Sport.objects.first()
+                if sport:
+                    CoachProfile.objects.create(
+                        user=user,
+                        city=city_obj,
+                        specialization=sport,
+                        experience_years=0
+                    )
+        
+        # Для organization роль создана, но организация будет создана позже
+        
         return user
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

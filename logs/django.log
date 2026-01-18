@@ -241,3 +241,359 @@ INFO 2026-01-16 22:12:27,491 autoreload 16760 19248 Watching for file changes wi
 INFO 2026-01-16 22:14:30,585 autoreload 16760 19248 C:\Users\Aza\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
 INFO 2026-01-16 22:14:31,698 autoreload 17868 19888 Watching for file changes with StatReloader
 INFO 2026-01-17 00:59:54,351 autoreload 6296 20928 Watching for file changes with StatReloader
+INFO 2026-01-19 01:28:18,441 autoreload 24432 25664 Watching for file changes with StatReloader
+INFO 2026-01-19 01:28:20,248 log 24432 1756 "GET / HTTP/1.1" 200 6275
+INFO 2026-01-19 01:28:20,485 log 24432 22008 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-19 01:28:20,487 log 24432 1756 "GET /static/css/main.css HTTP/1.1" 200 9179
+INFO 2026-01-19 02:03:41,900 log 24432 19208 "GET /register/ HTTP/1.1" 200 7512
+INFO 2026-01-19 02:03:41,938 log 24432 21948 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-01-19 02:03:41,938 log 24432 19208 "GET /static/css/main.css HTTP/1.1" 304 0
+WARNING 2026-01-19 02:04:35,102 log 24432 21948 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:04:35,102 log 24432 21948 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:05:43,291 log 24432 21948 Not Found: /api/auth/
+WARNING 2026-01-19 02:05:43,292 log 24432 21948 "GET //api/auth/ HTTP/1.1" 404 10870
+WARNING 2026-01-19 02:06:29,236 log 24432 21948 Not Found: /api/
+WARNING 2026-01-19 02:06:29,237 log 24432 21948 "GET //api/ HTTP/1.1" 404 9661
+WARNING 2026-01-19 02:06:32,763 log 24432 21948 Not Found: /api/
+WARNING 2026-01-19 02:06:32,764 log 24432 21948 "GET /api/ HTTP/1.1" 404 9661
+WARNING 2026-01-19 02:06:53,487 log 24432 21948 Not Found: /api/auth/
+WARNING 2026-01-19 02:06:53,488 log 24432 21948 "GET /api/auth/ HTTP/1.1" 404 10870
+WARNING 2026-01-19 02:09:37,778 log 24432 28092 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:09:37,779 log 24432 28092 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:11:18,436 log 24432 28092 Not Found: /api
+WARNING 2026-01-19 02:11:18,437 log 24432 28092 "GET /api HTTP/1.1" 404 5130
+WARNING 2026-01-19 02:12:07,615 log 24432 28092 Not Found: /api/api/auth/
+WARNING 2026-01-19 02:12:07,616 log 24432 28092 "GET /api/api/auth/ HTTP/1.1" 404 9688
+WARNING 2026-01-19 02:12:11,365 log 24432 28092 Not Found: /api/auth/
+WARNING 2026-01-19 02:12:11,366 log 24432 28092 "GET /api/auth/ HTTP/1.1" 404 10870
+INFO 2026-01-19 02:12:56,684 autoreload 24432 25664 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\urls.py changed, reloading.
+INFO 2026-01-19 02:12:57,439 autoreload 29000 28864 Watching for file changes with StatReloader
+INFO 2026-01-19 02:14:04,981 autoreload 29000 28864 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\urls.py changed, reloading.
+INFO 2026-01-19 02:14:05,637 autoreload 27608 29716 Watching for file changes with StatReloader
+INFO 2026-01-19 02:18:52,839 autoreload 14400 27940 Watching for file changes with StatReloader
+INFO 2026-01-19 02:19:15,798 log 27608 26652 "GET /api/auth/ HTTP/1.1" 200 221
+WARNING 2026-01-19 02:19:21,983 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:21,983 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:23,919 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:23,919 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:24,436 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:24,436 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:24,819 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:24,819 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:24,995 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:24,995 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:25,162 log 27608 26652 Bad Request: /api/auth/register/
+WARNING 2026-01-19 02:19:25,163 log 27608 26652 "POST /api/auth/register/ HTTP/1.1" 400 155
+WARNING 2026-01-19 02:19:26,205 log 27608 26652 Method Not Allowed: /api/auth/vk/
+WARNING 2026-01-19 02:19:26,206 log 27608 26652 "GET /api/auth/vk/ HTTP/1.1" 405 54
+INFO 2026-01-19 02:20:50,171 log 27608 26652 "GET /login/ HTTP/1.1" 200 5910
+INFO 2026-01-19 02:20:50,208 log 27608 21320 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-01-19 02:20:50,247 log 27608 26652 "GET /static/css/main.css HTTP/1.1" 200 12411
+INFO 2026-01-19 02:20:56,861 log 27608 26652 "POST /api/auth/login/ HTTP/1.1" 200 587
+INFO 2026-01-19 02:20:56,895 log 27608 26652 "GET /dashboard/ HTTP/1.1" 302 0
+WARNING 2026-01-19 02:20:56,910 log 27608 26652 Not Found: /accounts/login/
+WARNING 2026-01-19 02:20:56,910 log 27608 26652 "GET /accounts/login/?next=/dashboard/ HTTP/1.1" 404 5183
+INFO 2026-01-19 02:24:41,834 autoreload 14400 27940 C:\Users\mynam\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
+INFO 2026-01-19 02:24:41,847 autoreload 27608 29716 C:\Users\mynam\PycharmProjects\Sport_rb_db\config\settings\base.py changed, reloading.
+INFO 2026-01-19 02:24:42,759 autoreload 8560 17524 Watching for file changes with StatReloader
+INFO 2026-01-19 02:24:43,219 autoreload 21032 16308 Watching for file changes with StatReloader
+INFO 2026-01-19 02:24:58,216 autoreload 21032 16308 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-19 02:24:58,222 autoreload 8560 17524 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-19 02:24:59,096 autoreload 25084 4132 Watching for file changes with StatReloader
+INFO 2026-01-19 02:24:59,539 autoreload 13304 4172 Watching for file changes with StatReloader
+INFO 2026-01-19 02:25:07,041 autoreload 25084 4132 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views_auth.py changed, reloading.
+INFO 2026-01-19 02:25:07,061 autoreload 13304 4172 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views_auth.py changed, reloading.
+INFO 2026-01-19 02:25:08,007 autoreload 13088 15608 Watching for file changes with StatReloader
+INFO 2026-01-19 02:25:08,556 autoreload 26108 21976 Watching for file changes with StatReloader
+INFO 2026-01-19 02:25:40,159 autoreload 13088 15608 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-19 02:25:40,213 autoreload 26108 21976 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views_auth.py changed, reloading.
+INFO 2026-01-19 02:25:40,931 autoreload 27288 884 Watching for file changes with StatReloader
+INFO 2026-01-19 02:25:41,277 autoreload 27612 484 Watching for file changes with StatReloader
+INFO 2026-01-19 02:27:06,632 log 27288 13244 "GET //dashboard/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:27:06,651 log 27288 13244 "GET /login/?next=/dashboard/ HTTP/1.1" 200 5576
+INFO 2026-01-19 02:27:06,686 log 27288 13244 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:27:06,686 log 27288 26496 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-01-19 02:27:10,979 log 27288 13244 "GET / HTTP/1.1" 200 6275
+INFO 2026-01-19 02:27:16,202 log 27288 13244 "GET /organizations/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:27:16,211 log 27288 13244 "GET /login/?next=/organizations/ HTTP/1.1" 200 5580
+INFO 2026-01-19 02:27:20,450 log 27288 13244 "GET /events/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:27:20,460 log 27288 13244 "GET /login/?next=/events/ HTTP/1.1" 200 5573
+INFO 2026-01-19 02:30:21,828 autoreload 27288 884 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:30:21,829 autoreload 27612 484 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:30:22,764 autoreload 22516 23540 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:23,262 autoreload 28916 29780 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:29,572 autoreload 22516 23540 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-19 02:30:29,651 autoreload 28916 29780 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-19 02:30:30,533 autoreload 17324 19712 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:31,105 autoreload 3924 25172 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:48,910 autoreload 17324 19712 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:30:48,991 autoreload 3924 25172 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:30:49,762 autoreload 13516 10664 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:50,369 autoreload 20380 27256 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:57,679 autoreload 13516 10664 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\views.py changed, reloading.
+INFO 2026-01-19 02:30:57,838 autoreload 20380 27256 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\views.py changed, reloading.
+INFO 2026-01-19 02:30:58,584 autoreload 29736 29056 Watching for file changes with StatReloader
+INFO 2026-01-19 02:30:59,151 autoreload 23640 29840 Watching for file changes with StatReloader
+INFO 2026-01-19 02:31:19,955 autoreload 29736 29056 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-19 02:31:20,103 autoreload 23640 29840 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\authn\api\serializers.py changed, reloading.
+INFO 2026-01-19 02:31:20,842 autoreload 22736 9036 Watching for file changes with StatReloader
+INFO 2026-01-19 02:31:21,476 autoreload 13140 15824 Watching for file changes with StatReloader
+INFO 2026-01-19 02:32:11,732 autoreload 22736 9036 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:32:11,820 autoreload 13140 15824 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\frontend\views.py changed, reloading.
+INFO 2026-01-19 02:32:12,501 autoreload 15460 30316 Watching for file changes with StatReloader
+INFO 2026-01-19 02:32:12,876 autoreload 30484 28424 Watching for file changes with StatReloader
+INFO 2026-01-19 02:32:18,999 log 15460 15748 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 02:32:19,035 log 15460 15748 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:32:19,916 log 15460 15748 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 02:32:20,317 log 15460 15748 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 02:32:22,782 log 15460 15748 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 02:32:22,877 log 15460 24276 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-19 02:32:22,878 log 15460 15748 "GET /static/css/main.css HTTP/1.1" 200 12411
+WARNING 2026-01-19 02:32:23,062 log 15460 24276 Not Found: /favicon.ico
+WARNING 2026-01-19 02:32:23,062 log 15460 24276 "GET /favicon.ico HTTP/1.1" 404 5423
+WARNING 2026-01-19 02:32:23,076 log 15460 15748 Not Found: /favicon.ico
+WARNING 2026-01-19 02:32:23,077 log 15460 15748 "GET /favicon.ico HTTP/1.1" 404 5423
+INFO 2026-01-19 02:32:24,840 log 15460 15748 "GET /events/ HTTP/1.1" 200 7313
+WARNING 2026-01-19 02:32:24,883 log 15460 15748 Forbidden: /api/events/
+WARNING 2026-01-19 02:32:24,884 log 15460 15748 "GET /api/events/ HTTP/1.1" 403 82
+INFO 2026-01-19 02:33:03,338 log 15460 15748 "GET /organizations/ HTTP/1.1" 200 7246
+INFO 2026-01-19 02:33:03,424 log 15460 15748 "GET /api/organizations/ HTTP/1.1" 200 2
+INFO 2026-01-19 02:33:12,956 log 15460 15748 "GET /events/ HTTP/1.1" 200 7313
+WARNING 2026-01-19 02:33:13,011 log 15460 15748 Forbidden: /api/events/
+WARNING 2026-01-19 02:33:13,012 log 15460 15748 "GET /api/events/ HTTP/1.1" 403 82
+WARNING 2026-01-19 02:33:15,512 log 15460 23056 Forbidden: /api/events/
+WARNING 2026-01-19 02:33:15,513 log 15460 23056 "GET /api/events/?city=&sport= HTTP/1.1" 403 82
+WARNING 2026-01-19 02:33:16,868 log 15460 23056 Forbidden: /api/events/
+WARNING 2026-01-19 02:33:16,869 log 15460 23056 "GET /api/events/?city=&sport= HTTP/1.1" 403 82
+INFO 2026-01-19 02:33:18,629 log 15460 23056 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-19 02:35:18,881 log 15460 23056 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-19 02:35:18,921 log 15460 28280 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-19 02:35:18,921 log 15460 23056 "GET /static/css/main.css HTTP/1.1" 200 12411
+WARNING 2026-01-19 02:35:19,253 log 15460 28280 Not Found: /favicon.ico
+WARNING 2026-01-19 02:35:19,254 log 15460 28280 "GET /favicon.ico HTTP/1.1" 404 5423
+WARNING 2026-01-19 02:35:19,264 log 15460 23056 Not Found: /favicon.ico
+WARNING 2026-01-19 02:35:19,264 log 15460 23056 "GET /favicon.ico HTTP/1.1" 404 5423
+INFO 2026-01-19 02:35:38,079 log 15460 23056 "GET /admin HTTP/1.1" 301 0
+INFO 2026-01-19 02:35:38,100 log 15460 23056 "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:35:38,132 log 15460 23056 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4259
+INFO 2026-01-19 02:35:38,166 log 15460 23056 "GET /static/admin/css/base.css HTTP/1.1" 200 23100
+INFO 2026-01-19 02:35:38,172 log 15460 28280 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 3538
+INFO 2026-01-19 02:35:38,174 log 15460 21956 "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2026-01-19 02:35:38,174 log 15460 15420 "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2026-01-19 02:35:38,174 log 15460 29972 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2026-01-19 02:35:38,175 log 15460 25996 "GET /static/admin/css/responsive.css HTTP/1.1" 200 16273
+INFO 2026-01-19 02:35:38,189 log 15460 29972 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2026-01-19 02:35:44,034 log 15460 29972 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:35:44,065 log 15460 29972 "GET /admin/ HTTP/1.1" 200 5892
+INFO 2026-01-19 02:35:44,130 log 15460 29972 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2026-01-19 02:35:44,130 log 15460 25996 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 593
+INFO 2026-01-19 02:35:44,131 log 15460 21956 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 978
+INFO 2026-01-19 02:35:47,325 log 15460 25996 "GET /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:35:47,342 log 15460 25996 "GET /admin/ HTTP/1.1" 200 5892
+INFO 2026-01-19 02:38:48,977 autoreload 30484 28424 C:\Users\mynam\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-19 02:38:49,302 autoreload 15460 30316 C:\Users\mynam\PycharmProjects\Sport_rb_db\config\urls.py changed, reloading.
+INFO 2026-01-19 02:38:50,290 autoreload 24956 28680 Watching for file changes with StatReloader
+INFO 2026-01-19 02:38:50,333 autoreload 30636 15144 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:27,245 autoreload 30636 15144 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\achievements\admin.py changed, reloading.
+INFO 2026-01-19 02:43:27,786 autoreload 24956 28680 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\achievements\admin.py changed, reloading.
+INFO 2026-01-19 02:43:28,582 autoreload 29920 9260 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:28,695 autoreload 12400 3376 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:32,682 autoreload 29920 9260 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\geography\admin.py changed, reloading.
+INFO 2026-01-19 02:43:33,234 autoreload 12400 3376 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\geography\admin.py changed, reloading.
+INFO 2026-01-19 02:43:33,868 autoreload 3200 5264 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:34,104 autoreload 10664 27880 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:35,876 autoreload 3200 5264 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\admin_rb\admin.py changed, reloading.
+INFO 2026-01-19 02:43:36,399 autoreload 10664 27880 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\admin_rb\admin.py changed, reloading.
+INFO 2026-01-19 02:43:37,112 autoreload 26184 29512 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:37,115 autoreload 15592 11112 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:44,661 autoreload 15592 11112 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-19 02:43:45,292 autoreload 30220 28760 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:45,404 autoreload 26184 29512 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-19 02:43:46,791 autoreload 13828 6952 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:48,696 autoreload 13828 6952 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\events\admin.py changed, reloading.
+INFO 2026-01-19 02:43:48,817 autoreload 30220 28760 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\events\admin.py changed, reloading.
+INFO 2026-01-19 02:43:49,744 autoreload 24996 22672 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:50,117 autoreload 10416 27768 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:56,394 autoreload 10416 27768 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\training\admin.py changed, reloading.
+INFO 2026-01-19 02:43:56,439 autoreload 24996 22672 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\training\admin.py changed, reloading.
+INFO 2026-01-19 02:43:57,414 autoreload 2540 21320 Watching for file changes with StatReloader
+INFO 2026-01-19 02:43:57,841 autoreload 17084 18300 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:01,068 autoreload 17084 18300 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\organizations\admin.py changed, reloading.
+INFO 2026-01-19 02:44:01,097 autoreload 2540 21320 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\organizations\admin.py changed, reloading.
+INFO 2026-01-19 02:44:01,999 autoreload 26152 11152 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:02,507 autoreload 27032 29768 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:05,656 autoreload 26152 11152 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\parents\admin.py changed, reloading.
+INFO 2026-01-19 02:44:05,696 autoreload 27032 29768 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\parents\admin.py changed, reloading.
+INFO 2026-01-19 02:44:06,488 autoreload 30180 12436 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:07,096 autoreload 20528 20980 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:09,061 autoreload 30180 12436 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\city_committee\admin.py changed, reloading.
+INFO 2026-01-19 02:44:09,166 autoreload 20528 20980 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\city_committee\admin.py changed, reloading.
+INFO 2026-01-19 02:44:09,965 autoreload 8804 26416 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:10,589 autoreload 11228 18672 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:12,345 autoreload 8804 26416 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\audit\admin.py changed, reloading.
+INFO 2026-01-19 02:44:12,497 autoreload 11228 18672 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\audit\admin.py changed, reloading.
+INFO 2026-01-19 02:44:13,073 autoreload 29996 30328 Watching for file changes with StatReloader
+INFO 2026-01-19 02:44:13,598 autoreload 1964 21964 Watching for file changes with StatReloader
+INFO 2026-01-19 02:45:37,955 autoreload 29996 30328 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\notifications\admin.py changed, reloading.
+INFO 2026-01-19 02:45:38,207 autoreload 1964 21964 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\notifications\admin.py changed, reloading.
+INFO 2026-01-19 02:45:38,844 autoreload 23936 26400 Watching for file changes with StatReloader
+INFO 2026-01-19 02:45:39,691 autoreload 18696 6984 Watching for file changes with StatReloader
+INFO 2026-01-19 02:45:52,892 autoreload 23936 26400 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\notifications\admin.py changed, reloading.
+INFO 2026-01-19 02:45:53,274 autoreload 18696 6984 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\notifications\admin.py changed, reloading.
+INFO 2026-01-19 02:45:53,603 autoreload 1544 8344 Watching for file changes with StatReloader
+INFO 2026-01-19 02:45:54,367 autoreload 8264 3876 Watching for file changes with StatReloader
+INFO 2026-01-19 02:47:00,289 autoreload 8264 3876 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\parents\admin.py changed, reloading.
+INFO 2026-01-19 02:47:00,735 autoreload 1544 8344 C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\city_committee\admin.py changed, reloading.
+INFO 2026-01-19 02:47:01,299 autoreload 24480 20884 Watching for file changes with StatReloader
+INFO 2026-01-19 02:47:01,443 autoreload 12412 18472 Watching for file changes with StatReloader
+INFO 2026-01-19 02:47:37,993 log 12412 28788 "GET /login/ HTTP/1.1" 200 5835
+INFO 2026-01-19 02:47:38,073 log 12412 28788 "GET /static/css/main.css HTTP/1.1" 200 12411
+INFO 2026-01-19 02:47:38,073 log 12412 3428 "GET /static/js/main.js HTTP/1.1" 200 4920
+WARNING 2026-01-19 02:47:38,389 log 12412 3428 Not Found: /favicon.ico
+WARNING 2026-01-19 02:47:38,390 log 12412 3428 "GET /favicon.ico HTTP/1.1" 404 5423
+WARNING 2026-01-19 02:47:38,401 log 12412 28788 Not Found: /favicon.ico
+WARNING 2026-01-19 02:47:38,402 log 12412 28788 "GET /favicon.ico HTTP/1.1" 404 5423
+INFO 2026-01-19 02:47:38,413 log 12412 3428 "GET /login/ HTTP/1.1" 200 5835
+INFO 2026-01-19 02:47:38,439 log 12412 3428 "GET /static/css/main.css HTTP/1.1" 200 12411
+INFO 2026-01-19 02:47:38,439 log 12412 28788 "GET /static/js/main.js HTTP/1.1" 200 4920
+WARNING 2026-01-19 02:47:38,642 log 12412 28788 Not Found: /favicon.ico
+WARNING 2026-01-19 02:47:38,643 log 12412 28788 "GET /favicon.ico HTTP/1.1" 404 5423
+INFO 2026-01-19 02:47:38,859 log 12412 28788 "GET /login/ HTTP/1.1" 200 5835
+INFO 2026-01-19 02:47:38,884 log 12412 3428 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-19 02:47:38,885 log 12412 28788 "GET /static/css/main.css HTTP/1.1" 200 12411
+WARNING 2026-01-19 02:47:39,118 log 12412 3428 Not Found: /favicon.ico
+WARNING 2026-01-19 02:47:39,119 log 12412 3428 "GET /favicon.ico HTTP/1.1" 404 5423
+WARNING 2026-01-19 02:47:39,130 log 12412 28788 Not Found: /favicon.ico
+WARNING 2026-01-19 02:47:39,131 log 12412 28788 "GET /favicon.ico HTTP/1.1" 404 5423
+INFO 2026-01-19 02:47:53,348 log 12412 28788 "GET //dashboard/ HTTP/1.1" 200 5159
+ERROR 2026-01-19 02:48:01,206 log 12412 28788 Internal Server Error: /api/users/select-role/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: NOT NULL constraint failed: athletes_profile.main_sport_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\users\api\views.py", line 15, in select_role
+    user = serializer.save()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\apps\users\api\serializers.py", line 28, in save
+    AthleteProfile.objects.create(user=user, city=city)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\query.py", line 669, in create
+    obj.save(force_insert=True, using=self.db)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\base.py", line 874, in save
+    self.save_base(
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\base.py", line 966, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\base.py", line 1167, in _save_table
+    results = self._do_insert(
+              ^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\base.py", line 1218, in _do_insert
+    return manager._insert(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\query.py", line 1918, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1925, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb_db\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: NOT NULL constraint failed: athletes_profile.main_sport_id
+ERROR 2026-01-19 02:48:01,211 log 12412 28788 "POST /api/users/select-role/ HTTP/1.1" 500 204755
+WARNING 2026-01-19 02:48:07,741 log 12412 28788 Bad Request: /api/users/select-role/
+WARNING 2026-01-19 02:48:07,741 log 12412 28788 "POST /api/users/select-role/ HTTP/1.1" 400 61
+WARNING 2026-01-19 02:48:10,651 log 12412 28788 Bad Request: /api/users/select-role/
+WARNING 2026-01-19 02:48:10,651 log 12412 28788 "POST /api/users/select-role/ HTTP/1.1" 400 61
+WARNING 2026-01-19 02:48:14,049 log 12412 28788 Bad Request: /api/users/select-role/
+WARNING 2026-01-19 02:48:14,050 log 12412 28788 "POST /api/users/select-role/ HTTP/1.1" 400 61
+WARNING 2026-01-19 02:48:17,926 log 12412 28788 Method Not Allowed (GET): /admin/logout/
+WARNING 2026-01-19 02:48:17,927 log 12412 28788 "GET /admin/logout/ HTTP/1.1" 405 0
+WARNING 2026-01-19 02:48:19,318 log 12412 28788 Method Not Allowed (GET): /admin/logout/
+WARNING 2026-01-19 02:48:19,318 log 12412 28788 "GET /admin/logout/ HTTP/1.1" 405 0
+INFO 2026-01-19 02:48:24,577 log 12412 28788 "GET / HTTP/1.1" 200 6542
+WARNING 2026-01-19 02:48:27,172 log 12412 28788 Method Not Allowed (GET): /admin/logout/
+WARNING 2026-01-19 02:48:27,173 log 12412 28788 "GET /admin/logout/ HTTP/1.1" 405 0
+INFO 2026-01-19 02:48:31,354 log 12412 28788 "GET /admin/ HTTP/1.1" 200 48943
+INFO 2026-01-19 02:48:31,455 log 12412 28788 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,456 log 12412 3428 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,456 log 12412 29884 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,457 log 12412 7860 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,458 log 12412 9620 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,458 log 12412 3660 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,471 log 12412 3660 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,476 log 12412 7860 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,476 log 12412 9620 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2026-01-19 02:48:31,510 log 12412 7860 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 928
+INFO 2026-01-19 02:48:38,790 log 12412 7860 "POST /admin/logout/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:48:38,802 log 12412 7860 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 02:48:41,248 log 12412 7860 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-19 02:48:43,567 log 12412 7860 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-01-19 02:48:43,585 log 12412 7860 "GET /dashboard/ HTTP/1.1" 200 3694
+INFO 2026-01-19 02:48:45,851 log 12412 7860 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 02:48:45,915 log 12412 7860 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-19 02:48:48,026 log 12412 7860 Not Found: /organizations/5/
+WARNING 2026-01-19 02:48:48,027 log 12412 7860 "GET /organizations/5/ HTTP/1.1" 404 5438
+INFO 2026-01-19 02:48:53,743 log 12412 7860 "GET /events/ HTTP/1.1" 200 7507
+INFO 2026-01-19 02:48:53,788 log 12412 7860 "GET /api/events/ HTTP/1.1" 200 2
+INFO 2026-01-19 02:48:56,265 log 12412 7860 "GET /dashboard/ HTTP/1.1" 200 3694
+INFO 2026-01-19 02:48:57,943 log 12412 7860 "GET /events/ HTTP/1.1" 200 7507
+INFO 2026-01-19 02:48:57,989 log 12412 7860 "GET /api/events/ HTTP/1.1" 200 2
+INFO 2026-01-19 02:48:59,168 log 12412 7860 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 02:48:59,221 log 12412 7860 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-19 02:49:00,813 log 12412 7860 Not Found: /organizations/2/
+WARNING 2026-01-19 02:49:00,814 log 12412 7860 "GET /organizations/2/ HTTP/1.1" 404 5438

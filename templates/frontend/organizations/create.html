@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Создать организацию - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <h1>Создать спортивную организацию</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Информация об организации</h2>
+        </div>
+        <div class="card-body">
+            <form id="createOrgForm" hx-post="/api/organizations/create/" hx-target="#messages" hx-swap="innerHTML">
+                {% csrf_token %}
+                <div id="messages"></div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="name">Название организации *</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="type">Тип организации *</label>
+                    <select class="form-control" id="type" name="type" required>
+                        <option value="">Выберите тип</option>
+                        <option value="state">Государственная</option>
+                        <option value="private">Частная</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="city">Город *</label>
+                    <input type="text" class="form-control" id="city" name="city" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="address">Адрес</label>
+                    <input type="text" class="form-control" id="address" name="address">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description">Описание</label>
+                    <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="website">Сайт</label>
+                    <input type="url" class="form-control" id="website" name="website" placeholder="https://example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Телефон</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Документы (лицензия, устав)</label>
+                    <input type="file" class="form-control" id="documents" name="documents" multiple>
+                    <small>Можно загрузить несколько файлов</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Создать организацию</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 2rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3>Что дальше?</h3>
+            <p>После создания организации она будет отправлена на модерацию. После одобрения вы автоматически получите роль "Директор" и сможете управлять организацией.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('createOrgForm').addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail.xhr.status === 201) {
+        const response = JSON.parse(event.detail.xhr.responseText);
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = '<div class="alert alert-success">' + 
+            response.message + '</div>';
+        setTimeout(() => {
+            window.location.href = '/dashboard/';
+        }, 2000);
+    } else {
+        const response = JSON.parse(event.detail.xhr.responseText);
+        const messagesDiv = document.getElementById('messages');
+        let errors = '';
+        for (let key in response) {
+            if (Array.isArray(response[key])) {
+                errors += response[key].join(', ') + '<br>';
+            } else {
+                errors += response[key] + '<br>';
+            }
+        }
+        messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
+    }
+});
+</script>
+{% endblock %}

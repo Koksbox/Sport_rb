@@ -8,3 +8,4 @@ django-extensions
 psycopg2-binary
 cryptography
 redis
+python-dotenv

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет родителя - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>👨‍👩‍👧 Личный кабинет родителя</h1>
+    
+    {% if user.parent_profile %}
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Мой профиль</h2>
+        </div>
+        <div class="card-body">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Мои дети</h2>
+        </div>
+        <div class="card-body">
+            <p>Здесь будет список ваших детей и их спортивных достижений.</p>
+            <a href="#" class="btn btn-primary">Добавить ребёнка</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Быстрые действия -->
+    <div class="section-header" style="margin-top: 2rem;">
+        <h2 class="section-title">Быстрые действия</h2>
+    </div>
+    <div class="grid grid-2">
+        <a href="{% url 'frontend-organizations' %}" class="item-card">
+            <div class="item-icon">🏢</div>
+            <h3 class="item-card-title">Найти секцию</h3>
+            <p class="item-card-description">Найти секцию для ребёнка</p>
+        </a>
+        
+        <a href="{% url 'frontend-events' %}" class="item-card">
+            <div class="item-icon">🏆</div>
+            <h3 class="item-card-title">Мероприятия</h3>
+            <p class="item-card-description">Посмотреть мероприятия для детей</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет спортсмена - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>👤 Личный кабинет спортсмена</h1>
+    
+    {% if user.athlete_profile %}
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Мой профиль</h2>
+        </div>
+        <div class="card-body">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.athlete_profile.city %}
+                <div class="profile-item">
+                    <span class="profile-label">Город:</span>
+                    <span class="profile-value">{{ user.athlete_profile.city.name }}</span>
+                </div>
+                {% endif %}
+                {% if user.athlete_profile.main_sport %}
+                <div class="profile-item">
+                    <span class="profile-label">Основной вид спорта:</span>
+                    <span class="profile-value">{{ user.athlete_profile.main_sport.name }}</span>
+                </div>
+                {% endif %}
+                {% if user.athlete_profile.health_group %}
+                <div class="profile-item">
+                    <span class="profile-label">Группа здоровья:</span>
+                    <span class="profile-value">{{ user.athlete_profile.health_group }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Быстрые действия -->
+    <div class="section-header" style="margin-top: 2rem;">
+        <h2 class="section-title">Быстрые действия</h2>
+    </div>
+    <div class="grid grid-2">
+        <a href="{% url 'frontend-organizations' %}" class="item-card">
+            <div class="item-icon">🏢</div>
+            <h3 class="item-card-title">Найти секцию</h3>
+            <p class="item-card-description">Записаться в спортивную организацию</p>
+        </a>
+        
+        <a href="{% url 'frontend-events' %}" class="item-card">
+            <div class="item-icon">🏆</div>
+            <h3 class="item-card-title">Мероприятия</h3>
+            <p class="item-card-description">Посмотреть предстоящие события и зарегистрироваться</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

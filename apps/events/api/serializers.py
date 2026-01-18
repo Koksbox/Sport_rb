@@ -17,17 +17,26 @@ class EventAgeGroupSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     category = EventCategorySerializer(read_only=True)
     age_groups = EventAgeGroupSerializer(many=True, read_only=True)
-    organization_name = serializers.CharField(source='organization.name', read_only=True)
-    organizer_name = serializers.CharField(source='organizer_user.get_full_name', read_only=True)
+    organization_name = serializers.CharField(source='organizer_org.name', read_only=True, allow_null=True)
+    organizer_name = serializers.CharField(source='organizer_user.get_full_name', read_only=True, allow_null=True)
+    city = serializers.CharField(source='city.name', read_only=True)
+    sport = serializers.SerializerMethodField()
+    date = serializers.DateTimeField(source='start_date', read_only=True)
+    name = serializers.CharField(source='title', read_only=True)
 
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'description', 'event_type', 'level',
-            'city', 'venue', 'start_date', 'end_date',
+            'id', 'title', 'name', 'description', 'event_type', 'level',
+            'city', 'venue', 'start_date', 'end_date', 'date',
             'category', 'age_groups', 'organization_name',
-            'organizer_name', 'requires_registration', 'status'
+            'organizer_name', 'requires_registration', 'status', 'sport'
         ]
+    
+    def get_sport(self, obj):
+        if obj.category and hasattr(obj.category, 'sport'):
+            return obj.category.sport.name if hasattr(obj.category.sport, 'name') else None
+        return None
 
 class EventCreateSerializer(serializers.ModelSerializer):
     age_groups = serializers.ListField(
@@ -41,7 +50,7 @@ class EventCreateSerializer(serializers.ModelSerializer):
         fields = [
             'title', 'description', 'event_type', 'level',
             'city', 'venue', 'start_date', 'end_date',
-            'organization', 'organizer_user', 'requires_registration',
+            'organizer_org', 'organizer_user', 'requires_registration',
             'age_groups'
         ]
 
