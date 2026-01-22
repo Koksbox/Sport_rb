@@ -21,7 +21,6 @@
 
 #### Документация
 - `README_API_SEPARATION.md` - подробное описание разделения
-- `CHANGELOG_API_SEPARATION.md` - этот файл
 
 ### Измененные файлы
 

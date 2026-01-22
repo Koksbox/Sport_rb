@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+YANDEX_MAPS_API_KEY = os.getenv('YANDEX_MAPS_API_KEY', '')  # API ключ для Яндекс.Карт
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -80,6 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.core.context_processors.active_role',
             ],
         },
     },

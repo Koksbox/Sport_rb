@@ -597,3 +597,2184 @@ INFO 2026-01-19 02:48:59,168 log 12412 7860 "GET /organizations/ HTTP/1.1" 200 7
 INFO 2026-01-19 02:48:59,221 log 12412 7860 "GET /api/organizations/ HTTP/1.1" 200 1269
 WARNING 2026-01-19 02:49:00,813 log 12412 7860 Not Found: /organizations/2/
 WARNING 2026-01-19 02:49:00,814 log 12412 7860 "GET /organizations/2/ HTTP/1.1" 404 5438
+INFO 2026-01-19 03:08:34,383 autoreload 21368 3032 Watching for file changes with StatReloader
+INFO 2026-01-19 03:08:36,274 log 21368 14244 "GET / HTTP/1.1" 200 6542
+INFO 2026-01-19 03:08:36,427 log 21368 14244 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:08:36,427 log 21368 1468 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:08,663 autoreload 25456 29168 Watching for file changes with StatReloader
+INFO 2026-01-19 03:09:15,100 log 25456 15460 "GET / HTTP/1.1" 200 6542
+INFO 2026-01-19 03:09:41,852 log 25456 15460 "GET /dashboard/ HTTP/1.1" 200 3694
+INFO 2026-01-19 03:09:44,159 log 25456 15460 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 03:09:44,220 log 25456 15460 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-19 03:09:46,544 log 25456 15460 Method Not Allowed (GET): /admin/logout/
+WARNING 2026-01-19 03:09:46,545 log 25456 15460 "GET /admin/logout/ HTTP/1.1" 405 0
+WARNING 2026-01-19 03:09:47,488 log 25456 15460 Method Not Allowed (GET): /admin/logout/
+WARNING 2026-01-19 03:09:47,489 log 25456 15460 "GET /admin/logout/ HTTP/1.1" 405 0
+INFO 2026-01-19 03:09:53,872 log 25456 15460 "GET /admin/ HTTP/1.1" 200 48943
+INFO 2026-01-19 03:09:53,964 log 25456 15460 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,968 log 25456 28372 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,968 log 25456 20060 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,969 log 25456 3724 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,970 log 25456 9164 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,971 log 25456 25200 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,979 log 25456 25200 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,986 log 25456 20060 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,986 log 25456 3724 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:53,986 log 25456 9164 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2026-01-19 03:09:56,081 log 25456 20060 "POST /admin/logout/ HTTP/1.1" 302 0
+INFO 2026-01-19 03:09:56,101 log 25456 20060 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 03:10:52,357 log 25456 20060 "GET /events/ HTTP/1.1" 200 7313
+WARNING 2026-01-19 03:10:52,404 log 25456 20060 Forbidden: /api/events/
+WARNING 2026-01-19 03:10:52,404 log 25456 20060 "GET /api/events/ HTTP/1.1" 403 82
+INFO 2026-01-19 03:10:54,460 log 25456 20060 "GET /organizations/ HTTP/1.1" 200 7246
+INFO 2026-01-19 03:10:54,513 log 25456 20060 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-19 03:10:57,306 log 25456 20060 Not Found: /organizations/2/
+WARNING 2026-01-19 03:10:57,307 log 25456 20060 "GET /organizations/2/ HTTP/1.1" 404 5438
+INFO 2026-01-19 03:11:20,659 log 25456 20060 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-19 03:11:31,993 log 25456 20060 "GET /register/ HTTP/1.1" 200 12835
+INFO 2026-01-19 03:12:17,516 log 25456 20060 "POST /api/auth/register/ HTTP/1.1" 201 166
+INFO 2026-01-19 03:12:19,103 log 25456 20060 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-01-19 03:12:19,122 log 25456 20060 "GET /dashboard/ HTTP/1.1" 200 5075
+INFO 2026-01-19 03:13:07,673 log 25456 20060 "GET /dashboard/ HTTP/1.1" 200 5075
+INFO 2026-01-19 03:13:08,506 log 25456 20060 "GET /events/ HTTP/1.1" 200 7507
+INFO 2026-01-19 03:13:08,550 log 25456 20060 "GET /api/events/ HTTP/1.1" 200 2
+INFO 2026-01-19 03:13:09,605 log 25456 20060 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 03:13:09,662 log 25456 20060 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-19 03:13:10,539 log 25456 20060 Not Found: /organizations/1/
+WARNING 2026-01-19 03:13:10,539 log 25456 20060 "GET /organizations/1/ HTTP/1.1" 404 5438
+INFO 2026-01-19 03:13:15,308 log 25456 20060 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 03:13:15,371 log 25456 20060 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-19 03:13:28,534 log 25456 20060 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-19 03:13:28,584 log 25456 20060 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-19 03:13:29,946 log 25456 20060 "GET /dashboard/ HTTP/1.1" 200 5075
+INFO 2026-01-19 03:13:31,578 log 25456 20060 "GET / HTTP/1.1" 200 6542
+INFO 2026-01-19 03:13:37,065 log 25456 20060 "GET /dashboard/ HTTP/1.1" 200 5075
+INFO 2026-01-22 17:56:53,935 autoreload 12412 16848 Watching for file changes with StatReloader
+INFO 2026-01-22 17:56:59,595 log 12412 10420 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-22 17:56:59,808 log 12412 1228 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-22 17:56:59,809 log 12412 10420 "GET /static/css/main.css HTTP/1.1" 200 12411
+WARNING 2026-01-22 17:56:59,966 log 12412 1228 Not Found: /favicon.ico
+WARNING 2026-01-22 17:56:59,967 log 12412 1228 "GET /favicon.ico HTTP/1.1" 404 5716
+WARNING 2026-01-22 17:56:59,983 log 12412 10420 Not Found: /favicon.ico
+WARNING 2026-01-22 17:56:59,983 log 12412 10420 "GET /favicon.ico HTTP/1.1" 404 5716
+INFO 2026-01-22 17:57:04,566 log 12412 10420 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-22 17:57:12,854 log 12412 10420 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-01-22 17:57:12,897 log 12412 10420 "GET /dashboard/ HTTP/1.1" 200 9790
+WARNING 2026-01-22 17:57:13,281 log 12412 10420 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 17:57:13,282 log 12412 10420 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 17:57:14,945 log 12412 10420 "GET /athletes/profile/edit/ HTTP/1.1" 200 12942
+INFO 2026-01-22 17:57:15,003 log 12412 10420 "GET /api/athletes/profile/ HTTP/1.1" 200 217
+WARNING 2026-01-22 17:57:41,374 log 12412 10420 Method Not Allowed: /api/athletes/profile/
+WARNING 2026-01-22 17:57:41,375 log 12412 10420 "PATCH /api/athletes/profile/ HTTP/1.1" 405 56
+INFO 2026-01-22 17:57:48,519 log 12412 10420 "GET /dashboard/ HTTP/1.1" 200 9790
+WARNING 2026-01-22 17:57:48,564 log 12412 10420 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 17:57:48,565 log 12412 10420 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 17:59:11,143 log 12412 10420 "GET /events/ HTTP/1.1" 200 7507
+INFO 2026-01-22 17:59:11,225 log 12412 10420 "GET /api/events/ HTTP/1.1" 200 2
+INFO 2026-01-22 17:59:13,154 log 12412 10420 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-22 17:59:13,257 log 12412 10420 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-22 17:59:14,403 log 12412 10420 Not Found: /organizations/2/
+WARNING 2026-01-22 17:59:14,404 log 12412 10420 "GET /organizations/2/ HTTP/1.1" 404 5731
+WARNING 2026-01-22 17:59:22,941 log 12412 10420 Not Found: /organizations/2/
+WARNING 2026-01-22 17:59:22,941 log 12412 10420 "GET /organizations/2/ HTTP/1.1" 404 5731
+INFO 2026-01-22 17:59:41,617 autoreload 12412 16848 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 17:59:42,542 autoreload 23452 7676 Watching for file changes with StatReloader
+INFO 2026-01-22 17:59:50,552 autoreload 23452 7676 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\models\user.py changed, reloading.
+INFO 2026-01-22 17:59:51,361 autoreload 21120 16560 Watching for file changes with StatReloader
+INFO 2026-01-22 17:59:53,274 autoreload 21120 16560 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 17:59:54,164 autoreload 23380 16596 Watching for file changes with StatReloader
+INFO 2026-01-22 18:00:34,483 autoreload 23380 16596 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:00:35,312 autoreload 9148 12136 Watching for file changes with StatReloader
+INFO 2026-01-22 18:00:50,414 autoreload 9148 12136 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:00:51,513 autoreload 23432 14656 Watching for file changes with StatReloader
+INFO 2026-01-22 18:00:53,234 autoreload 23432 14656 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:00:54,082 autoreload 14008 29228 Watching for file changes with StatReloader
+INFO 2026-01-22 18:01:02,911 autoreload 14008 29228 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-22 18:01:03,642 autoreload 28772 18372 Watching for file changes with StatReloader
+INFO 2026-01-22 18:04:56,596 autoreload 28772 18372 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-22 18:04:57,411 autoreload 16836 23228 Watching for file changes with StatReloader
+INFO 2026-01-22 18:05:50,680 autoreload 6724 13248 Watching for file changes with StatReloader
+INFO 2026-01-22 18:06:10,704 autoreload 7268 8892 Watching for file changes with StatReloader
+ERROR 2026-01-22 18:06:18,871 log 7268 2408 Internal Server Error: /organizations/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: users_user.photo
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py", line 64, in organizations_list
+    return render(request, 'frontend/organizations/list.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 174, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\loader_tags.py", line 160, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\defaulttags.py", line 326, in render
+    match = condition.eval(context)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\defaulttags.py", line 918, in eval
+    return self.value.resolve(context, ignore_failures=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 788, in resolve
+    obj = self.var.resolve(context)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 928, in resolve
+    value = self._resolve_lookup(context)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 965, in _resolve_lookup
+    current = current[bit]
+              ~~~~~~~^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\utils\functional.py", line 251, in inner
+    self._setup()
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\utils\functional.py", line 404, in _setup
+    self._wrapped = self._setupfunc()
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 40, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+                                            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 20, in get_user
+    request._cached_user = auth.get_user(request)
+                           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 318, in get_user
+    user = backend.get_user(user_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 232, in get_user
+    user = UserModel._default_manager.get(pk=user_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: users_user.photo
+ERROR 2026-01-22 18:06:18,882 log 7268 2408 "GET /organizations/ HTTP/1.1" 500 249563
+ERROR 2026-01-22 18:06:25,641 log 7268 2408 Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: users_user.photo
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py", line 15, in index
+    return render(request, 'frontend/index.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 174, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\loader_tags.py", line 160, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\defaulttags.py", line 326, in render
+    match = condition.eval(context)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\defaulttags.py", line 918, in eval
+    return self.value.resolve(context, ignore_failures=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 788, in resolve
+    obj = self.var.resolve(context)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 928, in resolve
+    value = self._resolve_lookup(context)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\template\base.py", line 965, in _resolve_lookup
+    current = current[bit]
+              ~~~~~~~^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\utils\functional.py", line 251, in inner
+    self._setup()
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\utils\functional.py", line 404, in _setup
+    self._wrapped = self._setupfunc()
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 40, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+                                            ^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\middleware.py", line 20, in get_user
+    request._cached_user = auth.get_user(request)
+                           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\__init__.py", line 318, in get_user
+    user = backend.get_user(user_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\contrib\auth\backends.py", line 232, in get_user
+    user = UserModel._default_manager.get(pk=user_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 635, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 372, in __len__
+    self._fetch_all()
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: users_user.photo
+ERROR 2026-01-22 18:06:25,644 log 7268 2408 "GET / HTTP/1.1" 500 249066
+INFO 2026-01-22 18:07:37,849 autoreload 14724 25380 Watching for file changes with StatReloader
+INFO 2026-01-22 18:07:42,092 log 14724 22048 "GET / HTTP/1.1" 200 6542
+INFO 2026-01-22 18:07:44,270 log 14724 22048 "GET /dashboard/ HTTP/1.1" 200 9790
+WARNING 2026-01-22 18:07:44,328 log 14724 22048 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 18:07:44,328 log 14724 22048 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 18:07:45,706 log 14724 22048 "GET /athletes/profile/edit/ HTTP/1.1" 200 11369
+INFO 2026-01-22 18:07:45,786 log 14724 22048 "GET /api/athletes/profile/ HTTP/1.1" 200 417
+WARNING 2026-01-22 18:08:32,431 log 14724 22048 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 18:08:32,431 log 14724 22048 "PATCH /api/athletes/profile/ HTTP/1.1" 400 239
+WARNING 2026-01-22 18:08:54,571 log 14724 22048 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 18:08:54,572 log 14724 22048 "PATCH /api/athletes/profile/ HTTP/1.1" 400 140
+INFO 2026-01-22 18:15:29,034 autoreload 14724 25380 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\models\medical.py changed, reloading.
+INFO 2026-01-22 18:15:30,043 autoreload 24032 11368 Watching for file changes with StatReloader
+INFO 2026-01-22 18:15:35,702 autoreload 24032 11368 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:15:36,486 autoreload 5056 19856 Watching for file changes with StatReloader
+INFO 2026-01-22 18:15:46,302 autoreload 5056 19856 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:15:47,277 autoreload 25452 9896 Watching for file changes with StatReloader
+INFO 2026-01-22 18:17:06,271 autoreload 25452 9896 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:17:07,170 autoreload 25064 24436 Watching for file changes with StatReloader
+INFO 2026-01-22 18:17:12,880 autoreload 25064 24436 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:17:13,804 autoreload 24900 16516 Watching for file changes with StatReloader
+INFO 2026-01-22 18:22:28,733 autoreload 24900 16516 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 18:22:29,569 autoreload 26684 25864 Watching for file changes with StatReloader
+INFO 2026-01-22 18:22:49,080 autoreload 26684 25864 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:22:49,854 autoreload 7384 17692 Watching for file changes with StatReloader
+INFO 2026-01-22 18:31:15,838 log 7384 14772 "GET /athletes/profile/edit/ HTTP/1.1" 200 23926
+INFO 2026-01-22 18:31:15,899 log 7384 14772 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 18:31:15,922 log 7384 14772 "GET /api/athletes/profile/ HTTP/1.1" 200 559
+INFO 2026-01-22 18:31:15,963 log 7384 14772 "GET /media/user_photos/QRcode_c2.png HTTP/1.1" 200 86469
+WARNING 2026-01-22 18:31:44,525 log 7384 14772 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 18:31:44,526 log 7384 14772 "PATCH /api/athletes/profile/ HTTP/1.1" 400 102
+INFO 2026-01-22 18:31:52,631 log 7384 14772 "GET /dashboard/ HTTP/1.1" 200 10809
+WARNING 2026-01-22 18:31:52,699 log 7384 14772 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 18:31:52,700 log 7384 14772 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 18:31:54,606 log 7384 14772 "GET /athletes/profile/edit/ HTTP/1.1" 200 23926
+INFO 2026-01-22 18:31:54,660 log 7384 14772 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 18:31:54,681 log 7384 14772 "GET /api/athletes/profile/ HTTP/1.1" 200 559
+WARNING 2026-01-22 18:31:57,267 log 7384 14772 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 18:31:57,268 log 7384 14772 "PATCH /api/athletes/profile/ HTTP/1.1" 400 102
+INFO 2026-01-22 18:32:20,303 log 7384 14772 "PATCH /api/athletes/profile/ HTTP/1.1" 200 605
+INFO 2026-01-22 18:32:21,869 log 7384 14772 "GET /dashboard/ HTTP/1.1" 200 10832
+INFO 2026-01-22 18:32:21,911 log 7384 14772 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916.jpg HTTP/1.1" 200 69459
+WARNING 2026-01-22 18:32:21,932 log 7384 14772 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 18:32:21,933 log 7384 14772 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 18:32:22,134 log 7384 14772 "GET /dashboard/ HTTP/1.1" 200 10832
+INFO 2026-01-22 18:32:22,160 log 7384 14772 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916.jpg HTTP/1.1" 304 0
+WARNING 2026-01-22 18:32:22,173 log 7384 14772 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 18:32:22,174 log 7384 14772 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 18:32:31,630 log 7384 14772 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-22 18:32:31,690 log 7384 14772 "GET /api/organizations/ HTTP/1.1" 200 1269
+WARNING 2026-01-22 18:32:32,337 log 7384 14772 Not Found: /organizations/2/
+WARNING 2026-01-22 18:32:32,338 log 7384 14772 "GET /organizations/2/ HTTP/1.1" 404 5731
+INFO 2026-01-22 18:33:19,663 autoreload 7384 17692 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 18:33:20,522 autoreload 23476 28308 Watching for file changes with StatReloader
+INFO 2026-01-22 18:33:23,861 autoreload 23476 28308 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 18:33:24,763 autoreload 4708 8632 Watching for file changes with StatReloader
+INFO 2026-01-22 18:33:41,357 autoreload 4708 8632 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:33:42,465 autoreload 30696 9736 Watching for file changes with StatReloader
+INFO 2026-01-22 18:33:45,035 autoreload 30696 9736 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-22 18:33:45,821 autoreload 10612 27000 Watching for file changes with StatReloader
+INFO 2026-01-22 18:33:50,437 autoreload 10612 27000 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\urls.py changed, reloading.
+INFO 2026-01-22 18:33:51,244 autoreload 10300 6944 Watching for file changes with StatReloader
+INFO 2026-01-22 18:35:56,833 autoreload 10300 6944 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:35:57,790 autoreload 11316 28732 Watching for file changes with StatReloader
+INFO 2026-01-22 18:36:16,145 autoreload 11316 28732 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 18:36:17,012 autoreload 27672 15808 Watching for file changes with StatReloader
+INFO 2026-01-22 18:36:59,984 autoreload 27672 15808 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 18:37:00,980 autoreload 13688 25324 Watching for file changes with StatReloader
+INFO 2026-01-22 19:27:29,674 log 13688 916 "GET /organizations/2/ HTTP/1.1" 200 12137
+INFO 2026-01-22 19:27:29,732 log 13688 916 "GET /api/organizations/2/ HTTP/1.1" 200 392
+INFO 2026-01-22 19:27:45,746 log 13688 916 "GET /organizations/ HTTP/1.1" 200 7148
+INFO 2026-01-22 19:27:45,803 log 13688 916 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 19:27:48,301 log 13688 916 "GET /events/ HTTP/1.1" 200 7507
+INFO 2026-01-22 19:27:48,357 log 13688 916 "GET /api/events/ HTTP/1.1" 200 2
+INFO 2026-01-22 19:27:53,132 log 13688 916 "GET /dashboard/ HTTP/1.1" 200 10832
+INFO 2026-01-22 19:27:53,165 log 13688 916 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916.jpg HTTP/1.1" 304 0
+WARNING 2026-01-22 19:27:53,207 log 13688 916 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:27:53,208 log 13688 916 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:27:57,009 log 13688 916 "GET /admin/logout/ HTTP/1.1" 302 0
+INFO 2026-01-22 19:27:57,024 log 13688 916 "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-01-22 19:27:57,110 log 13688 916 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 3848
+INFO 2026-01-22 19:27:57,281 log 13688 19828 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2026-01-22 19:27:57,282 log 13688 15652 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 3538
+INFO 2026-01-22 19:27:57,282 log 13688 916 "GET /static/admin/css/base.css HTTP/1.1" 200 23100
+INFO 2026-01-22 19:27:57,284 log 13688 15240 "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2026-01-22 19:27:57,285 log 13688 27172 "GET /static/admin/css/responsive.css HTTP/1.1" 200 16273
+INFO 2026-01-22 19:27:57,290 log 13688 5912 "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2026-01-22 19:27:57,308 log 13688 27172 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2026-01-22 19:29:28,243 autoreload 13688 25324 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 19:29:30,055 autoreload 29556 17536 Watching for file changes with StatReloader
+INFO 2026-01-22 19:31:29,771 autoreload 29556 17536 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 19:31:30,348 autoreload 25352 9056 Watching for file changes with StatReloader
+INFO 2026-01-22 19:31:42,603 log 25352 3820 "GET /dashboard/ HTTP/1.1" 200 10826
+WARNING 2026-01-22 19:31:42,661 log 25352 3820 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:31:42,662 log 25352 3820 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:31:43,738 log 25352 3820 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-01-22 19:31:43,750 log 25352 3820 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-22 19:31:49,833 log 25352 3820 "GET /register/ HTTP/1.1" 200 11677
+INFO 2026-01-22 19:32:22,604 log 25352 3820 "POST /api/auth/register/ HTTP/1.1" 201 188
+INFO 2026-01-22 19:32:24,233 log 25352 3820 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-01-22 19:32:24,253 log 25352 3820 "GET /dashboard/ HTTP/1.1" 200 5153
+INFO 2026-01-22 19:32:31,165 log 25352 3820 "POST /api/users/select-role/ HTTP/1.1" 201 109
+INFO 2026-01-22 19:32:35,688 log 25352 3820 "GET /dashboard/ HTTP/1.1" 200 4305
+INFO 2026-01-22 19:32:39,415 log 25352 3820 "GET /organizations/create/ HTTP/1.1" 200 7792
+WARNING 2026-01-22 19:33:19,859 log 25352 3820 Bad Request: /api/organizations/create/
+WARNING 2026-01-22 19:33:19,860 log 25352 3820 "POST /api/organizations/create/ HTTP/1.1" 400 145
+INFO 2026-01-22 19:34:46,444 autoreload 25352 9056 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:34:47,225 autoreload 9340 30016 Watching for file changes with StatReloader
+INFO 2026-01-22 19:35:41,507 autoreload 9340 30016 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-22 19:35:42,403 autoreload 6604 900 Watching for file changes with StatReloader
+INFO 2026-01-22 19:35:47,052 autoreload 6604 900 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:35:47,809 autoreload 4988 28268 Watching for file changes with StatReloader
+INFO 2026-01-22 19:35:51,422 autoreload 4988 28268 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-22 19:35:52,123 autoreload 15180 17492 Watching for file changes with StatReloader
+INFO 2026-01-22 19:35:56,845 autoreload 15180 17492 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:35:57,757 autoreload 16224 2960 Watching for file changes with StatReloader
+INFO 2026-01-22 19:36:03,504 autoreload 16224 2960 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:36:04,149 autoreload 30076 25512 Watching for file changes with StatReloader
+INFO 2026-01-22 19:36:11,920 autoreload 30076 25512 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\models\documents.py changed, reloading.
+INFO 2026-01-22 19:36:12,805 autoreload 16216 20628 Watching for file changes with StatReloader
+INFO 2026-01-22 19:36:21,578 autoreload 16216 20628 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:36:22,334 autoreload 11316 3824 Watching for file changes with StatReloader
+INFO 2026-01-22 19:36:25,336 log 11316 2764 "GET /organizations/create/ HTTP/1.1" 200 13020
+INFO 2026-01-22 19:36:25,383 log 11316 2764 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 19:36:46,187 log 11316 2764 "POST /api/organizations/create/ HTTP/1.1" 201 87
+INFO 2026-01-22 19:36:48,259 log 11316 2764 "GET /dashboard/ HTTP/1.1" 200 4305
+INFO 2026-01-22 19:36:55,759 log 11316 2764 "GET /events/ HTTP/1.1" 200 7505
+ERROR 2026-01-22 19:36:55,871 log 11316 2764 Internal Server Error: /api/events/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py", line 30, in list_events
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py", line 37, in get_sport
+    if obj.category and hasattr(obj.category, 'sport'):
+       ^^^^^^^^^^^^
+AttributeError: 'Event' object has no attribute 'category'
+ERROR 2026-01-22 19:36:55,875 log 11316 2764 "GET /api/events/ HTTP/1.1" 500 152329
+INFO 2026-01-22 19:36:59,642 log 11316 2764 "GET /organizations/ HTTP/1.1" 200 7373
+INFO 2026-01-22 19:36:59,702 log 11316 2764 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 19:37:00,288 log 11316 2764 "GET /events/ HTTP/1.1" 200 7505
+ERROR 2026-01-22 19:37:00,354 log 11316 2764 Internal Server Error: /api/events/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py", line 30, in list_events
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py", line 37, in get_sport
+    if obj.category and hasattr(obj.category, 'sport'):
+       ^^^^^^^^^^^^
+AttributeError: 'Event' object has no attribute 'category'
+ERROR 2026-01-22 19:37:00,357 log 11316 2764 "GET /api/events/ HTTP/1.1" 500 152329
+INFO 2026-01-22 19:37:32,593 log 11316 2764 "GET /dashboard/ HTTP/1.1" 200 4305
+INFO 2026-01-22 19:41:35,412 autoreload 11316 3824 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 19:41:36,469 autoreload 28852 14004 Watching for file changes with StatReloader
+INFO 2026-01-22 19:41:38,904 autoreload 28852 14004 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 19:41:39,836 autoreload 6728 18408 Watching for file changes with StatReloader
+INFO 2026-01-22 19:41:49,766 autoreload 6728 18408 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-22 19:41:50,759 autoreload 9864 24840 Watching for file changes with StatReloader
+INFO 2026-01-22 19:41:53,379 autoreload 9864 24840 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\urls.py changed, reloading.
+INFO 2026-01-22 19:41:54,356 autoreload 11520 24800 Watching for file changes with StatReloader
+INFO 2026-01-22 19:41:57,960 autoreload 11520 24800 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 19:41:58,877 autoreload 29452 19900 Watching for file changes with StatReloader
+INFO 2026-01-22 19:42:06,650 autoreload 29452 19900 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 19:42:07,390 autoreload 17572 16032 Watching for file changes with StatReloader
+INFO 2026-01-22 19:42:16,405 autoreload 17572 16032 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 19:42:17,216 autoreload 29056 9136 Watching for file changes with StatReloader
+INFO 2026-01-22 19:42:33,518 autoreload 29056 9136 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 19:42:34,417 autoreload 21320 29516 Watching for file changes with StatReloader
+INFO 2026-01-22 19:42:38,159 autoreload 21320 29516 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:42:39,032 autoreload 15908 26036 Watching for file changes with StatReloader
+INFO 2026-01-22 19:42:41,613 autoreload 15908 26036 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\urls.py changed, reloading.
+INFO 2026-01-22 19:42:42,613 autoreload 3808 19636 Watching for file changes with StatReloader
+INFO 2026-01-22 19:43:22,549 autoreload 3808 19636 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 19:43:23,389 autoreload 11500 23548 Watching for file changes with StatReloader
+INFO 2026-01-22 19:44:55,641 autoreload 11500 23548 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:44:56,309 autoreload 24376 25020 Watching for file changes with StatReloader
+INFO 2026-01-22 19:45:06,893 autoreload 24376 25020 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\urls.py changed, reloading.
+INFO 2026-01-22 19:45:07,793 autoreload 5744 20932 Watching for file changes with StatReloader
+INFO 2026-01-22 19:47:16,546 autoreload 5744 20932 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 19:47:17,242 autoreload 12412 22568 Watching for file changes with StatReloader
+INFO 2026-01-22 19:47:30,349 autoreload 12412 22568 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 19:47:31,155 autoreload 25352 24264 Watching for file changes with StatReloader
+INFO 2026-01-22 19:47:45,382 autoreload 25352 24264 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 19:47:46,246 autoreload 25656 5416 Watching for file changes with StatReloader
+INFO 2026-01-22 19:50:25,467 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 6481
+INFO 2026-01-22 19:50:30,529 log 25656 4312 "GET /organizations/my/ HTTP/1.1" 200 6269
+ERROR 2026-01-22 19:50:30,618 log 25656 4312 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 19:50:30,621 log 25656 4312 "GET /api/organizations/my/ HTTP/1.1" 500 152475
+INFO 2026-01-22 19:50:34,937 log 25656 4312 "GET /events/ HTTP/1.1" 200 7505
+ERROR 2026-01-22 19:50:35,015 log 25656 4312 Internal Server Error: /api/events/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py", line 31, in list_events
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py", line 37, in get_sport
+    if obj.category and hasattr(obj.category, 'sport'):
+       ^^^^^^^^^^^^
+AttributeError: 'Event' object has no attribute 'category'
+ERROR 2026-01-22 19:50:35,020 log 25656 4312 "GET /api/events/ HTTP/1.1" 500 152352
+INFO 2026-01-22 19:50:43,639 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 6481
+INFO 2026-01-22 19:50:48,573 log 25656 4312 "GET /organizations/my/ HTTP/1.1" 200 6269
+ERROR 2026-01-22 19:50:48,647 log 25656 4312 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 19:50:48,649 log 25656 4312 "GET /api/organizations/my/ HTTP/1.1" 500 152475
+INFO 2026-01-22 19:50:52,027 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 6481
+INFO 2026-01-22 19:50:59,189 log 25656 4312 "GET /role-selection/new/ HTTP/1.1" 200 8230
+INFO 2026-01-22 19:51:05,495 log 25656 4312 "POST /api/users/select-role/ HTTP/1.1" 201 104
+INFO 2026-01-22 19:51:05,526 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7509
+INFO 2026-01-22 19:51:09,443 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:51:09,466 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7509
+INFO 2026-01-22 19:51:10,420 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 19:51:10,443 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7062
+INFO 2026-01-22 19:51:11,370 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:51:11,391 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7509
+INFO 2026-01-22 19:51:17,858 log 25656 4312 "GET /role-selection/new/ HTTP/1.1" 200 8230
+INFO 2026-01-22 19:51:22,025 log 25656 4312 "POST /api/users/select-role/ HTTP/1.1" 201 108
+INFO 2026-01-22 19:51:22,056 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 12973
+WARNING 2026-01-22 19:51:22,126 log 25656 4312 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:51:22,127 log 25656 4312 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:51:24,610 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:51:24,631 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7732
+INFO 2026-01-22 19:51:25,142 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 19:51:25,160 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7285
+INFO 2026-01-22 19:51:26,047 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:51:26,070 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7732
+INFO 2026-01-22 19:51:26,492 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 19:51:26,520 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 12973
+WARNING 2026-01-22 19:51:26,560 log 25656 4312 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:51:26,561 log 25656 4312 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:51:27,678 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:51:27,697 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7732
+INFO 2026-01-22 19:52:08,475 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 19:52:08,495 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 12973
+WARNING 2026-01-22 19:52:08,538 log 25656 4312 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:52:08,539 log 25656 4312 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:52:25,554 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 19:52:25,575 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7285
+INFO 2026-01-22 19:52:42,451 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 19:52:42,471 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7285
+INFO 2026-01-22 19:52:46,210 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 19:52:46,235 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 7732
+INFO 2026-01-22 19:52:46,691 log 25656 4312 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 19:52:46,712 log 25656 4312 "GET /dashboard/ HTTP/1.1" 200 12973
+WARNING 2026-01-22 19:52:46,749 log 25656 4312 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 19:52:46,750 log 25656 4312 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 19:52:48,384 log 25656 4312 "GET /athletes/profile/edit/ HTTP/1.1" 200 23924
+INFO 2026-01-22 19:52:48,448 log 25656 4312 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 19:52:48,479 log 25656 4312 "GET /api/athletes/profile/ HTTP/1.1" 200 413
+WARNING 2026-01-22 19:53:00,810 log 25656 4312 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 19:53:00,811 log 25656 4312 "PATCH /api/athletes/profile/ HTTP/1.1" 400 239
+WARNING 2026-01-22 19:53:08,049 log 25656 4312 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 19:53:08,050 log 25656 4312 "PATCH /api/athletes/profile/ HTTP/1.1" 400 102
+INFO 2026-01-22 19:56:37,700 autoreload 25656 5416 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:56:38,710 autoreload 25312 11332 Watching for file changes with StatReloader
+INFO 2026-01-22 19:58:24,112 autoreload 25312 11332 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 19:58:24,859 autoreload 27168 18112 Watching for file changes with StatReloader
+INFO 2026-01-22 19:58:32,606 autoreload 27168 18112 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:58:33,295 autoreload 4152 29472 Watching for file changes with StatReloader
+INFO 2026-01-22 19:58:35,918 autoreload 4152 29472 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:58:36,680 autoreload 26880 25124 Watching for file changes with StatReloader
+INFO 2026-01-22 19:58:39,237 autoreload 26880 25124 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:58:39,866 autoreload 18160 21668 Watching for file changes with StatReloader
+INFO 2026-01-22 19:59:12,761 autoreload 18160 21668 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 19:59:13,536 autoreload 3360 29164 Watching for file changes with StatReloader
+INFO 2026-01-22 19:59:54,859 autoreload 3360 29164 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-22 19:59:55,592 autoreload 23400 1860 Watching for file changes with StatReloader
+INFO 2026-01-22 20:02:43,019 autoreload 23400 1860 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\templatetags\__init__.py changed, reloading.
+INFO 2026-01-22 20:02:43,674 autoreload 7664 20752 Watching for file changes with StatReloader
+INFO 2026-01-22 20:08:30,141 autoreload 24472 29760 Watching for file changes with StatReloader
+INFO 2026-01-22 20:09:04,049 autoreload 24472 29760 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-22 20:09:04,789 autoreload 2468 12348 Watching for file changes with StatReloader
+WARNING 2026-01-22 20:11:06,055 log 20516 9120 Forbidden: /api/sports/
+WARNING 2026-01-22 20:11:06,056 log 20516 9120 Forbidden: /api/geography/cities/
+ERROR 2026-01-22 20:11:06,103 log 20516 9120 Internal Server Error: /api/events/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py", line 36, in list_events
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py", line 37, in get_sport
+    if obj.category and hasattr(obj.category, 'sport'):
+       ^^^^^^^^^^^^
+AttributeError: 'Event' object has no attribute 'category'
+WARNING 2026-01-22 20:11:06,126 log 20516 9120 Forbidden: /api/sports/
+WARNING 2026-01-22 20:11:06,127 log 20516 9120 Forbidden: /api/geography/cities/
+ERROR 2026-01-22 20:11:06,153 log 20516 9120 Internal Server Error: /api/events/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py", line 36, in list_events
+    return Response(serializer.data)
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 797, in data
+    ret = super().data
+          ^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 251, in data
+    self._data = self.to_representation(self.instance)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 716, in to_representation
+    self.child.to_representation(item) for item in iterable
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\serializers.py", line 540, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\fields.py", line 1870, in to_representation
+    return method(value)
+           ^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py", line 37, in get_sport
+    if obj.category and hasattr(obj.category, 'sport'):
+       ^^^^^^^^^^^^
+AttributeError: 'Event' object has no attribute 'category'
+INFO 2026-01-22 20:11:16,958 autoreload 2468 12348 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-01-22 20:11:17,712 autoreload 11092 19364 Watching for file changes with StatReloader
+INFO 2026-01-22 20:11:23,488 autoreload 11092 19364 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-01-22 20:11:24,253 autoreload 11396 19580 Watching for file changes with StatReloader
+WARNING 2026-01-22 20:11:32,986 log 24180 16848 Forbidden: /api/sports/
+WARNING 2026-01-22 20:11:32,988 log 24180 16848 Forbidden: /api/geography/cities/
+WARNING 2026-01-22 20:11:33,042 log 24180 16848 Forbidden: /api/sports/
+WARNING 2026-01-22 20:11:33,043 log 24180 16848 Forbidden: /api/geography/cities/
+INFO 2026-01-22 20:11:56,748 autoreload 11396 19580 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-01-22 20:11:57,643 autoreload 26640 10368 Watching for file changes with StatReloader
+INFO 2026-01-22 20:12:13,770 log 26640 15748 "GET /athletes/profile/edit/ HTTP/1.1" 200 23924
+INFO 2026-01-22 20:12:13,901 log 26640 15748 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 20:12:13,928 log 26640 15748 "GET /api/athletes/profile/ HTTP/1.1" 200 413
+INFO 2026-01-22 20:12:18,669 log 26640 15748 "GET / HTTP/1.1" 200 6540
+INFO 2026-01-22 20:12:24,769 log 26640 15748 "GET /events/ HTTP/1.1" 200 8191
+INFO 2026-01-22 20:12:24,845 log 26640 15748 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 20:12:26,512 log 26640 15748 "GET /events/8/ HTTP/1.1" 200 4852
+INFO 2026-01-22 20:12:26,564 log 26640 15748 "GET /api/events/8/ HTTP/1.1" 200 1087
+WARNING 2026-01-22 20:12:29,307 log 26640 15748 Bad Request: /api/events/8/register/
+WARNING 2026-01-22 20:12:29,308 log 26640 15748 "POST /api/events/8/register/ HTTP/1.1" 400 65
+INFO 2026-01-22 20:12:33,845 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:12:33,920 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:12:33,921 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:12:36,509 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 20:12:36,530 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:12:38,851 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:12:41,989 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:12:42,697 log 26640 15748 "GET /events/ HTTP/1.1" 200 8191
+INFO 2026-01-22 20:12:42,754 log 26640 15748 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 20:12:43,273 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:12:44,948 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:12:44,969 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:12:45,008 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:12:45,009 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:12:45,607 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:12:45,648 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:12:45,649 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:15:53,997 log 26640 15748 "GET /organizations/ HTTP/1.1" 200 8066
+INFO 2026-01-22 20:15:54,061 log 26640 15748 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 20:15:56,037 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:15:56,092 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:15:56,093 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:16:08,607 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 20:16:08,626 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:16:09,226 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 20:16:09,247 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 7313
+INFO 2026-01-22 20:16:10,091 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 20:16:10,112 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:16:11,134 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:16:11,154 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:16:11,195 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:16:11,196 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:16:12,918 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:16:12,937 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:16:12,979 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:16:12,979 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:16:13,656 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:16:13,675 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:16:13,712 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:16:13,713 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:16:14,279 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:16:14,303 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:16:14,342 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:16:14,343 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:16:14,948 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:16:14,968 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:16:15,005 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:16:15,006 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:17:03,484 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 20:17:03,506 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:19:38,634 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 20:19:38,654 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 7313
+INFO 2026-01-22 20:19:40,054 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 20:19:40,077 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 13001
+WARNING 2026-01-22 20:19:40,123 log 26640 15748 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 20:19:40,124 log 26640 15748 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 20:19:46,569 log 26640 15748 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 20:19:46,589 log 26640 15748 "GET /dashboard/ HTTP/1.1" 200 9104
+INFO 2026-01-22 20:21:05,051 autoreload 26640 10368 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 20:21:05,724 autoreload 23072 21168 Watching for file changes with StatReloader
+INFO 2026-01-22 20:21:10,102 autoreload 23072 21168 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\urls.py changed, reloading.
+INFO 2026-01-22 20:21:10,690 autoreload 22704 3684 Watching for file changes with StatReloader
+INFO 2026-01-22 20:21:14,000 autoreload 22704 3684 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 20:21:14,809 autoreload 24148 30404 Watching for file changes with StatReloader
+INFO 2026-01-22 20:21:27,209 autoreload 24148 30404 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 20:21:27,889 autoreload 15532 11432 Watching for file changes with StatReloader
+INFO 2026-01-22 20:21:50,162 autoreload 15532 11432 C:\Users\mynam\PycharmProjects\Sport_rb\apps\attendance\api\views.py changed, reloading.
+INFO 2026-01-22 20:21:50,794 autoreload 25760 27020 Watching for file changes with StatReloader
+INFO 2026-01-22 20:21:54,201 autoreload 25760 27020 C:\Users\mynam\PycharmProjects\Sport_rb\apps\attendance\api\urls.py changed, reloading.
+INFO 2026-01-22 20:21:54,793 autoreload 20708 11204 Watching for file changes with StatReloader
+INFO 2026-01-22 20:22:06,517 autoreload 20708 11204 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\urls.py changed, reloading.
+INFO 2026-01-22 20:22:07,128 autoreload 18976 26344 Watching for file changes with StatReloader
+INFO 2026-01-22 20:23:22,400 autoreload 18976 26344 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 20:23:22,910 autoreload 11712 18180 Watching for file changes with StatReloader
+INFO 2026-01-22 20:25:36,122 autoreload 11712 18180 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 20:25:36,675 autoreload 28652 19492 Watching for file changes with StatReloader
+INFO 2026-01-22 20:25:58,164 autoreload 28652 19492 C:\Users\mynam\PycharmProjects\Sport_rb\apps\attendance\api\urls.py changed, reloading.
+INFO 2026-01-22 20:25:58,856 autoreload 8972 25312 Watching for file changes with StatReloader
+INFO 2026-01-22 21:14:03,996 log 8972 5836 "GET /dashboard/ HTTP/1.1" 200 12801
+WARNING 2026-01-22 21:14:04,068 log 8972 5836 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:14:04,069 log 8972 28204 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:14:04,070 log 8972 5836 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 21:14:04,070 log 8972 28204 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 21:14:08,766 log 8972 28204 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 21:14:08,786 log 8972 28204 "GET /dashboard/ HTTP/1.1" 200 7548
+INFO 2026-01-22 21:14:10,578 log 8972 28204 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 21:14:10,599 log 8972 28204 "GET /dashboard/ HTTP/1.1" 200 12801
+WARNING 2026-01-22 21:14:10,643 log 8972 28204 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:14:10,644 log 8972 5836 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:14:10,645 log 8972 5836 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 21:14:10,645 log 8972 28204 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 21:14:14,482 log 8972 28204 "GET /events/ HTTP/1.1" 200 8191
+INFO 2026-01-22 21:14:14,553 log 8972 28204 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 21:14:15,480 log 8972 28204 "GET /events/8/ HTTP/1.1" 200 4852
+INFO 2026-01-22 21:14:15,545 log 8972 28204 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 21:14:19,706 log 8972 28204 "GET /dashboard/ HTTP/1.1" 200 12801
+WARNING 2026-01-22 21:14:19,754 log 8972 28204 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:14:19,754 log 8972 5836 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:14:19,755 log 8972 5836 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 21:14:19,755 log 8972 28204 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 21:14:20,518 log 8972 5836 "GET /organizations/ HTTP/1.1" 200 8066
+INFO 2026-01-22 21:14:20,580 log 8972 5836 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 21:14:21,682 log 8972 5836 "GET /organizations/2/ HTTP/1.1" 200 12135
+INFO 2026-01-22 21:14:21,736 log 8972 5836 "GET /api/organizations/2/ HTTP/1.1" 200 392
+INFO 2026-01-22 21:14:23,314 log 8972 5836 "GET /dashboard/ HTTP/1.1" 200 12801
+WARNING 2026-01-22 21:14:23,366 log 8972 28204 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:14:23,367 log 8972 5836 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:14:23,367 log 8972 28204 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 21:14:23,367 log 8972 5836 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 21:14:24,868 log 8972 28204 "GET /organizations/ HTTP/1.1" 200 8066
+INFO 2026-01-22 21:14:24,925 log 8972 28204 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 21:14:25,472 log 8972 28204 "GET /organizations/2/ HTTP/1.1" 200 12135
+INFO 2026-01-22 21:14:25,528 log 8972 28204 "GET /api/organizations/2/ HTTP/1.1" 200 392
+INFO 2026-01-22 21:14:27,764 log 8972 28204 "GET /dashboard/ HTTP/1.1" 200 12801
+WARNING 2026-01-22 21:14:27,818 log 8972 5836 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:14:27,819 log 8972 28204 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:14:27,820 log 8972 5836 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 21:14:27,820 log 8972 28204 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 21:14:29,364 log 8972 5836 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 21:14:29,387 log 8972 5836 "GET /dashboard/ HTTP/1.1" 200 13236
+WARNING 2026-01-22 21:14:29,445 log 8972 5836 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 21:14:29,446 log 8972 5836 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 21:14:33,205 log 8972 5836 "GET /dashboard/ HTTP/1.1" 200 13236
+WARNING 2026-01-22 21:14:33,246 log 8972 5836 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 21:14:33,247 log 8972 5836 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 21:14:34,995 log 8972 5836 "GET /events/ HTTP/1.1" 200 8191
+INFO 2026-01-22 21:14:35,063 log 8972 5836 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 21:14:35,939 log 8972 5836 "GET /organizations/ HTTP/1.1" 200 8066
+INFO 2026-01-22 21:14:35,993 log 8972 5836 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 21:14:38,215 log 8972 5836 "GET /dashboard/ HTTP/1.1" 200 13236
+WARNING 2026-01-22 21:14:38,267 log 8972 5836 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 21:14:38,268 log 8972 5836 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 21:16:54,134 log 8972 5836 "GET /organizations/ HTTP/1.1" 200 8066
+INFO 2026-01-22 21:16:54,197 log 8972 5836 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 21:16:55,028 log 8972 5836 "GET /organizations/2/ HTTP/1.1" 200 12135
+INFO 2026-01-22 21:16:55,086 log 8972 5836 "GET /api/organizations/2/ HTTP/1.1" 200 392
+INFO 2026-01-22 21:17:09,456 log 8972 5836 "GET / HTTP/1.1" 200 6540
+INFO 2026-01-22 21:18:00,513 autoreload 8972 25312 C:\Users\mynam\PycharmProjects\Sport_rb\config\settings\base.py changed, reloading.
+INFO 2026-01-22 21:18:01,621 autoreload 15060 2620 Watching for file changes with StatReloader
+INFO 2026-01-22 21:19:36,948 autoreload 15060 2620 C:\Users\mynam\PycharmProjects\Sport_rb\config\settings\base.py changed, reloading.
+INFO 2026-01-22 21:19:37,583 autoreload 12692 2932 Watching for file changes with StatReloader
+INFO 2026-01-22 21:25:39,499 log 12692 27968 "GET / HTTP/1.1" 200 6483
+INFO 2026-01-22 21:25:41,792 log 12692 27968 "GET /dashboard/ HTTP/1.1" 200 13179
+WARNING 2026-01-22 21:25:41,854 log 12692 27968 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 21:25:41,854 log 12692 27968 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 21:25:42,975 log 12692 27968 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 21:25:42,997 log 12692 27968 "GET /dashboard/ HTTP/1.1" 200 12907
+WARNING 2026-01-22 21:25:43,050 log 12692 27968 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:25:43,051 log 12692 24104 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:25:43,052 log 12692 27968 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 21:25:43,052 log 12692 24104 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 21:25:45,131 log 12692 24104 "GET /dashboard/ HTTP/1.1" 200 12907
+WARNING 2026-01-22 21:25:45,168 log 12692 27968 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 21:25:45,168 log 12692 24104 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 21:25:45,169 log 12692 24104 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 21:25:45,169 log 12692 27968 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 21:25:45,947 log 12692 24104 "GET /coaches/organizations/find/ HTTP/1.1" 200 9375
+INFO 2026-01-22 21:25:46,005 log 12692 24104 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 21:25:50,196 log 12692 24104 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 21:25:50,262 log 12692 24104 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 21:25:50,771 log 12692 24104 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 21:25:50,839 log 12692 24104 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 21:25:56,521 log 12692 24104 "GET /coaches/organizations/find/ HTTP/1.1" 200 9375
+INFO 2026-01-22 21:25:56,571 log 12692 24104 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 21:30:20,540 autoreload 12692 2932 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-22 21:30:21,209 autoreload 22768 22160 Watching for file changes with StatReloader
+INFO 2026-01-22 21:30:35,721 autoreload 22768 22160 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-22 21:30:36,199 autoreload 25192 20712 Watching for file changes with StatReloader
+INFO 2026-01-22 21:33:09,888 autoreload 25192 20712 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-22 21:33:10,381 autoreload 29684 12996 Watching for file changes with StatReloader
+INFO 2026-01-22 21:33:18,748 autoreload 29684 12996 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\models\__init__.py changed, reloading.
+INFO 2026-01-22 21:33:19,213 autoreload 19196 23352 Watching for file changes with StatReloader
+INFO 2026-01-22 21:33:21,430 autoreload 19196 23352 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\admin.py changed, reloading.
+INFO 2026-01-22 21:33:22,032 autoreload 9040 25444 Watching for file changes with StatReloader
+INFO 2026-01-22 21:33:35,735 autoreload 9040 25444 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-22 21:33:36,300 autoreload 2972 29760 Watching for file changes with StatReloader
+INFO 2026-01-22 21:33:52,211 autoreload 2972 29760 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\serializers.py changed, reloading.
+INFO 2026-01-22 21:33:52,833 autoreload 1624 20752 Watching for file changes with StatReloader
+INFO 2026-01-22 21:34:01,346 autoreload 1624 20752 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 21:34:02,065 autoreload 252 23180 Watching for file changes with StatReloader
+INFO 2026-01-22 21:34:36,839 autoreload 252 23180 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 21:34:37,473 autoreload 22384 2240 Watching for file changes with StatReloader
+INFO 2026-01-22 21:34:41,778 autoreload 22384 2240 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 21:34:42,538 autoreload 1360 10524 Watching for file changes with StatReloader
+INFO 2026-01-22 21:34:48,058 autoreload 1360 10524 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\urls.py changed, reloading.
+INFO 2026-01-22 21:34:48,676 autoreload 20196 20188 Watching for file changes with StatReloader
+INFO 2026-01-22 21:39:22,540 autoreload 20196 20188 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 21:39:23,131 autoreload 17612 11964 Watching for file changes with StatReloader
+INFO 2026-01-22 21:39:48,861 autoreload 17612 11964 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\models\invitation.py changed, reloading.
+INFO 2026-01-22 21:39:49,533 autoreload 27020 20060 Watching for file changes with StatReloader
+INFO 2026-01-22 22:21:43,013 log 27020 20620 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 22:21:43,086 log 27020 20620 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 22:21:43,093 log 27020 3724 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 22:21:43,107 log 27020 18844 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 22:21:46,430 log 27020 18844 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 22:21:46,478 log 27020 18844 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 22:21:46,479 log 27020 3724 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 22:21:46,495 log 27020 20620 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 22:21:48,879 log 27020 20620 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:21:48,942 log 27020 20620 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:22:00,517 log 27020 20620 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:22:00,567 log 27020 20620 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:22:00,567 log 27020 3724 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:22:00,568 log 27020 20620 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:22:00,568 log 27020 3724 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:22:04,503 log 27020 20620 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 22:22:04,567 log 27020 3724 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 22:22:04,567 log 27020 20620 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 22:22:04,583 log 27020 18844 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 22:22:07,606 log 27020 18844 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:22:07,656 log 27020 18844 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:26:51,322 autoreload 27020 20060 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\models\__init__.py changed, reloading.
+INFO 2026-01-22 22:26:52,149 autoreload 29888 13340 Watching for file changes with StatReloader
+INFO 2026-01-22 22:27:00,960 autoreload 29888 13340 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-22 22:27:01,675 autoreload 22572 14264 Watching for file changes with StatReloader
+INFO 2026-01-22 22:28:45,928 autoreload 22572 14264 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-22 22:28:46,649 autoreload 20072 16652 Watching for file changes with StatReloader
+INFO 2026-01-22 22:28:55,187 autoreload 20072 16652 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\serializers.py changed, reloading.
+INFO 2026-01-22 22:28:55,893 autoreload 9572 2604 Watching for file changes with StatReloader
+INFO 2026-01-22 22:28:58,171 autoreload 9572 2604 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 22:28:58,731 autoreload 22776 11548 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:05,175 autoreload 22776 11548 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 22:29:05,875 autoreload 26908 20040 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:08,042 autoreload 26908 20040 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-22 22:29:08,709 autoreload 8212 29496 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:11,068 autoreload 8212 29496 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\urls.py changed, reloading.
+INFO 2026-01-22 22:29:11,736 autoreload 6388 25988 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:29,919 autoreload 6388 25988 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\admin.py changed, reloading.
+INFO 2026-01-22 22:29:30,757 autoreload 27312 3332 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:34,097 autoreload 27312 3332 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\admin.py changed, reloading.
+INFO 2026-01-22 22:29:34,797 autoreload 26532 9736 Watching for file changes with StatReloader
+INFO 2026-01-22 22:29:46,519 autoreload 26532 9736 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\models\__init__.py changed, reloading.
+INFO 2026-01-22 22:29:47,220 autoreload 12836 20756 Watching for file changes with StatReloader
+INFO 2026-01-22 22:40:43,931 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:40:43,988 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:40:45,989 log 12836 15444 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:40:46,050 log 12836 15444 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:40:46,051 log 12836 12656 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:40:46,052 log 12836 15444 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:40:46,052 log 12836 12656 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:40:46,831 log 12836 12656 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 22:40:46,903 log 12836 12656 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:40:47,371 log 12836 12656 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:40:47,428 log 12836 12656 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:40:51,224 log 12836 12656 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:40:51,273 log 12836 15444 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:40:51,274 log 12836 12656 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:40:51,274 log 12836 15444 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 22:40:51,275 log 12836 12656 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 22:40:54,782 log 12836 15444 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 22:40:54,805 log 12836 15444 "GET /dashboard/ HTTP/1.1" 200 13179
+WARNING 2026-01-22 22:40:54,866 log 12836 15444 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 22:40:54,866 log 12836 15444 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 22:40:56,369 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8009
+INFO 2026-01-22 22:40:56,432 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:40:57,363 log 12836 15444 "GET /organizations/2/ HTTP/1.1" 200 22181
+INFO 2026-01-22 22:40:57,421 log 12836 15444 "GET /api/organizations/2/ HTTP/1.1" 200 462
+INFO 2026-01-22 22:41:08,500 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8009
+INFO 2026-01-22 22:41:08,592 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:41:09,564 log 12836 15444 "GET /organizations/5/ HTTP/1.1" 200 22181
+INFO 2026-01-22 22:41:09,627 log 12836 15444 "GET /api/organizations/5/ HTTP/1.1" 200 502
+INFO 2026-01-22 22:41:13,090 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8009
+INFO 2026-01-22 22:41:13,152 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:41:14,833 log 12836 15444 "GET /events/ HTTP/1.1" 200 8134
+INFO 2026-01-22 22:41:14,903 log 12836 15444 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:41:18,766 log 12836 15444 "GET /events/8/ HTTP/1.1" 200 4795
+INFO 2026-01-22 22:41:18,831 log 12836 15444 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:41:20,082 log 12836 15444 "GET /dashboard/ HTTP/1.1" 200 13179
+WARNING 2026-01-22 22:41:20,133 log 12836 15444 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 22:41:20,134 log 12836 15444 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 22:41:21,403 log 12836 15444 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:41:21,426 log 12836 15444 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:41:21,468 log 12836 12656 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:41:21,468 log 12836 15444 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:41:21,469 log 12836 15444 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:41:21,469 log 12836 12656 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:41:22,296 log 12836 15444 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 22:41:22,363 log 12836 15444 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:41:23,248 log 12836 15444 "GET /events/8/ HTTP/1.1" 200 4936
+INFO 2026-01-22 22:41:23,309 log 12836 15444 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:42:34,503 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:42:34,594 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:42:40,667 log 12836 15444 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 22:42:40,780 log 12836 15444 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 22:42:40,786 log 12836 12656 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 22:42:40,808 log 12836 6980 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 22:42:44,752 log 12836 6980 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:42:44,822 log 12836 6980 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:42:44,822 log 12836 12656 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:42:44,823 log 12836 6980 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:42:44,824 log 12836 12656 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:42:47,449 log 12836 6980 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 22:42:47,541 log 12836 12656 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 22:42:47,549 log 12836 6980 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 22:42:47,566 log 12836 15444 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 22:42:52,861 log 12836 15444 "GET /organizations/ HTTP/1.1" 200 8150
+INFO 2026-01-22 22:42:52,968 log 12836 15444 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 22:42:56,806 log 12836 15444 "GET /dashboard/ HTTP/1.1" 200 13552
+WARNING 2026-01-22 22:42:56,859 log 12836 6980 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:42:56,859 log 12836 15444 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:42:56,860 log 12836 6980 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 22:42:56,860 log 12836 15444 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 22:42:58,770 log 12836 6980 "GET /role-selection/new/ HTTP/1.1" 200 8685
+INFO 2026-01-22 22:43:01,357 log 12836 6980 "POST /api/users/select-role/ HTTP/1.1" 201 158
+INFO 2026-01-22 22:43:01,394 log 12836 6980 "GET /dashboard/ HTTP/1.1" 200 8126
+INFO 2026-01-22 22:43:03,626 autoreload 12836 20756 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 22:43:04,574 autoreload 10584 17128 Watching for file changes with StatReloader
+INFO 2026-01-22 22:43:08,965 log 10584 6876 "GET /role-selection/new/ HTTP/1.1" 200 8556
+WARNING 2026-01-22 22:43:12,889 log 10584 6876 Bad Request: /api/users/select-role/
+WARNING 2026-01-22 22:43:12,890 log 10584 6876 "POST /api/users/select-role/ HTTP/1.1" 400 69
+INFO 2026-01-22 22:43:16,461 log 10584 6876 "GET /dashboard/ HTTP/1.1" 200 8126
+INFO 2026-01-22 22:43:34,684 log 10584 26088 "GET /events/ HTTP/1.1" 200 8146
+INFO 2026-01-22 22:43:34,769 log 10584 26088 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:43:37,582 autoreload 10584 17128 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\urls.py changed, reloading.
+INFO 2026-01-22 22:43:38,373 autoreload 17036 8400 Watching for file changes with StatReloader
+INFO 2026-01-22 22:43:42,116 autoreload 17036 8400 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\urls.py changed, reloading.
+INFO 2026-01-22 22:43:42,877 autoreload 9944 17864 Watching for file changes with StatReloader
+INFO 2026-01-22 22:43:47,574 autoreload 9944 17864 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 22:43:48,214 autoreload 10188 16860 Watching for file changes with StatReloader
+INFO 2026-01-22 22:45:51,529 autoreload 10188 16860 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 22:45:52,192 autoreload 10116 25372 Watching for file changes with StatReloader
+INFO 2026-01-22 22:46:07,767 autoreload 10116 25372 C:\Users\mynam\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-01-22 22:46:08,554 autoreload 17692 16088 Watching for file changes with StatReloader
+INFO 2026-01-22 22:47:01,309 log 17692 1852 "GET /events/ HTTP/1.1" 200 8146
+INFO 2026-01-22 22:47:01,378 log 17692 1852 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:47:02,444 log 17692 1852 "GET /dashboard/ HTTP/1.1" 200 8126
+INFO 2026-01-22 22:47:04,955 log 17692 1852 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:47:04,984 log 17692 1852 "GET /dashboard/ HTTP/1.1" 200 13782
+WARNING 2026-01-22 22:47:05,037 log 17692 17076 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:47:05,038 log 17692 1852 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:47:05,038 log 17692 17076 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+WARNING 2026-01-22 22:47:05,038 log 17692 1852 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+INFO 2026-01-22 22:47:05,826 log 17692 17076 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 22:47:05,916 log 17692 17076 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:47:07,734 log 17692 17076 "GET /events/8/ HTTP/1.1" 200 18465
+INFO 2026-01-22 22:47:07,807 log 17692 17076 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:47:11,573 log 17692 17076 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 22:47:11,663 log 17692 17076 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:47:12,181 log 17692 17076 "GET /dashboard/ HTTP/1.1" 200 13782
+WARNING 2026-01-22 22:47:12,264 log 17692 17076 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:47:12,265 log 17692 1852 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:47:12,266 log 17692 17076 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:47:12,268 log 17692 1852 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:47:18,479 log 17692 1852 "GET /events/ HTTP/1.1" 200 8275
+INFO 2026-01-22 22:47:18,567 log 17692 1852 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:47:21,062 log 17692 1852 "GET /events/8/ HTTP/1.1" 200 18465
+INFO 2026-01-22 22:47:21,135 log 17692 1852 "GET /api/events/8/ HTTP/1.1" 200 1087
+WARNING 2026-01-22 22:47:22,578 log 17692 1852 Bad Request: /api/events/8/register/
+WARNING 2026-01-22 22:47:22,578 log 17692 1852 "POST /api/events/8/register/ HTTP/1.1" 400 65
+INFO 2026-01-22 22:47:28,126 log 17692 1852 "GET /dashboard/ HTTP/1.1" 200 13782
+WARNING 2026-01-22 22:47:28,201 log 17692 1852 Not Found: /api/coaches/organizations/
+WARNING 2026-01-22 22:47:28,202 log 17692 17076 Not Found: /api/coaches/groups/
+WARNING 2026-01-22 22:47:28,204 log 17692 1852 "GET /api/coaches/organizations/ HTTP/1.1" 404 129
+WARNING 2026-01-22 22:47:28,205 log 17692 17076 "GET /api/coaches/groups/ HTTP/1.1" 404 59
+INFO 2026-01-22 22:47:31,771 log 17692 1852 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 22:47:31,809 log 17692 1852 "GET /dashboard/ HTTP/1.1" 200 8514
+INFO 2026-01-22 22:47:35,153 log 17692 1852 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:47:35,255 log 17692 1852 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:47:35,258 log 17692 1852 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 22:47:37,691 log 17692 1852 "GET /events/ HTTP/1.1" 200 8268
+INFO 2026-01-22 22:47:37,796 log 17692 1852 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:47:38,763 log 17692 1852 "GET /events/8/ HTTP/1.1" 200 18458
+INFO 2026-01-22 22:47:38,834 log 17692 1852 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:47:40,069 log 17692 1852 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:47:40,171 log 17692 1852 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:47:40,174 log 17692 1852 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 22:48:33,862 log 17692 1852 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:48:33,936 log 17692 1852 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:48:33,939 log 17692 1852 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 22:48:34,740 log 17692 1852 "GET /events/ HTTP/1.1" 200 8268
+INFO 2026-01-22 22:48:34,810 log 17692 1852 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:48:35,910 log 17692 1852 "GET /events/8/ HTTP/1.1" 200 18458
+INFO 2026-01-22 22:48:35,965 log 17692 1852 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:50:34,361 autoreload 17692 16088 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\staff\coach_membership.py changed, reloading.
+INFO 2026-01-22 22:50:35,173 autoreload 18828 18700 Watching for file changes with StatReloader
+INFO 2026-01-22 22:51:02,413 autoreload 18828 18700 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\staff\coach_membership.py changed, reloading.
+INFO 2026-01-22 22:51:03,364 autoreload 16960 15324 Watching for file changes with StatReloader
+INFO 2026-01-22 22:59:13,172 log 16960 15508 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:59:13,259 log 16960 15508 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:59:13,263 log 16960 15508 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 22:59:14,029 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 22:59:14,488 log 16960 15508 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:59:14,560 log 16960 15508 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:59:14,562 log 16960 15508 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+WARNING 2026-01-22 22:59:20,708 log 16960 15508 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-22 22:59:20,708 log 16960 15508 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 9344
+INFO 2026-01-22 22:59:42,689 log 16960 15508 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 22:59:42,751 log 16960 15508 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 22:59:42,753 log 16960 15508 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 22:59:43,232 log 16960 15508 "GET /events/ HTTP/1.1" 200 8268
+INFO 2026-01-22 22:59:43,294 log 16960 15508 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 22:59:44,323 log 16960 15508 "GET /events/8/ HTTP/1.1" 200 18458
+INFO 2026-01-22 22:59:44,383 log 16960 15508 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 22:59:46,923 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 22:59:50,759 log 16960 15508 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 22:59:50,784 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 13169
+WARNING 2026-01-22 22:59:50,840 log 16960 15508 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 22:59:50,841 log 16960 15508 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 22:59:52,130 log 16960 15508 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 22:59:52,149 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 22:59:53,514 log 16960 15508 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:59:53,535 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 13908
+INFO 2026-01-22 22:59:53,582 log 16960 15432 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 22:59:53,583 log 16960 15508 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 22:59:55,153 log 16960 15508 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 22:59:55,170 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 22:59:56,036 log 16960 15508 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:59:56,054 log 16960 15508 "GET /dashboard/ HTTP/1.1" 200 13908
+INFO 2026-01-22 22:59:56,101 log 16960 15508 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 22:59:56,101 log 16960 15432 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 22:59:56,373 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 22:59:56,398 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13169
+WARNING 2026-01-22 22:59:56,439 log 16960 15432 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 22:59:56,440 log 16960 15432 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 22:59:57,333 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:59:57,353 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13908
+INFO 2026-01-22 22:59:57,395 log 16960 15432 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 22:59:57,396 log 16960 15508 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 22:59:58,436 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 22:59:58,454 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 22:59:59,435 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 22:59:59,454 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13908
+INFO 2026-01-22 22:59:59,497 log 16960 15508 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 22:59:59,498 log 16960 15432 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:00:01,758 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 23:00:01,775 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 23:00:02,773 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 23:00:02,792 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13169
+WARNING 2026-01-22 23:00:02,828 log 16960 15432 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:00:02,828 log 16960 15432 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:00:03,850 log 16960 15432 "GET /athletes/profile/edit/ HTTP/1.1" 200 23867
+INFO 2026-01-22 23:00:03,925 log 16960 15432 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:00:03,951 log 16960 15432 "GET /api/athletes/profile/ HTTP/1.1" 200 413
+WARNING 2026-01-22 23:00:15,221 log 16960 15432 Bad Request: /api/athletes/profile/
+WARNING 2026-01-22 23:00:15,222 log 16960 15432 "PATCH /api/athletes/profile/ HTTP/1.1" 400 239
+INFO 2026-01-22 23:00:30,031 log 16960 15432 "PATCH /api/athletes/profile/ HTTP/1.1" 200 613
+INFO 2026-01-22 23:00:31,619 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13997
+WARNING 2026-01-22 23:00:31,686 log 16960 15508 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:00:31,687 log 16960 15508 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:00:31,730 log 16960 15432 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 200 69459
+INFO 2026-01-22 23:00:38,147 log 16960 15432 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 23:00:38,168 log 16960 15432 "GET /dashboard/ HTTP/1.1" 200 13908
+INFO 2026-01-22 23:00:38,215 log 16960 15432 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:00:38,216 log 16960 15508 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:00:45,562 log 16960 15508 "GET /coaches/profile/edit/ HTTP/1.1" 200 17614
+INFO 2026-01-22 23:00:45,624 log 16960 15508 "GET /api/coaches/profile/ HTTP/1.1" 200 564
+INFO 2026-01-22 23:00:45,645 log 16960 25148 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-22 23:00:45,655 log 16960 15508 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 23:00:45,658 log 16960 15432 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:03:37,368 autoreload 16960 15324 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 23:03:38,235 autoreload 25868 30532 Watching for file changes with StatReloader
+INFO 2026-01-22 23:03:44,163 autoreload 25868 30532 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 23:03:44,969 autoreload 10096 14760 Watching for file changes with StatReloader
+INFO 2026-01-22 23:03:48,808 autoreload 10096 14760 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 23:03:49,630 autoreload 10176 7216 Watching for file changes with StatReloader
+INFO 2026-01-22 23:04:36,203 autoreload 10176 7216 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\urls.py changed, reloading.
+INFO 2026-01-22 23:04:37,185 autoreload 15224 6624 Watching for file changes with StatReloader
+INFO 2026-01-22 23:07:16,940 autoreload 15224 6624 C:\Users\mynam\PycharmProjects\Sport_rb\apps\coaches\api\views.py changed, reloading.
+INFO 2026-01-22 23:07:17,863 autoreload 11884 23704 Watching for file changes with StatReloader
+INFO 2026-01-22 23:07:52,306 autoreload 11884 23704 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 23:07:53,092 autoreload 13156 26892 Watching for file changes with StatReloader
+INFO 2026-01-22 23:08:32,051 autoreload 13156 26892 C:\Users\mynam\PycharmProjects\Sport_rb\apps\athletes\api\views.py changed, reloading.
+INFO 2026-01-22 23:08:32,893 autoreload 26328 22484 Watching for file changes with StatReloader
+INFO 2026-01-22 23:09:11,805 log 26328 12808 "GET / HTTP/1.1" 200 6624
+INFO 2026-01-22 23:09:13,074 log 26328 12808 "GET / HTTP/1.1" 200 6624
+INFO 2026-01-22 23:09:14,227 log 26328 12808 "GET /dashboard/ HTTP/1.1" 200 14107
+INFO 2026-01-22 23:09:14,289 log 26328 4064 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:09:14,289 log 26328 12808 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:09:18,435 log 26328 4064 "GET /coaches/profile/edit/ HTTP/1.1" 200 14879
+INFO 2026-01-22 23:09:18,491 log 26328 4064 "GET /api/coaches/profile/ HTTP/1.1" 200 564
+INFO 2026-01-22 23:09:18,515 log 26328 4064 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 23:09:18,518 log 26328 12808 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:09:31,969 log 26328 12808 "GET /coaches/profile/edit/?csrfmiddlewaretoken=wDiAWzA29fLjbmftmRTbGGzWgOTgFLwU3xjHQuz2Jb6DZoSNCkrvxnhsH8btSBgq&city_id=13&specialization=1&phone=&telegram=&experience_years=3&education= HTTP/1.1" 200 14879
+INFO 2026-01-22 23:09:33,112 log 26328 12808 "GET /api/coaches/profile/ HTTP/1.1" 200 564
+INFO 2026-01-22 23:09:33,794 log 26328 12808 "GET /api/geography/cities/ HTTP/1.1" 200 1159
+INFO 2026-01-22 23:09:33,795 log 26328 4064 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:09:40,250 log 26328 4064 "GET /users/basic-data/edit/ HTTP/1.1" 200 12998
+INFO 2026-01-22 23:09:40,309 log 26328 4064 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:09:40,324 log 26328 4064 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-22 23:09:45,234 log 26328 4064 "GET /dashboard/ HTTP/1.1" 200 14107
+INFO 2026-01-22 23:09:45,284 log 26328 12808 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:09:45,284 log 26328 4064 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:09:46,248 log 26328 12808 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 23:09:46,270 log 26328 12808 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:09:46,327 log 26328 12808 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:09:46,328 log 26328 12808 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:09:48,753 log 26328 12808 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 23:09:48,775 log 26328 12808 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 23:09:52,156 log 26328 12808 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 23:09:52,175 log 26328 12808 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:09:52,220 log 26328 12808 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:09:52,221 log 26328 12808 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:09:53,763 log 26328 12808 "GET /users/basic-data/edit/ HTTP/1.1" 200 12857
+INFO 2026-01-22 23:09:53,809 log 26328 12808 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:11:44,004 autoreload 26328 22484 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 23:11:44,751 autoreload 19100 25504 Watching for file changes with StatReloader
+INFO 2026-01-22 23:11:50,400 autoreload 19100 25504 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:11:51,117 autoreload 20284 9152 Watching for file changes with StatReloader
+INFO 2026-01-22 23:12:33,005 autoreload 20284 9152 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 23:12:33,732 autoreload 17384 23092 Watching for file changes with StatReloader
+INFO 2026-01-22 23:13:09,107 log 17384 11192 "GET /users/basic-data/edit/ HTTP/1.1" 200 14210
+INFO 2026-01-22 23:13:09,150 log 17384 11192 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:13:09,166 log 17384 11192 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+ERROR 2026-01-22 23:13:31,248 log 17384 21172 Internal Server Error: /api/users/basic-data/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py", line 92, in get_user_basic_data
+    full_name = data.pop('full_name', '').strip()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'strip'
+ERROR 2026-01-22 23:13:31,251 log 17384 21172 "PATCH /api/users/basic-data/ HTTP/1.1" 500 105632
+INFO 2026-01-22 23:14:16,581 autoreload 17384 23092 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 23:14:17,334 autoreload 30032 29692 Watching for file changes with StatReloader
+INFO 2026-01-22 23:14:32,444 autoreload 30032 29692 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-22 23:14:33,245 autoreload 18916 27304 Watching for file changes with StatReloader
+INFO 2026-01-22 23:15:46,425 log 18916 12356 "GET /users/basic-data/edit/ HTTP/1.1" 200 14517
+INFO 2026-01-22 23:15:46,475 log 18916 12356 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:15:46,490 log 18916 12356 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+WARNING 2026-01-22 23:16:02,793 log 18916 12356 Bad Request: /api/users/basic-data/
+WARNING 2026-01-22 23:16:02,793 log 18916 12356 "PATCH /api/users/basic-data/ HTTP/1.1" 400 102
+INFO 2026-01-22 23:17:01,347 autoreload 18916 27304 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:17:02,110 autoreload 17664 27624 Watching for file changes with StatReloader
+INFO 2026-01-22 23:17:18,478 autoreload 17664 27624 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:17:19,232 autoreload 25192 24344 Watching for file changes with StatReloader
+INFO 2026-01-22 23:17:43,833 log 25192 20604 "GET /users/basic-data/edit/ HTTP/1.1" 200 14648
+INFO 2026-01-22 23:17:43,890 log 25192 20604 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:17:43,906 log 25192 20604 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-22 23:18:41,989 autoreload 25192 24344 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\views.py changed, reloading.
+INFO 2026-01-22 23:18:42,799 autoreload 9804 21172 Watching for file changes with StatReloader
+INFO 2026-01-22 23:20:04,120 autoreload 9804 21172 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\views.py changed, reloading.
+INFO 2026-01-22 23:20:04,978 autoreload 22964 18260 Watching for file changes with StatReloader
+INFO 2026-01-22 23:20:23,327 log 22964 11332 "GET /users/basic-data/edit/ HTTP/1.1" 200 15966
+INFO 2026-01-22 23:22:17,708 autoreload 22964 18260 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\models\city.py changed, reloading.
+INFO 2026-01-22 23:22:18,510 autoreload 12496 11976 Watching for file changes with StatReloader
+INFO 2026-01-22 23:22:26,379 autoreload 12496 11976 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\views.py changed, reloading.
+INFO 2026-01-22 23:22:27,208 autoreload 26844 1752 Watching for file changes with StatReloader
+INFO 2026-01-22 23:22:32,933 autoreload 26844 1752 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\urls.py changed, reloading.
+INFO 2026-01-22 23:22:33,692 autoreload 21324 13320 Watching for file changes with StatReloader
+INFO 2026-01-22 23:22:40,523 autoreload 21324 13320 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:22:41,348 autoreload 9256 15908 Watching for file changes with StatReloader
+INFO 2026-01-22 23:26:19,348 autoreload 9256 15908 C:\Users\mynam\PycharmProjects\Sport_rb\apps\geography\api\views.py changed, reloading.
+INFO 2026-01-22 23:26:20,070 autoreload 20976 29056 Watching for file changes with StatReloader
+INFO 2026-01-22 23:26:45,864 log 20976 14772 "GET /users/basic-data/edit/ HTTP/1.1" 200 17449
+INFO 2026-01-22 23:26:45,910 log 20976 14772 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:26:45,924 log 20976 14772 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-22 23:27:12,346 log 20976 14772 "GET /users/basic-data/edit/ HTTP/1.1" 200 17449
+INFO 2026-01-22 23:27:12,436 log 20976 23644 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-22 23:27:12,436 log 20976 14772 "GET /static/css/main.css HTTP/1.1" 200 12411
+INFO 2026-01-22 23:27:12,719 log 20976 23644 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+WARNING 2026-01-22 23:27:12,731 log 20976 14772 Not Found: /favicon.ico
+WARNING 2026-01-22 23:27:12,732 log 20976 14772 "GET /favicon.ico HTTP/1.1" 404 9526
+WARNING 2026-01-22 23:27:12,747 log 20976 23644 Not Found: /favicon.ico
+WARNING 2026-01-22 23:27:12,748 log 20976 23644 "GET /favicon.ico HTTP/1.1" 404 9526
+INFO 2026-01-22 23:27:27,229 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:27:27,292 log 20976 23644 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:27:27,292 log 20976 23644 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:27:36,533 log 20976 23644 "GET /users/basic-data/edit/ HTTP/1.1" 200 17449
+INFO 2026-01-22 23:27:36,586 log 20976 23644 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-22 23:27:42,442 log 20976 23644 "GET /api/geography/cities/search/?q=%D0%B3%20%D0%A3 HTTP/1.1" 200 2
+INFO 2026-01-22 23:27:42,810 log 20976 23644 "GET /api/geography/cities/search/?q=%D0%B3%20%D0%A3%D1%84 HTTP/1.1" 200 2
+INFO 2026-01-22 23:27:43,529 log 20976 23644 "GET /api/geography/cities/search/?q=%D0%B3%20%D0%A3%D1%84%D0%B2 HTTP/1.1" 200 2
+INFO 2026-01-22 23:27:44,382 log 20976 23644 "GET /api/geography/cities/search/?q=%D0%B3%20%D0%A3%D1%84%D0%B0 HTTP/1.1" 200 2
+INFO 2026-01-22 23:27:57,091 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:27:57,151 log 20976 23644 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:27:57,151 log 20976 23644 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:27:58,283 log 20976 23644 "GET /athletes/profile/edit/ HTTP/1.1" 200 20178
+INFO 2026-01-22 23:27:58,337 log 20976 23644 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:27:58,358 log 20976 23644 "GET /api/athletes/profile/ HTTP/1.1" 200 613
+INFO 2026-01-22 23:28:14,182 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:28:14,247 log 20976 23644 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:28:14,248 log 20976 23644 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:28:14,982 log 20976 23644 "GET /events/ HTTP/1.1" 200 10864
+INFO 2026-01-22 23:28:15,049 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+WARNING 2026-01-22 23:28:24,072 log 20976 23644 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-22 23:28:24,073 log 20976 23644 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 9637
+INFO 2026-01-22 23:28:29,678 log 20976 23644 "GET /events/ HTTP/1.1" 200 10864
+INFO 2026-01-22 23:28:29,742 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:28:31,752 log 20976 23644 "GET /events/6/ HTTP/1.1" 200 18324
+INFO 2026-01-22 23:28:31,811 log 20976 23644 "GET /api/events/6/ HTTP/1.1" 200 953
+WARNING 2026-01-22 23:28:33,257 log 20976 23644 Bad Request: /api/events/6/register/
+WARNING 2026-01-22 23:28:33,258 log 20976 23644 "POST /api/events/6/register/ HTTP/1.1" 400 81
+INFO 2026-01-22 23:28:42,284 log 20976 23644 "GET /events/ HTTP/1.1" 200 10864
+INFO 2026-01-22 23:28:42,349 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:28:43,755 log 20976 23644 "GET /events/8/ HTTP/1.1" 200 18324
+INFO 2026-01-22 23:28:43,815 log 20976 23644 "GET /api/events/8/ HTTP/1.1" 200 1087
+WARNING 2026-01-22 23:28:45,026 log 20976 23644 Bad Request: /api/events/8/register/
+WARNING 2026-01-22 23:28:45,027 log 20976 23644 "POST /api/events/8/register/ HTTP/1.1" 400 81
+INFO 2026-01-22 23:28:46,717 log 20976 23644 "GET /events/ HTTP/1.1" 200 10864
+INFO 2026-01-22 23:28:46,773 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:28:47,378 log 20976 23644 "GET /events/5/ HTTP/1.1" 200 18324
+INFO 2026-01-22 23:28:47,437 log 20976 23644 "GET /api/events/5/ HTTP/1.1" 200 1034
+WARNING 2026-01-22 23:28:48,362 log 20976 23644 Bad Request: /api/events/5/register/
+WARNING 2026-01-22 23:28:48,362 log 20976 23644 "POST /api/events/5/register/ HTTP/1.1" 400 81
+INFO 2026-01-22 23:28:50,555 log 20976 23644 "GET /organizations/ HTTP/1.1" 200 10739
+INFO 2026-01-22 23:28:50,626 log 20976 23644 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 23:29:02,240 log 20976 23644 "GET /organizations/5/ HTTP/1.1" 200 22181
+INFO 2026-01-22 23:29:02,295 log 20976 23644 "GET /api/organizations/5/ HTTP/1.1" 200 502
+INFO 2026-01-22 23:29:17,231 log 20976 23644 "GET /organizations/ HTTP/1.1" 200 10739
+INFO 2026-01-22 23:29:17,382 log 20976 23644 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-22 23:29:24,342 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14284
+INFO 2026-01-22 23:29:24,382 log 20976 23644 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+WARNING 2026-01-22 23:29:24,401 log 20976 23644 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:29:24,401 log 20976 23644 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:29:35,639 log 20976 23644 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-22 23:29:35,665 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14107
+INFO 2026-01-22 23:29:35,717 log 20976 23644 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:29:35,718 log 20976 14772 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:29:40,417 log 20976 14772 "GET /coaches/invitations/ HTTP/1.1" 200 9327
+INFO 2026-01-22 23:29:40,466 log 20976 14772 "GET /api/coaches/invitations/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:29:42,316 log 20976 14772 "GET /dashboard/ HTTP/1.1" 200 14107
+INFO 2026-01-22 23:29:42,368 log 20976 23644 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:29:42,378 log 20976 14772 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:29:43,058 log 20976 14772 "GET /coaches/organizations/find/ HTTP/1.1" 200 16894
+INFO 2026-01-22 23:29:43,124 log 20976 14772 "GET /api/geography/cities/ HTTP/1.1" 200 1897
+INFO 2026-01-22 23:29:43,124 log 20976 23644 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-01-22 23:29:43,140 log 20976 6916 "GET /api/coaches/free-organizations/ HTTP/1.1" 200 1614
+INFO 2026-01-22 23:29:55,734 log 20976 6916 "GET /events/ HTTP/1.1" 200 11005
+INFO 2026-01-22 23:29:55,813 log 20976 6916 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:29:56,986 log 20976 6916 "GET /dashboard/ HTTP/1.1" 200 14107
+INFO 2026-01-22 23:29:57,031 log 20976 6916 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
+INFO 2026-01-22 23:29:57,032 log 20976 23644 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-22 23:30:08,213 log 20976 23644 "POST /api/users/switch-role/ HTTP/1.1" 200 38
+INFO 2026-01-22 23:30:08,240 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 23:30:20,481 log 20976 23644 "GET /events/ HTTP/1.1" 200 10998
+INFO 2026-01-22 23:30:20,552 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:30:21,989 log 20976 23644 "GET /events/8/ HTTP/1.1" 200 18458
+INFO 2026-01-22 23:30:22,044 log 20976 23644 "GET /api/events/8/ HTTP/1.1" 200 1087
+INFO 2026-01-22 23:30:24,034 log 20976 23644 "GET /events/ HTTP/1.1" 200 10998
+INFO 2026-01-22 23:30:24,096 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:30:25,799 log 20976 23644 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 23:30:25,881 log 20976 23644 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 23:30:25,886 log 20976 23644 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 23:30:32,782 log 20976 23644 "GET /events/ HTTP/1.1" 200 10998
+INFO 2026-01-22 23:30:32,843 log 20976 23644 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-22 23:30:33,900 log 20976 23644 "GET /organizations/my/ HTTP/1.1" 200 6346
+ERROR 2026-01-22 23:30:34,013 log 20976 23644 Internal Server Error: /api/organizations/my/
+Traceback (most recent call last):
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py", line 45, in get_my_organizations
+    ) | Organization.objects.filter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1671, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1703, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1551, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1358, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\PycharmProjects\Sport_rb\.venv\Lib\site-packages\django\db\models\sql\query.py", line 1832, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'director' into field. Choices are: accessibility, address, city, city_id, citypermission, clubrequest, coach_invitations, coachmembership, created_at, created_by, created_by_id, documents, event, groups, id, inn, latitude, longitude, name, org_type, priority, section_enrollment_requests, sport_directions, status, updated_at, verificationrequest, verified_at, website
+ERROR 2026-01-22 23:30:34,016 log 20976 23644 "GET /api/organizations/my/ HTTP/1.1" 500 152928
+INFO 2026-01-22 23:30:34,999 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 8592
+INFO 2026-01-22 23:30:40,884 log 20976 23644 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-22 23:30:40,907 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 14284
+WARNING 2026-01-22 23:30:40,948 log 20976 23644 Not Found: /api/athletes/progress/
+WARNING 2026-01-22 23:30:40,949 log 20976 23644 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-01-22 23:30:41,798 log 20976 23644 "POST /api/users/switch-role/ HTTP/1.1" 200 32
+INFO 2026-01-22 23:30:41,824 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 7886
+INFO 2026-01-22 23:31:31,543 log 20976 23644 "GET /dashboard/ HTTP/1.1" 200 7886
+INFO 2026-01-22 23:39:33,129 autoreload 20976 29056 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\models\role.py changed, reloading.
+INFO 2026-01-22 23:39:34,284 autoreload 23432 25360 Watching for file changes with StatReloader
+INFO 2026-01-22 23:39:42,713 autoreload 23432 25360 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\models\parent_child_link.py changed, reloading.
+INFO 2026-01-22 23:39:43,411 autoreload 28924 6764 Watching for file changes with StatReloader
+INFO 2026-01-22 23:39:52,346 autoreload 28924 6764 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:39:53,060 autoreload 12968 18748 Watching for file changes with StatReloader
+INFO 2026-01-22 23:40:14,712 autoreload 12968 18748 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\views.py changed, reloading.
+INFO 2026-01-22 23:40:15,388 autoreload 17448 12616 Watching for file changes with StatReloader
+INFO 2026-01-22 23:40:23,218 autoreload 17448 12616 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\urls.py changed, reloading.
+INFO 2026-01-22 23:40:24,200 autoreload 13196 11804 Watching for file changes with StatReloader
+INFO 2026-01-22 23:40:34,329 autoreload 13196 11804 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\models\role.py changed, reloading.
+INFO 2026-01-22 23:40:35,076 autoreload 17080 23424 Watching for file changes with StatReloader
+INFO 2026-01-22 23:40:54,747 autoreload 17080 23424 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:40:55,472 autoreload 23780 8452 Watching for file changes with StatReloader
+INFO 2026-01-22 23:41:06,509 autoreload 23780 8452 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\views.py changed, reloading.
+INFO 2026-01-22 23:41:07,227 autoreload 29660 11244 Watching for file changes with StatReloader
+INFO 2026-01-22 23:43:24,591 autoreload 29660 11244 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-22 23:43:25,376 autoreload 18796 23680 Watching for file changes with StatReloader
+INFO 2026-01-22 23:44:17,101 autoreload 18796 23680 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-22 23:44:17,793 autoreload 23092 26116 Watching for file changes with StatReloader
+INFO 2026-01-22 23:44:37,241 autoreload 23092 26116 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:44:37,981 autoreload 8424 14708 Watching for file changes with StatReloader
+INFO 2026-01-22 23:44:51,016 autoreload 8424 14708 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\views.py changed, reloading.
+INFO 2026-01-22 23:44:51,879 autoreload 22356 27856 Watching for file changes with StatReloader
+INFO 2026-01-22 23:47:11,533 autoreload 22356 27856 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\views.py changed, reloading.
+INFO 2026-01-22 23:47:12,345 autoreload 4752 12136 Watching for file changes with StatReloader
+INFO 2026-01-22 23:47:22,343 autoreload 4752 12136 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\views.py changed, reloading.
+INFO 2026-01-22 23:47:23,023 autoreload 23404 29684 Watching for file changes with StatReloader
+INFO 2026-01-22 23:47:49,801 autoreload 23404 29684 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:47:50,451 autoreload 25172 21268 Watching for file changes with StatReloader
+INFO 2026-01-22 23:48:30,292 autoreload 25172 21268 C:\Users\mynam\PycharmProjects\Sport_rb\apps\parents\api\serializers.py changed, reloading.
+INFO 2026-01-22 23:48:31,194 autoreload 29960 26808 Watching for file changes with StatReloader
+INFO 2026-01-23 00:06:25,960 log 29960 14612 "GET /dashboard/ HTTP/1.1" 200 14828
+INFO 2026-01-23 00:06:26,022 log 29960 14612 "GET /api/parents/children/ HTTP/1.1" 200 2
+INFO 2026-01-23 00:12:43,427 autoreload 29960 26808 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 00:12:44,128 autoreload 24212 8336 Watching for file changes with StatReloader
+INFO 2026-01-23 00:13:27,576 autoreload 24212 8336 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:13:28,340 autoreload 14392 18756 Watching for file changes with StatReloader
+INFO 2026-01-23 00:13:35,118 autoreload 14392 18756 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\urls.py changed, reloading.
+INFO 2026-01-23 00:13:35,861 autoreload 14196 24284 Watching for file changes with StatReloader
+INFO 2026-01-23 00:13:40,509 autoreload 14196 24284 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\urls.py changed, reloading.
+INFO 2026-01-23 00:13:41,187 autoreload 30548 6532 Watching for file changes with StatReloader
+INFO 2026-01-23 00:13:46,437 autoreload 30548 6532 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 00:13:47,063 autoreload 15004 19584 Watching for file changes with StatReloader
+INFO 2026-01-23 00:14:01,363 autoreload 15004 19584 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:14:02,073 autoreload 16688 1972 Watching for file changes with StatReloader
+INFO 2026-01-23 00:14:08,849 autoreload 16688 1972 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:14:09,595 autoreload 16084 29480 Watching for file changes with StatReloader
+INFO 2026-01-23 00:18:54,742 autoreload 16084 29480 C:\Users\mynam\PycharmProjects\Sport_rb\apps\core\apps.py changed, reloading.
+INFO 2026-01-23 00:18:55,444 autoreload 13360 14328 Watching for file changes with StatReloader
+INFO 2026-01-23 00:19:16,860 autoreload 13360 14328 C:\Users\mynam\PycharmProjects\Sport_rb\apps\core\signals.py changed, reloading.
+INFO 2026-01-23 00:19:17,561 autoreload 28580 19296 Watching for file changes with StatReloader
+INFO 2026-01-23 00:20:08,464 autoreload 28580 19296 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:20:09,208 autoreload 20952 15040 Watching for file changes with StatReloader
+INFO 2026-01-23 00:20:12,739 autoreload 20952 15040 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:20:13,318 autoreload 6444 20928 Watching for file changes with StatReloader
+INFO 2026-01-23 00:20:29,436 autoreload 6444 20928 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\views.py changed, reloading.
+INFO 2026-01-23 00:20:30,042 autoreload 12160 17872 Watching for file changes with StatReloader
+INFO 2026-01-23 00:21:02,246 autoreload 12160 17872 C:\Users\mynam\PycharmProjects\Sport_rb\apps\admin_rb\api\urls.py changed, reloading.
+INFO 2026-01-23 00:21:02,960 autoreload 20972 3360 Watching for file changes with StatReloader
+INFO 2026-01-23 00:34:46,884 autoreload 20972 3360 C:\Users\mynam\PycharmProjects\Sport_rb\config\settings\base.py changed, reloading.
+INFO 2026-01-23 00:34:47,646 autoreload 29464 11924 Watching for file changes with StatReloader
+INFO 2026-01-23 00:38:05,542 autoreload 29464 11924 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 00:38:06,330 autoreload 11300 15800 Watching for file changes with StatReloader
+INFO 2026-01-23 00:38:11,011 autoreload 11300 15800 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 00:38:11,766 autoreload 18192 20656 Watching for file changes with StatReloader
+INFO 2026-01-23 00:40:40,098 autoreload 18192 20656 C:\Users\mynam\PycharmProjects\Sport_rb\config\settings\base.py changed, reloading.
+INFO 2026-01-23 00:40:40,883 autoreload 2904 5912 Watching for file changes with StatReloader
+INFO 2026-01-23 00:40:49,656 log 2904 29992 "GET /dashboard/ HTTP/1.1" 200 14828
+INFO 2026-01-23 00:40:49,716 log 2904 29992 "GET /api/parents/children/ HTTP/1.1" 200 2
+INFO 2026-01-23 00:40:52,142 log 2904 29992 "GET /users/basic-data/edit/ HTTP/1.1" 200 17461
+INFO 2026-01-23 00:40:52,202 log 2904 29992 "GET /api/users/basic-data/ HTTP/1.1" 200 394
+INFO 2026-01-23 00:40:52,219 log 2904 29992 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-23 00:41:54,559 autoreload 2904 5912 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-23 00:41:55,396 autoreload 27372 28920 Watching for file changes with StatReloader
+INFO 2026-01-23 00:42:02,174 autoreload 27372 28920 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-23 00:42:02,878 autoreload 20196 14652 Watching for file changes with StatReloader
+INFO 2026-01-23 00:42:29,802 autoreload 20196 14652 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\views.py changed, reloading.
+INFO 2026-01-23 00:42:30,625 autoreload 25996 29448 Watching for file changes with StatReloader
+INFO 2026-01-23 00:42:38,324 autoreload 25996 29448 C:\Users\mynam\PycharmProjects\Sport_rb\apps\users\api\serializers.py changed, reloading.
+INFO 2026-01-23 00:42:39,165 autoreload 10824 24412 Watching for file changes with StatReloader
+INFO 2026-01-23 00:43:49,903 log 10824 400 "GET /users/basic-data/edit/ HTTP/1.1" 200 17568
+INFO 2026-01-23 00:43:50,018 log 10824 400 "GET /api/users/basic-data/ HTTP/1.1" 200 414
+INFO 2026-01-23 00:43:50,553 log 10824 400 "GET /users/basic-data/edit/ HTTP/1.1" 200 17568
+INFO 2026-01-23 00:43:50,605 log 10824 400 "GET /api/users/basic-data/ HTTP/1.1" 200 414
+INFO 2026-01-23 00:43:50,742 log 10824 400 "GET /users/basic-data/edit/ HTTP/1.1" 200 17568
+INFO 2026-01-23 00:43:50,798 log 10824 400 "GET /api/users/basic-data/ HTTP/1.1" 200 414
+INFO 2026-01-23 00:43:52,456 log 10824 400 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-01-23 00:43:52,468 log 10824 400 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-23 00:45:53,492 autoreload 10824 24412 C:\Users\mynam\PycharmProjects\Sport_rb\apps\core\signals.py changed, reloading.
+INFO 2026-01-23 00:45:54,289 autoreload 20844 1896 Watching for file changes with StatReloader
+INFO 2026-01-23 00:46:48,277 autoreload 20844 1896 C:\Users\mynam\PycharmProjects\Sport_rb\apps\core\signals.py changed, reloading.
+INFO 2026-01-23 00:46:49,096 autoreload 25368 30036 Watching for file changes with StatReloader
+INFO 2026-01-23 00:50:33,663 autoreload 25368 30036 C:\Users\mynam\PycharmProjects\Sport_rb\apps\core\signals.py changed, reloading.
+INFO 2026-01-23 00:50:34,651 autoreload 9804 3272 Watching for file changes with StatReloader
+INFO 2026-01-23 00:54:45,509 log 9804 21848 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-23 00:54:49,099 log 9804 21848 "GET /events/ HTTP/1.1" 200 10729
+INFO 2026-01-23 00:54:49,182 log 9804 21848 "GET /api/events/ HTTP/1.1" 200 9966
+INFO 2026-01-23 00:54:49,940 log 9804 21848 "GET /organizations/ HTTP/1.1" 200 14397
+INFO 2026-01-23 00:54:50,004 log 9804 21848 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-23 00:58:31,964 log 9804 21848 "GET /organizations/2/ HTTP/1.1" 200 23433
+INFO 2026-01-23 00:58:32,046 log 9804 21848 "GET /api/organizations/2/ HTTP/1.1" 200 462
+INFO 2026-01-23 00:58:38,108 log 9804 21848 "GET /organizations/ HTTP/1.1" 200 14397
+INFO 2026-01-23 00:58:38,165 log 9804 21848 "GET /api/organizations/ HTTP/1.1" 200 1269
+INFO 2026-01-23 01:02:07,720 autoreload 9804 3272 C:\Users\mynam\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-01-23 01:02:08,357 autoreload 12720 16836 Watching for file changes with StatReloader
+INFO 2026-01-23 01:02:12,735 autoreload 12720 16836 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 01:02:13,386 autoreload 3968 6700 Watching for file changes with StatReloader
+INFO 2026-01-23 01:02:59,685 autoreload 3968 6700 C:\Users\mynam\PycharmProjects\Sport_rb\apps\frontend\views.py changed, reloading.
+INFO 2026-01-23 01:03:00,358 autoreload 9448 29096 Watching for file changes with StatReloader
+INFO 2026-01-23 01:41:15,668 log 9448 1060 "GET /organizations/ HTTP/1.1" 200 14795
+INFO 2026-01-23 01:41:15,731 log 9448 1060 "GET /api/organizations/ HTTP/1.1" 200 1434
+INFO 2026-01-23 01:41:19,188 log 9448 1060 "GET / HTTP/1.1" 200 6448

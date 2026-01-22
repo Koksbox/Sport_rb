@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from apps.athletes.models import (
     AthleteProfile, MedicalInfo, EmergencyContact,
-    SocialStatus, AthleteSpecialization
+    SocialStatus, AthleteSpecialization, SectionEnrollmentRequest
 )
 from apps.parents.models import ParentChildLink
 from apps.sports.models import Sport
@@ -17,7 +17,7 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
 class MedicalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicalInfo
-        fields = ['conditions', 'other_conditions', 'allergies']
+        fields = ['conditions', 'other_conditions', 'allergies', 'health_issues_description']
 
 class SocialStatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,14 +37,20 @@ class AthleteProfileSerializer(serializers.ModelSerializer):
     social_status = SocialStatusSerializer(required=False)
     specializations = AthleteSpecializationSerializer(many=True, read_only=True)
     main_sport_name = serializers.CharField(source='main_sport.name', read_only=True)
+    additional_sports = serializers.SerializerMethodField()
 
     class Meta:
         model = AthleteProfile
         fields = [
             'id', 'city', 'school_or_university', 'main_sport', 'main_sport_name',
             'health_group', 'goals', 'emergency_contact', 'medical_info',
-            'social_status', 'specializations'
+            'social_status', 'specializations', 'additional_sports'
         ]
+    
+    def get_additional_sports(self, obj):
+        """Получить дополнительные виды спорта (не основные)"""
+        additional = obj.specializations.filter(is_primary=False)
+        return [{'id': s.sport.id, 'name': s.sport.name} for s in additional]
 
     def update(self, instance, validated_data):
         # Обновление вложенных объектов
@@ -130,6 +136,39 @@ class EnrollmentRequestSerializer(serializers.ModelSerializer):
         athlete = self.context['request'].user.athlete_profile
         return Enrollment.objects.create(
             athlete=athlete,
+            status='pending',
+            **validated_data
+        )
+
+
+class SectionEnrollmentRequestSerializer(serializers.ModelSerializer):
+    """Сериализатор для заявки на секцию"""
+    class Meta:
+        model = SectionEnrollmentRequest
+        fields = ['sport_direction', 'message']
+
+    def validate(self, attrs):
+        athlete = self.context['request'].user.athlete_profile
+        sport_direction = attrs['sport_direction']
+        
+        # Проверка: нет активной или ожидающей заявки на эту секцию
+        if SectionEnrollmentRequest.objects.filter(
+            athlete=athlete,
+            sport_direction=sport_direction,
+            status='pending'
+        ).exists():
+            raise serializers.ValidationError("Вы уже подали заявку на эту секцию.")
+        
+        return attrs
+
+    def create(self, validated_data):
+        athlete = self.context['request'].user.athlete_profile
+        sport_direction = validated_data['sport_direction']
+        organization = sport_direction.organization
+        
+        return SectionEnrollmentRequest.objects.create(
+            athlete=athlete,
+            organization=organization,
             status='pending',
             **validated_data
         )

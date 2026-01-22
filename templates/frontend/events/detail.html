@@ -4,37 +4,181 @@
 {% block title %}Мероприятие - СпортБаш{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 800px;">
-    <div id="eventDetail" hx-get="/api/events/{{ event_id }}/" hx-trigger="load">
+<div class="container" style="max-width: 1200px;">
+    <div id="eventDetail">
         <div class="loading" style="margin: 2rem auto; display: block;"></div>
     </div>
 </div>
 
+<!-- Модальное окно для регистрации спортсменов/групп (тренер/директор) -->
+<div id="bulkRegisterModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close" onclick="closeBulkModal()">&times;</span>
+        <h2>Зарегистрировать спортсменов на мероприятие</h2>
+        
+        <div style="margin-bottom: 1rem;">
+            <button class="btn btn-secondary" onclick="showAthletesTab()" id="athletesTabBtn">Спортсмены</button>
+            <button class="btn btn-secondary" onclick="showGroupsTab()" id="groupsTabBtn">Группы</button>
+        </div>
+        
+        <!-- Вкладка спортсменов -->
+        <div id="athletesTab">
+            <div style="margin-bottom: 1rem;">
+                <input type="text" id="athleteSearch" class="form-control" placeholder="Поиск спортсменов..." 
+                    onkeyup="filterAthletes()">
+            </div>
+            <div id="athletesList" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+        </div>
+        
+        <!-- Вкладка групп -->
+        <div id="groupsTab" style="display: none;">
+            <div id="groupsList" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+        </div>
+        
+        <div id="bulkRegisterErrors" style="color: var(--text-error); margin-top: 1rem;"></div>
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-primary" onclick="submitBulkRegistration()">Зарегистрировать</button>
+            <button type="button" class="btn btn-secondary" onclick="closeBulkModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 2% auto;
+    padding: 2rem;
+    border: 1px solid #888;
+    width: 90%;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
+
+.athlete-item, .group-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.athlete-item:hover, .group-item:hover {
+    background-color: #f5f5f5;
+}
+
+.athlete-item.selected, .group-item.selected {
+    background-color: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+.athlete-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-blue);
+    color: white;
+}
+</style>
+
 <script>
-document.body.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'eventDetail') {
-        const data = JSON.parse(event.detail.xhr.response);
+const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+const hasAthleteProfile = {% if user.is_authenticated and user.athlete_profile %}true{% else %}false{% endif %};
+const hasCoachProfile = {% if user.is_authenticated and user.coach_profile %}true{% else %}false{% endif %};
+const hasDirectorRole = {% if user.is_authenticated and user.director_role %}true{% else %}false{% endif %};
+
+let eventData = null;
+let selectedAthletes = new Set();
+let selectedGroups = new Set();
+let allAthletes = [];
+let allGroups = [];
+
+// Загрузка данных мероприятия
+fetch(`/api/events/{{ event_id }}/`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Мероприятие не найдено');
+        }
+        return response.json();
+    })
+    .then(data => {
+        eventData = data;
         renderEventDetail(data);
-    }
-});
+    })
+    .catch(error => {
+        document.getElementById('eventDetail').innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h2>Мероприятие не найдено</h2>
+                    <p>Мероприятие с указанным ID не существует.</p>
+                    <a href="{% url 'frontend-events' %}" class="btn btn-primary">Вернуться к списку мероприятий</a>
+                </div>
+            </div>
+        `;
+    });
 
 function renderEventDetail(event) {
     const container = document.getElementById('eventDetail');
     const date = event.date ? new Date(event.date).toLocaleDateString('ru-RU') : 'Дата не указана';
     
-    let html = `
+    let registerButton = '';
+    if (hasAthleteProfile) {
+        registerButton = `<button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>`;
+    } else if (hasCoachProfile || hasDirectorRole) {
+        registerButton = `<button class="btn btn-primary" onclick="openBulkRegisterModal(${event.id})">Зарегистрировать спортсменов</button>`;
+    }
+    
+    const html = `
+        <div style="margin-bottom: 1rem;">
+            <a href="{% url 'frontend-events' %}" style="color: var(--primary-blue); text-decoration: none;">
+                ← Вернуться к списку мероприятий
+            </a>
+        </div>
+        
         <div class="card">
             <div class="card-header">
-                <h1 class="card-title">${event.name || 'Без названия'}</h1>
+                <h1 class="card-title">${escapeHtml(event.name || 'Без названия')}</h1>
             </div>
             <div class="card-body">
                 <p><strong>Дата:</strong> ${date}</p>
-                ${event.city ? '<p><strong>Город:</strong> ' + event.city + '</p>' : ''}
-                ${event.sport ? '<p><strong>Вид спорта:</strong> ' + event.sport + '</p>' : ''}
-                ${event.description ? '<p><strong>Описание:</strong><br>' + event.description + '</p>' : ''}
+                ${event.city ? '<p><strong>Город:</strong> ' + escapeHtml(event.city) + '</p>' : ''}
+                ${event.sport ? '<p><strong>Вид спорта:</strong> ' + escapeHtml(event.sport) + '</p>' : ''}
+                ${event.description ? '<p><strong>Описание:</strong><br>' + escapeHtml(event.description) + '</p>' : ''}
+                ${event.organization_name ? '<p><strong>Организатор:</strong> ' + escapeHtml(event.organization_name) + '</p>' : ''}
                 
                 <div style="margin-top: 2rem;">
-                    <button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>
+                    ${registerButton}
                 </div>
             </div>
         </div>
@@ -48,7 +192,7 @@ function registerForEvent(eventId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': getCookie('csrftoken')
         }
     })
     .then(response => response.json())
@@ -56,12 +200,253 @@ function registerForEvent(eventId) {
         if (data.message) {
             alert(data.message);
         } else {
-            alert('Ошибка: ' + JSON.stringify(data));
+            alert('Ошибка: ' + (data.error || JSON.stringify(data)));
         }
     })
     .catch(error => {
         alert('Ошибка: ' + error);
     });
+}
+
+// Функции для массовой регистрации
+function openBulkRegisterModal(eventId) {
+    selectedAthletes.clear();
+    selectedGroups.clear();
+    document.getElementById('bulkRegisterModal').style.display = 'block';
+    showAthletesTab();
+    loadAthletes(eventId);
+    loadGroups(eventId);
+}
+
+function closeBulkModal() {
+    document.getElementById('bulkRegisterModal').style.display = 'none';
+    selectedAthletes.clear();
+    selectedGroups.clear();
+}
+
+function showAthletesTab() {
+    document.getElementById('athletesTab').style.display = 'block';
+    document.getElementById('groupsTab').style.display = 'none';
+    document.getElementById('athletesTabBtn').classList.add('active');
+    document.getElementById('groupsTabBtn').classList.remove('active');
+}
+
+function showGroupsTab() {
+    document.getElementById('athletesTab').style.display = 'none';
+    document.getElementById('groupsTab').style.display = 'block';
+    document.getElementById('athletesTabBtn').classList.remove('active');
+    document.getElementById('groupsTabBtn').classList.add('active');
+}
+
+function loadAthletes(eventId) {
+    fetch(`/api/events/${eventId}/athletes/`, {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        allAthletes = data.athletes || [];
+        renderAthletes(allAthletes);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки спортсменов:', error);
+        document.getElementById('athletesList').innerHTML = 
+            '<p style="color: var(--text-error);">Ошибка загрузки спортсменов</p>';
+    });
+}
+
+function loadGroups(eventId) {
+    fetch(`/api/events/${eventId}/groups/`, {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        allGroups = data.groups || [];
+        renderGroups(allGroups);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки групп:', error);
+        document.getElementById('groupsList').innerHTML = 
+            '<p style="color: var(--text-error);">Ошибка загрузки групп</p>';
+    });
+}
+
+function renderAthletes(athletes) {
+    const container = document.getElementById('athletesList');
+    
+    if (!athletes || athletes.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Нет доступных спортсменов</p>';
+        return;
+    }
+    
+    let html = '';
+    athletes.forEach(athlete => {
+        const isSelected = selectedAthletes.has(athlete.id);
+        const disabled = !athlete.eligible || athlete.already_registered;
+        const disabledClass = disabled ? 'disabled' : '';
+        const selectedClass = isSelected ? 'selected' : '';
+        
+        html += `
+            <div class="athlete-item ${selectedClass} ${disabledClass}" 
+                 onclick="${disabled ? '' : `toggleAthlete(${athlete.id})`}"
+                 data-athlete-id="${athlete.id}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${escapeHtml(athlete.full_name)}</strong>
+                        ${athlete.age ? ` (${athlete.age} лет)` : ''}
+                        ${athlete.main_sport ? `<br><small>${escapeHtml(athlete.main_sport)}</small>` : ''}
+                    </div>
+                    <div>
+                        ${!athlete.eligible ? '<span style="color: var(--text-error);">Не подходит по возрасту</span>' : ''}
+                        ${athlete.already_registered ? '<span style="color: var(--text-light);">Уже зарегистрирован</span>' : ''}
+                        ${isSelected ? '✓' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function renderGroups(groups) {
+    const container = document.getElementById('groupsList');
+    
+    if (!groups || groups.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Нет доступных групп</p>';
+        return;
+    }
+    
+    let html = '';
+    groups.forEach(group => {
+        const isSelected = selectedGroups.has(group.id);
+        const selectedClass = isSelected ? 'selected' : '';
+        
+        html += `
+            <div class="group-item ${selectedClass}" 
+                 onclick="toggleGroup(${group.id})"
+                 data-group-id="${group.id}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${escapeHtml(group.name)}</strong>
+                        ${group.sport_name ? `<br><small>${escapeHtml(group.sport_name)}</small>` : ''}
+                        ${group.age_level ? `<br><small>Возраст: ${escapeHtml(group.age_level)}</small>` : ''}
+                    </div>
+                    <div>
+                        <span>Спортсменов: ${group.athletes_count || 0}</span>
+                        ${isSelected ? ' ✓' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function toggleAthlete(athleteId) {
+    if (selectedAthletes.has(athleteId)) {
+        selectedAthletes.delete(athleteId);
+    } else {
+        selectedAthletes.add(athleteId);
+    }
+    renderAthletes(allAthletes);
+}
+
+function toggleGroup(groupId) {
+    if (selectedGroups.has(groupId)) {
+        selectedGroups.delete(groupId);
+    } else {
+        selectedGroups.add(groupId);
+    }
+    renderGroups(allGroups);
+}
+
+function filterAthletes() {
+    const searchTerm = document.getElementById('athleteSearch').value.toLowerCase();
+    const filtered = allAthletes.filter(athlete => 
+        athlete.full_name.toLowerCase().includes(searchTerm)
+    );
+    renderAthletes(filtered);
+}
+
+function submitBulkRegistration() {
+    const athletes = Array.from(selectedAthletes);
+    const groups = Array.from(selectedGroups);
+    
+    if (athletes.length === 0 && groups.length === 0) {
+        alert('Выберите спортсменов или группы для регистрации');
+        return;
+    }
+    
+    const errorsDiv = document.getElementById('bulkRegisterErrors');
+    errorsDiv.textContent = '';
+    
+    fetch(`/api/events/{{ event_id }}/bulk-register/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            athletes: athletes,
+            groups: groups
+        })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert(`Успешно зарегистрировано: ${result.data.registered_count} спортсменов`);
+            closeBulkModal();
+            // Можно обновить список спортсменов
+            loadAthletes({{ event_id }});
+        } else {
+            const errorMsg = result.data.error || 'Неизвестная ошибка';
+            errorsDiv.textContent = errorMsg;
+            if (result.data.errors) {
+                errorsDiv.innerHTML += '<ul>' + result.data.errors.map(e => `<li>${escapeHtml(e)}</li>`).join('') + '</ul>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        errorsDiv.textContent = 'Произошла ошибка при регистрации';
+    });
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('bulkRegisterModal');
+    if (event.target === modal) {
+        closeBulkModal();
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 </script>
 {% endblock %}

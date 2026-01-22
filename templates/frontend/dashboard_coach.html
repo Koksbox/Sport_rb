@@ -1,10 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load role_names %}
 
 {% block title %}Личный кабинет тренера - СпортБаш{% endblock %}
 
 {% block content %}
 <div class="container">
+    {% if all_roles|length > 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for role in all_roles %}
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}">
+                    {{ role|role_name }}
+                </button>
+                {% endfor %}
+                {% if all_roles|length < 4 %}
+                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
+                        style="background: var(--primary-blue); color: white;">
+                    + Добавить роль
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% elif all_roles|length == 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>У вас одна роль. Хотите добавить ещё?</span>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <h1>🏋️ Личный кабинет тренера</h1>
     
     {% if user.coach_profile %}
@@ -16,7 +51,7 @@
             <div class="profile-info">
                 <div class="profile-item">
                     <span class="profile-label">ФИО:</span>
-                    <span class="profile-value">{{ user.get_full_name }}</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
                 </div>
                 <div class="profile-item">
                     <span class="profile-label">Email:</span>
@@ -41,6 +76,41 @@
                 </div>
                 {% endif %}
             </div>
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать общие данные</a>
+                <a href="{% url 'frontend-coach-profile-edit' %}" class="btn btn-primary">🏋️ Редактировать профиль тренера</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Мои организации -->
+    {% if user.coach_profile %}
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Мои организации</h2>
+        </div>
+        <div class="card-body">
+            <div id="coachOrganizations">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'frontend-coach-find-organization' %}" class="btn btn-primary">🔍 Найти организацию для работы</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Мои группы -->
+    {% if user.coach_profile %}
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Мои группы</h2>
+        </div>
+        <div class="card-body">
+            <div id="coachGroups">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
         </div>
     </div>
     {% endif %}
@@ -50,17 +120,176 @@
         <h2 class="section-title">Быстрые действия</h2>
     </div>
     <div class="grid grid-2">
-        <a href="#" class="item-card">
+        <a href="{% url 'frontend-coach-groups' %}" class="item-card">
             <div class="item-icon">👥</div>
-            <h3 class="item-card-title">Мои группы</h3>
-            <p class="item-card-description">Управление группами и учениками</p>
+            <h3 class="item-card-title">Управление группами</h3>
+            <p class="item-card-description">Просмотр спортсменов и посещаемости</p>
+        </a>
+        
+        <a href="{% url 'frontend-coach-find-organization' %}" class="item-card">
+            <div class="item-icon">🔍</div>
+            <h3 class="item-card-title">Свободные организации</h3>
+            <p class="item-card-description">Найти организацию и подать заявку</p>
+        </a>
+        
+        <a href="{% url 'frontend-coach-invitations' %}" class="item-card">
+            <div class="item-icon">📨</div>
+            <h3 class="item-card-title">Приглашения</h3>
+            <p class="item-card-description">Просмотр приглашений от организаций</p>
         </a>
         
         <a href="{% url 'frontend-events' %}" class="item-card">
             <div class="item-icon">🏆</div>
             <h3 class="item-card-title">Мероприятия</h3>
-            <p class="item-card-description">Создать или посмотреть мероприятия</p>
+            <p class="item-card-description">Зарегистрировать участника(-ов) на мероприятия</p>
         </a>
     </div>
 </div>
+
+<script>
+function switchRole(role) {
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            // Перезагружаем страницу для обновления интерфейса и навигации
+            window.location.href = '/dashboard/';
+        } else {
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Загрузка организаций тренера
+fetch('/api/coaches/organizations/', {
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const container = document.getElementById('coachOrganizations');
+        if (data.organizations && data.organizations.length > 0) {
+            let html = '<div class="grid grid-2" style="gap: 1rem;">';
+            data.organizations.forEach(org => {
+                html += `
+                    <div class="card" style="padding: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem;">${escapeHtml(org.name)}</h4>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">${escapeHtml(org.city_name || '')}</p>
+                        <a href="/coaches/organizations/${org.id}/groups/" class="btn btn-secondary" style="width: 100%;">Управлять группами</a>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center;">У вас пока нет организаций</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки организаций:', error);
+        const container = document.getElementById('coachOrganizations');
+        if (container) {
+            container.innerHTML = '<p style="color: var(--text-error); text-align: center;">Ошибка загрузки организаций. Попробуйте обновить страницу.</p>';
+        }
+    });
+
+// Загрузка групп тренера
+fetch('/api/coaches/groups/')
+    .then(response => response.json())
+    .then(groups => {
+        const container = document.getElementById('coachGroups');
+        if (groups && groups.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+            groups.forEach(group => {
+                html += `
+                    <div class="card" style="padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">${escapeHtml(group.name || 'Без названия')}</h4>
+                                <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                    ${escapeHtml(group.organization_name || '')} • ${escapeHtml(group.sport_name || '')}
+                                </p>
+                                <p style="color: var(--text-light);">Спортсменов: ${group.enrollments ? group.enrollments.length : 0}</p>
+                            </div>
+                            <a href="/coaches/groups/${group.id}/" class="btn btn-primary">Открыть</a>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center;">У вас пока нет групп</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки групп:', error);
+        document.getElementById('coachGroups').innerHTML = 
+            '<p style="color: var(--text-error);">Ошибка загрузки групп</p>';
+    });
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+
+<style>
+.role-switch-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}
+</style>
 {% endblock %}

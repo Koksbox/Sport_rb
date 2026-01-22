@@ -36,7 +36,7 @@ class Command(BaseCommand):
         self.create_organizations()
         self.create_events()
 
-        self.stdout.write(self.style.SUCCESS('✓ Пробные данные успешно загружены!'))
+        self.stdout.write(self.style.SUCCESS('Пробные данные успешно загружены!'))
 
     def clear_data(self):
         """Очистка существующих данных (кроме суперпользователя)"""
@@ -85,7 +85,7 @@ class Command(BaseCommand):
             )
             cities.append(city)
 
-        self.stdout.write(self.style.SUCCESS(f'✓ Создано {len(cities)} городов'))
+        self.stdout.write(self.style.SUCCESS(f'Создано {len(cities)} городов'))
 
     def create_sports(self):
         """Создание видов спорта"""
@@ -138,7 +138,7 @@ class Command(BaseCommand):
                     except Exception as e:
                         self.stdout.write(self.style.WARNING(f'Не удалось создать категорию {category_name} для {sport_name}: {e}'))
 
-        self.stdout.write(self.style.SUCCESS(f'✓ Создано {sports_count} видов спорта и {categories_count} категорий'))
+        self.stdout.write(self.style.SUCCESS(f'Создано {sports_count} видов спорта и {categories_count} категорий'))
 
     def create_users(self):
         """Создание пользователей с разными ролями"""
@@ -246,7 +246,7 @@ class Command(BaseCommand):
                 UserRole.objects.create(user=user, role=role)
                 ParentProfile.objects.create(user=user)
 
-        self.stdout.write(self.style.SUCCESS('✓ Пользователи созданы'))
+        self.stdout.write(self.style.SUCCESS('Пользователи созданы'))
 
     def create_organizations(self):
         """Создание спортивных организаций"""
@@ -295,7 +295,7 @@ class Command(BaseCommand):
                             sport=sport
                         )
 
-        self.stdout.write(self.style.SUCCESS(f'✓ Создано {org_count} организаций'))
+        self.stdout.write(self.style.SUCCESS(f'Создано {org_count} организаций'))
 
     def create_events(self):
         """Создание мероприятий"""
@@ -315,30 +315,41 @@ class Command(BaseCommand):
             return
 
         events_data = [
-            ('Республиканский турнир по футболу', 'competition', 'republic', 'Уфа', 'Стадион "Динамо"', 30),
-            ('Городские соревнования по плаванию', 'competition', 'city', 'Стерлитамак', 'Бассейн "Волна"', 20),
-            ('Фестиваль ГТО', 'gto_festival', 'city', 'Салават', 'Стадион "Нефтехимик"', 25),
-            ('Открытый турнир по боксу', 'competition', 'city', 'Нефтекамск', 'Дворец спорта', 18),
-            ('Спортивный лагерь "Олимпийские надежды"', 'camp', 'republic', 'Уфа', 'База отдыха "Родник"', 35),
+            ('Республиканский турнир по футболу', 'competition', 'republic', 'Уфа', 'Стадион "Динамо"', 30, 'Футбол'),
+            ('Городские соревнования по плаванию', 'competition', 'city', 'Стерлитамак', 'Бассейн "Волна"', 20, 'Плавание'),
+            ('Фестиваль ГТО "Здоровье и сила"', 'gto_festival', 'city', 'Салават', 'Стадион "Нефтехимик"', 25, None),
+            ('Открытый турнир по боксу', 'competition', 'city', 'Нефтекамск', 'Дворец спорта', 18, 'Бокс'),
+            ('Спортивный лагерь "Олимпийские надежды"', 'camp', 'republic', 'Уфа', 'База отдыха "Родник"', 35, None),
+            ('Марафон "Бег за здоровьем"', 'marathon', 'city', 'Октябрьский', 'Парк Победы', 45, 'Бег'),
+            ('Дни открытых дверей в ДЮСШ', 'open_doors', 'city', 'Туймазы', 'ДЮСШ "Олимпиец"', 10, None),
+            ('Республиканские соревнования по баскетболу', 'competition', 'republic', 'Уфа', 'Спорткомплекс "Динамо"', 40, 'Баскетбол'),
+            ('Городской турнир по волейболу', 'competition', 'city', 'Стерлитамак', 'Спортзал "Юность"', 22, 'Волейбол'),
+            ('Фестиваль единоборств', 'competition', 'city', 'Салават', 'Дворец спорта', 28, 'Дзюдо'),
         ]
 
         event_count = 0
-        for title, event_type, level, city_name, venue, days_ahead in events_data:
-            city = next((c for c in cities if c.name == city_name), cities[0])
+        for title, event_type, level, city_name, venue, days_ahead, sport_name in events_data:
+            city = next((c for c in cities if c.name == city_name), cities[0] if cities else None)
+            if not city:
+                continue
+                
             start_date = timezone.now() + timedelta(days=days_ahead)
-            end_date = start_date + timedelta(days=1)
+            end_date = start_date + timedelta(days=1 if event_type != 'camp' else 7)
 
             # Создаем категорию события
-            sport = random.choice(sports)
-            category, _ = EventCategory.objects.get_or_create(
-                name=f'{sport.name} - {title}',
-                defaults={'sport': sport}
-            )
+            try:
+                category, _ = EventCategory.objects.get_or_create(
+                    name=event_type,
+                    defaults={'description': f'Категория для мероприятий типа {event_type}'}
+                )
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f'Не удалось создать категорию: {e}'))
+                category = None
 
             event, created = Event.objects.get_or_create(
                 title=title,
                 defaults={
-                    'description': f'Описание мероприятия: {title}. Приглашаем всех желающих принять участие!',
+                    'description': f'Описание мероприятия: {title}. Приглашаем всех желающих принять участие! Мероприятие пройдет в городе {city_name} на площадке "{venue}".',
                     'event_type': event_type,
                     'level': level,
                     'city': city,
@@ -360,10 +371,13 @@ class Command(BaseCommand):
                     (17, 20),
                 ]
                 for min_age, max_age in age_groups:
-                    EventAgeGroup.objects.create(
-                        event=event,
-                        min_age=min_age,
-                        max_age=max_age
-                    )
+                    try:
+                        EventAgeGroup.objects.create(
+                            event=event,
+                            min_age=min_age,
+                            max_age=max_age
+                        )
+                    except Exception as e:
+                        self.stdout.write(self.style.WARNING(f'Не удалось создать возрастную группу: {e}'))
 
-        self.stdout.write(self.style.SUCCESS(f'✓ Создано {event_count} мероприятий'))
+        self.stdout.write(self.style.SUCCESS(f'Создано {event_count} мероприятий'))

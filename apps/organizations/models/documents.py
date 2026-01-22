@@ -7,6 +7,7 @@ DOCUMENT_TYPE_CHOICES = [
     ('inn', 'ИНН'),
     ('license', 'Лицензия'),
     ('charter', 'Устав'),
+    ('other', 'Другое'),
 ]
 
 class OrganizationDocument(TimeStampedModel):

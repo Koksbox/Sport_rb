@@ -4,7 +4,13 @@
 {% block title %}Создать организацию - СпортБаш{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 800px;">
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-organizations' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться к списку организаций
+        </a>
+    </div>
+    
     <h1>Создать спортивную организацию</h1>
     
     <div class="card">
@@ -12,61 +18,62 @@
             <h2 class="card-title">Информация об организации</h2>
         </div>
         <div class="card-body">
-            <form id="createOrgForm" hx-post="/api/organizations/create/" hx-target="#messages" hx-swap="innerHTML">
+            <form id="createOrgForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div id="messages"></div>
                 
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Название организации *</label>
+                        <input type="text" class="form-control" id="name" name="name" required 
+                               placeholder="Например: ДЮСШ 'Олимпиец'">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="org_type">Тип организации *</label>
+                        <select class="form-control" id="org_type" name="org_type" required>
+                            <option value="">Выберите тип</option>
+                            <option value="state">Государственная</option>
+                            <option value="private">Частная</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="citySelector"></div>
+                
                 <div class="form-group">
-                    <label class="form-label" for="name">Название организации *</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <label class="form-label" for="address">Адрес *</label>
+                    <input type="text" class="form-control" id="address" name="address" required
+                           placeholder="Например: ул. Ленина, д. 10">
+                    <small style="color: var(--text-light);">Укажите адрес или выберите точку на карте</small>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="type">Тип организации *</label>
-                    <select class="form-control" id="type" name="type" required>
-                        <option value="">Выберите тип</option>
-                        <option value="state">Государственная</option>
-                        <option value="private">Частная</option>
-                    </select>
+                    <label class="form-label" for="inn">ИНН *</label>
+                    <input type="text" class="form-control" id="inn" name="inn" required
+                           placeholder="10 или 12 цифр" pattern="[0-9]{10}|[0-9]{12}" maxlength="12">
+                    <small style="color: var(--text-light);">ИНН должен быть уникальным</small>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="city">Город *</label>
-                    <input type="text" class="form-control" id="city" name="city" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="address">Адрес</label>
-                    <input type="text" class="form-control" id="address" name="address">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="description">Описание</label>
-                    <textarea class="form-control" id="description" name="description" rows="4"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="website">Сайт</label>
-                    <input type="url" class="form-control" id="website" name="website" placeholder="https://example.com">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="phone">Телефон</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email">
+                    <label class="form-label" for="website">Сайт организации</label>
+                    <input type="url" class="form-control" id="website" name="website" 
+                           placeholder="https://example.com">
+                    <small style="color: var(--text-light);">Необязательное поле</small>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Документы (лицензия, устав)</label>
-                    <input type="file" class="form-control" id="documents" name="documents" multiple>
-                    <small>Можно загрузить несколько файлов</small>
+                    <input type="file" class="form-control" id="documents" name="documents" multiple 
+                           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    <small style="color: var(--text-light);">Необязательное поле. Можно загрузить несколько файлов (PDF, DOC, изображения)</small>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Создать организацию</button>
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                        Создать организацию
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -80,28 +87,170 @@
 </div>
 
 <script>
-document.getElementById('createOrgForm').addEventListener('htmx:afterRequest', function(event) {
-    if (event.detail.xhr.status === 201) {
-        const response = JSON.parse(event.detail.xhr.responseText);
-        const messagesDiv = document.getElementById('messages');
-        messagesDiv.innerHTML = '<div class="alert alert-success">' + 
-            response.message + '</div>';
-        setTimeout(() => {
-            window.location.href = '/dashboard/';
-        }, 2000);
-    } else {
-        const response = JSON.parse(event.detail.xhr.responseText);
-        const messagesDiv = document.getElementById('messages');
-        let errors = '';
-        for (let key in response) {
-            if (Array.isArray(response[key])) {
-                errors += response[key].join(', ') + '<br>';
+// Инициализация селектора города с картой
+let citySelector = null;
+
+// Загружаем данные пользователя и инициализируем селектор
+fetch('/api/users/basic-data/')
+    .then(response => response.json())
+    .then(userData => {
+        // Получаем API ключ
+        const apiKey = window.YANDEX_MAPS_API_KEY || '';
+        
+        citySelector = window.createYandexCitySelector('citySelector', {
+            apiKey: apiKey,
+            showMap: true,
+            mapHeight: '400px',
+            initialCity: userData.city || null,
+            onCitySelect: function(city) {
+                // При выборе города можно обновить адрес
+                console.log('Выбран город:', city);
+            }
+        });
+        
+        // Если есть город в профиле, устанавливаем его
+        if (userData.city) {
+            // Ищем город в списке и устанавливаем
+            setTimeout(() => {
+                fetch(`/api/geography/cities/search/?q=${encodeURIComponent(userData.city)}`)
+                    .then(response => response.json())
+                    .then(results => {
+                        if (results.length > 0 && citySelector) {
+                            const input = document.getElementById('citySelector_input');
+                            if (input) {
+                                citySelector.selectCity(results[0], input);
+                            }
+                        }
+                    });
+            }, 500);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки данных пользователя:', error);
+        // Инициализируем без данных пользователя
+        const apiKey = window.YANDEX_MAPS_API_KEY || '';
+        citySelector = window.createYandexCitySelector('citySelector', {
+            apiKey: apiKey,
+            showMap: true,
+            mapHeight: '400px'
+        });
+    });
+
+// Обработка отправки формы
+document.getElementById('createOrgForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    const form = this;
+    
+    // Очистка предыдущих сообщений
+    messagesDiv.innerHTML = '';
+    
+    // Блокировка кнопки
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Создание...';
+    
+    // Создание FormData
+    const formData = new FormData(form);
+    
+    // Добавляем данные из селектора города
+    if (citySelector) {
+        const cityData = citySelector.getSelectedCity();
+        const coords = citySelector.getSelectedCoordinates();
+        
+        if (cityData.id) {
+            formData.set('city_id', cityData.id);
+        }
+        if (coords.latitude) {
+            formData.set('latitude', coords.latitude);
+        }
+        if (coords.longitude) {
+            formData.set('longitude', coords.longitude);
+        }
+    }
+    
+    // Отправка запроса
+    fetch('/api/organizations/create/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">' + 
+                (result.data.message || 'Организация успешно создана!') + '</div>';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 2000);
+        } else {
+            // Обработка ошибок
+            let errors = '';
+            if (result.data.error) {
+                errors = result.data.error;
+            } else if (typeof result.data === 'object') {
+                for (let key in result.data) {
+                    const fieldNames = {
+                        'name': 'Название организации',
+                        'org_type': 'Тип организации',
+                        'city_id': 'Город',
+                        'address': 'Адрес',
+                        'inn': 'ИНН',
+                        'website': 'Сайт'
+                    };
+                    const fieldName = fieldNames[key] || key;
+                    
+                    if (Array.isArray(result.data[key])) {
+                        result.data[key].forEach(msg => {
+                            errors += `${fieldName}: ${msg}<br>`;
+                        });
+                    } else if (typeof result.data[key] === 'object') {
+                        for (let nestedKey in result.data[key]) {
+                            errors += `${fieldName}.${nestedKey}: ${result.data[key][nestedKey]}<br>`;
+                        }
+                    } else {
+                        errors += `${fieldName}: ${result.data[key]}<br>`;
+                    }
+                }
             } else {
-                errors += response[key] + '<br>';
+                errors = 'Произошла ошибка при создании организации';
+            }
+            
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
+            messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке формы. Попробуйте еще раз.</div>';
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Создать организацию';
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
     }
+    return cookieValue;
+}
+
+// Валидация ИНН
+document.getElementById('inn').addEventListener('input', function(e) {
+    this.value = this.value.replace(/\D/g, ''); // Только цифры
 });
 </script>
 {% endblock %}

@@ -34,23 +34,12 @@
                     <input type="tel" class="form-control" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                     <label class="form-label" for="city">Город</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="Например: Уфа">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="role">Выберите тип кабинета *</label>
-                    <select class="form-control" id="role" name="role" required>
-                        <option value="">-- Выберите --</option>
-                        <option value="athlete">✅ Спортсмен - Я хочу заниматься спортом</option>
-                        <option value="parent">👨‍👩‍👧 Родитель - Ребёнок занимается спортом</option>
-                        <option value="coach">🏋️ Тренер - Я тренер</option>
-                        <option value="organization">🏢 Организация - Я представляю спортивную организацию</option>
-                    </select>
-                    <small class="form-text" style="color: var(--text-light); margin-top: 0.5rem; display: block;">
-                        Выберите, как вы хотите использовать СпортБаш
-                    </small>
+                    <input type="text" class="form-control" id="city" name="city" 
+                           placeholder="Начните вводить название города, села или деревни" 
+                           autocomplete="off">
+                    <div id="citySuggestions" class="city-suggestions" style="display: none;"></div>
                 </div>
                 
                 <div class="form-group">
@@ -89,6 +78,56 @@
 </div>
 
 <script>
+// Автокомплит для города
+let citySearchTimeout;
+const cityInput = document.getElementById('city');
+const citySuggestions = document.getElementById('citySuggestions');
+
+cityInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    clearTimeout(citySearchTimeout);
+    
+    if (query.length < 2) {
+        citySuggestions.style.display = 'none';
+        return;
+    }
+    
+    citySearchTimeout = setTimeout(() => {
+        fetch(`/api/geography/cities/search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(results => {
+                if (results.length === 0) {
+                    citySuggestions.style.display = 'none';
+                    return;
+                }
+                
+                citySuggestions.innerHTML = '';
+                results.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-suggestion-item';
+                    item.textContent = city.display_name;
+                    item.onclick = function() {
+                        cityInput.value = city.name;
+                        citySuggestions.style.display = 'none';
+                    };
+                    citySuggestions.appendChild(item);
+                });
+                citySuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска городов:', error);
+            });
+    }, 300);
+});
+
+// Скрываем подсказки при клике вне поля
+document.addEventListener('click', function(e) {
+    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
+        citySuggestions.style.display = 'none';
+    }
+});
+
 // Обработка формы регистрации
 document.getElementById('registerForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -231,4 +270,34 @@ function registerTelegram() {
     }
 }
 </script>
+
+<style>
+.city-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.city-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background-color: var(--secondary-blue);
+}
+
+.city-suggestion-item:last-child {
+    border-bottom: none;
+}
+</style>
 {% endblock %}

@@ -1,6 +1,6 @@
 # apps/coaches/admin.py
 from django.contrib import admin
-from .models import CoachProfile, Qualification, ClubRequest
+from .models import CoachProfile, Qualification, ClubRequest, CoachInvitation
 
 
 @admin.register(CoachProfile)

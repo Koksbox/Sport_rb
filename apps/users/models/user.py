@@ -37,6 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[('M', 'Мужской'), ('F', 'Женский')], null=True, blank=True)
     city = models.CharField(max_length=100, blank=True)
+    photo = models.ImageField(upload_to='user_photos/', null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

@@ -15,6 +15,7 @@ class MedicalInfo(TimeStampedModel):
     conditions = models.JSONField(default=list)  # список из MEDICAL_CONDITIONS
     other_conditions = EncryptedTextField(blank=True)
     allergies = EncryptedTextField(blank=True)
+    health_issues_description = EncryptedTextField(blank=True, help_text="Описание проблем со здоровьем")
 
     class Meta:
         db_table = 'athletes_medical'

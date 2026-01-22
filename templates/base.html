@@ -27,21 +27,21 @@
             <div class="nav-menu">
                 {% if user.is_authenticated %}
                     <a href="{% url 'frontend-dashboard' %}" class="nav-link">
-                        {% if user.roles.exists %}
-                            {% with role=user.roles.first.role %}
-                                {% if role == 'athlete' %}👤 Спортсмен
-                                {% elif role == 'parent' %}👨‍👩‍👧 Родитель
-                                {% elif role == 'coach' %}🏋️ Тренер
-                                {% elif role == 'organization' or role == 'director' %}🏢 Организация
-                                {% else %}Личный кабинет{% endif %}
-                            {% endwith %}
+                        {% if active_role and active_role_icon and active_role_name %}
+                            {{ active_role_icon }} {{ active_role_name }}
                         {% else %}
                             Личный кабинет
                         {% endif %}
                     </a>
+                    {% if active_role == 'coach' %}
+                        <a href="{% url 'frontend-coach-find-organization' %}" class="nav-link">🔍 Найти организацию</a>
+                    {% endif %}
+                    {% if active_role == 'organization' or active_role == 'director' %}
+                        <a href="{% url 'frontend-my-organizations' %}" class="nav-link">🏢 Мои организации</a>
+                    {% endif %}
                     <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
                     <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>
-                    <a href="{% url 'admin:logout' %}" class="nav-link">Выход</a>
+                    <a href="{% url 'frontend-logout' %}" class="nav-link">Выход</a>
                 {% else %}
                     <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
                     <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>

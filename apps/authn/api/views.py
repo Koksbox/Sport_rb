@@ -14,22 +14,15 @@ class LoginView(TokenObtainPairView):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    """Регистрация без роли - роль выбирается в личном кабинете"""
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        role = serializer.validated_data.get('role', '')
-        role_names = {
-            'athlete': 'Спортсмен',
-            'parent': 'Родитель',
-            'coach': 'Тренер',
-            'organization': 'Организация'
-        }
-        role_name = role_names.get(role, 'Пользователь')
         return Response({
-            "message": f"Регистрация успешна! Создан кабинет: {role_name}.",
+            "message": "Регистрация успешна! Выберите роль в личном кабинете.",
             "user_id": user.id,
             "email": user.email,
-            "role": role
+            "needs_role_selection": True
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

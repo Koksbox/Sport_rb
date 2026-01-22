@@ -15,7 +15,7 @@ class EventAgeGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'min_age', 'max_age']
 
 class EventSerializer(serializers.ModelSerializer):
-    category = EventCategorySerializer(read_only=True)
+    category = serializers.SerializerMethodField()
     age_groups = EventAgeGroupSerializer(many=True, read_only=True)
     organization_name = serializers.CharField(source='organizer_org.name', read_only=True, allow_null=True)
     organizer_name = serializers.CharField(source='organizer_user.get_full_name', read_only=True, allow_null=True)
@@ -33,9 +33,26 @@ class EventSerializer(serializers.ModelSerializer):
             'organizer_name', 'requires_registration', 'status', 'sport'
         ]
     
+    def get_category(self, obj):
+        # Возвращаем первую категорию, если есть связь
+        try:
+            if hasattr(obj, 'categories') and obj.categories.exists():
+                category = obj.categories.first()
+                return EventCategorySerializer(category).data
+        except:
+            pass
+        return None
+    
     def get_sport(self, obj):
-        if obj.category and hasattr(obj.category, 'sport'):
-            return obj.category.sport.name if hasattr(obj.category.sport, 'name') else None
+        # Проверяем наличие категории через related_name или прямое обращение
+        try:
+            # Если есть связь через EventCategory
+            if hasattr(obj, 'categories') and obj.categories.exists():
+                category = obj.categories.first()
+                if hasattr(category, 'sport') and category.sport:
+                    return category.sport.name
+        except:
+            pass
         return None
 
 class EventCreateSerializer(serializers.ModelSerializer):

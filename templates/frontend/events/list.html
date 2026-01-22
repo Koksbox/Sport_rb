@@ -12,11 +12,14 @@
     
     <!-- Фильтры -->
     <div class="card" style="margin-bottom: 2rem;">
-        <form id="filterForm" hx-get="/api/events/" hx-target="#eventsList" hx-swap="innerHTML">
+        <form id="filterForm">
             <div class="grid grid-3">
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                     <label class="form-label" for="city">Город</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="Например: Уфа">
+                    <input type="text" class="form-control" id="city" name="city" 
+                           placeholder="Начните вводить название города, села или деревни" 
+                           autocomplete="off">
+                    <div id="citySuggestions" class="city-suggestions" style="display: none;"></div>
                 </div>
                 
                 <div class="form-group">
@@ -33,37 +36,78 @@
     </div>
     
     <!-- Список мероприятий -->
-    <div id="eventsList" class="items-list" 
-         hx-get="/api/events/" 
-         hx-trigger="load"
-         hx-swap="innerHTML"
-         hx-indicator=".loading-indicator">
-        <div class="loading loading-indicator" style="margin: 2rem auto; display: block;"></div>
+    <div id="eventsList" class="items-list">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
     </div>
 </div>
 
 <script>
-// Обработка загрузки мероприятий через HTMX
-document.body.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'eventsList') {
-        try {
-            const response = event.detail.xhr.response;
-            let events;
-            
-            if (typeof response === 'string') {
-                events = JSON.parse(response);
-            } else {
-                events = response;
-            }
-            
-            renderEvents(events);
-        } catch (e) {
-            console.error('Ошибка парсинга данных:', e);
-            document.getElementById('eventsList').innerHTML = 
-                '<div class="card"><p class="text-center">Ошибка загрузки данных</p></div>';
-        }
+// Автокомплит для города в фильтре
+let citySearchTimeout;
+const cityInput = document.getElementById('city');
+const citySuggestions = document.getElementById('citySuggestions');
+
+cityInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    clearTimeout(citySearchTimeout);
+    
+    if (query.length < 2) {
+        citySuggestions.style.display = 'none';
+        return;
+    }
+    
+    citySearchTimeout = setTimeout(() => {
+        fetch(`/api/geography/cities/search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(results => {
+                if (results.length === 0) {
+                    citySuggestions.style.display = 'none';
+                    return;
+                }
+                
+                citySuggestions.innerHTML = '';
+                results.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-suggestion-item';
+                    item.textContent = city.display_name;
+                    item.onclick = function() {
+                        cityInput.value = city.name;
+                        citySuggestions.style.display = 'none';
+                    };
+                    citySuggestions.appendChild(item);
+                });
+                citySuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска городов:', error);
+            });
+    }, 300);
+});
+
+// Скрываем подсказки при клике вне поля
+document.addEventListener('click', function(e) {
+    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
+        citySuggestions.style.display = 'none';
     }
 });
+
+// Загрузка мероприятий при загрузке страницы
+fetch('/api/events/')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки мероприятий');
+        }
+        return response.json();
+    })
+    .then(events => {
+        renderEvents(events);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки мероприятий:', error);
+        document.getElementById('eventsList').innerHTML = 
+            '<div class="card" style="grid-column: 1 / -1;"><p class="text-center">Ошибка загрузки данных</p></div>';
+    });
 
 function renderEvents(events) {
     const container = document.getElementById('eventsList');
@@ -107,6 +151,32 @@ function renderEvents(events) {
     container.innerHTML = html;
 }
 
+// Обработка фильтров
+document.getElementById('filterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const city = document.getElementById('city').value;
+    const sport = document.getElementById('sport').value;
+    
+    let url = '/api/events/';
+    const params = new URLSearchParams();
+    if (city) params.append('city', city);
+    if (sport) params.append('sport', sport);
+    if (params.toString()) url += '?' + params.toString();
+    
+    document.getElementById('eventsList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(events => {
+            renderEvents(events);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            document.getElementById('eventsList').innerHTML = 
+                '<div class="card" style="grid-column: 1 / -1;"><p class="text-center">Ошибка загрузки данных</p></div>';
+        });
+});
+
 function getEventTypeName(type) {
     const types = {
         'competition': 'Соревнование',
@@ -124,4 +194,34 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 </script>
+
+<style>
+.city-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.city-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background-color: var(--secondary-blue);
+}
+
+.city-suggestion-item:last-child {
+    border-bottom: none;
+}
+</style>
 {% endblock %}

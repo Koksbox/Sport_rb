@@ -4,34 +4,138 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import AthleteProfileSerializer, ParentRequestSerializer, ClubForAthleteSerializer, \
-    EnrollmentRequestSerializer
+    EnrollmentRequestSerializer, SectionEnrollmentRequestSerializer
 from ...notifications.models import Notification
 from ...organizations.models import Organization
 from ...parents.models import ParentChildLink
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def get_athlete_profile(request):
+    """Получить или обновить профиль спортсмена"""
     try:
         profile = request.user.athlete_profile
-        serializer = AthleteProfileSerializer(profile)
-        return Response(serializer.data)
-    except Exception:
-        return Response({"error": "Профиль спортсмена не найден"}, status=404)
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
-def update_athlete_profile(request):
-    try:
-        profile = request.user.athlete_profile
-        serializer = AthleteProfileSerializer(profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-    except Exception:
-        return Response({"error": "Профиль спортсмена не найден"}, status=404)
+        user = request.user
+        
+        if request.method == 'GET':
+            # Возвращаем данные пользователя и профиля
+            from apps.users.api.serializers import UserBasicSerializer
+            user_serializer = UserBasicSerializer(user, context={'request': request})
+            profile_serializer = AthleteProfileSerializer(profile)
+            
+            data = user_serializer.data
+            data.update(profile_serializer.data)
+            return Response(data)
+        
+        elif request.method == 'PATCH':
+            # Обновляем данные пользователя
+            from apps.users.api.serializers import UserBasicSerializer
+            user_data = {}
+            profile_data = {}
+            
+            # Общие данные пользователя (ФИО, фото, дата рождения, пол, город) 
+            # редактируются отдельно через /api/users/basic-data/
+            # Здесь обрабатываем только специфичные для спортсмена поля
+            
+            # Остальные данные идут в профиль
+            for key, value in request.data.items():
+                if key not in user_fields and key != 'csrfmiddlewaretoken':
+                    profile_data[key] = value
+            
+            # Обновляем пользователя
+            if user_data:
+                user_serializer = UserBasicSerializer(user, data=user_data, partial=True, context={'request': request})
+                if user_serializer.is_valid():
+                    user_serializer.save()
+                else:
+                    return Response(user_serializer.errors, status=400)
+            
+            # Обновляем профиль
+            if profile_data:
+                import json
+                
+                # Обрабатываем дополнительные виды спорта отдельно
+                additional_sports = None
+                if 'additional_sports' in profile_data:
+                    try:
+                        # Может быть JSON строка или список
+                        if isinstance(profile_data['additional_sports'], str):
+                            additional_sports = json.loads(profile_data['additional_sports'])
+                        else:
+                            additional_sports = profile_data['additional_sports']
+                    except:
+                        additional_sports = []
+                    profile_data.pop('additional_sports')
+                
+                # Обрабатываем medical_info
+                medical_info_data = None
+                if 'medical_info' in profile_data:
+                    try:
+                        if isinstance(profile_data['medical_info'], str):
+                            medical_info_data = json.loads(profile_data['medical_info'])
+                        else:
+                            medical_info_data = profile_data['medical_info']
+                    except:
+                        medical_info_data = None
+                    profile_data.pop('medical_info')
+                
+                # Обрабатываем goals
+                if 'goals' in profile_data:
+                    try:
+                        if isinstance(profile_data['goals'], str):
+                            profile_data['goals'] = json.loads(profile_data['goals'])
+                    except:
+                        profile_data['goals'] = []
+                
+                profile_serializer = AthleteProfileSerializer(profile, data=profile_data, partial=True)
+                if profile_serializer.is_valid():
+                    profile_serializer.save()
+                    
+                    # Обновляем медицинскую информацию
+                    if medical_info_data:
+                        from apps.athletes.models import MedicalInfo
+                        MedicalInfo.objects.update_or_create(
+                            athlete=profile,
+                            defaults=medical_info_data
+                        )
+                    
+                    # Обновляем дополнительные виды спорта
+                    if additional_sports is not None:
+                        from apps.athletes.models import AthleteSpecialization
+                        from apps.sports.models import Sport
+                        
+                        # Удаляем старые дополнительные виды спорта
+                        AthleteSpecialization.objects.filter(
+                            athlete=profile, 
+                            is_primary=False
+                        ).delete()
+                        
+                        # Добавляем новые
+                        for sport_id in additional_sports:
+                            try:
+                                sport = Sport.objects.get(id=sport_id)
+                                # Проверяем, что это не основной вид спорта
+                                if sport.id != profile.main_sport.id:
+                                    AthleteSpecialization.objects.create(
+                                        athlete=profile,
+                                        sport=sport,
+                                        is_primary=False
+                                    )
+                            except Sport.DoesNotExist:
+                                pass
+                else:
+                    return Response(profile_serializer.errors, status=400)
+            
+            # Возвращаем обновленные данные
+            user_serializer = UserBasicSerializer(user, context={'request': request})
+            profile_serializer = AthleteProfileSerializer(profile)
+            data = user_serializer.data
+            data.update(profile_serializer.data)
+            return Response(data)
+            
+    except Exception as e:
+        return Response({"error": "Профиль спортсмена не найден", "detail": str(e)}, status=404)
 
 
 @api_view(['GET'])
@@ -123,8 +227,17 @@ def request_enrollment(request):
     serializer = EnrollmentRequestSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         enrollment = serializer.save()
-        # Уведомление тренерам группы
+        # Уведомление директору организации
         from apps.notifications.models import Notification
+        organization = enrollment.group.organization
+        if hasattr(organization, 'director'):
+            Notification.objects.create(
+                recipient=organization.director.user,
+                notification_type='athlete_group_request',
+                title='Новая заявка на вступление в группу',
+                body=f'Спортсмен {enrollment.athlete.user.get_full_name()} хочет вступить в группу "{enrollment.group.name}" в вашей организации.'
+            )
+        # Уведомление тренерам группы
         coach_memberships = enrollment.group.coach_memberships.filter(status='active')
         for membership in coach_memberships:
             Notification.objects.create(
@@ -134,6 +247,27 @@ def request_enrollment(request):
                 body=f'Спортсмен {enrollment.athlete.user.first_name} хочет вступить в вашу группу "{enrollment.group.name}".'
             )
         return Response({"message": "Заявка отправлена. Ожидайте подтверждения."}, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def request_section_enrollment(request):
+    """Отправить заявку на вступление в секцию (директор решит группу)"""
+    serializer = SectionEnrollmentRequestSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        section_request = serializer.save()
+        # Уведомление директору организации
+        from apps.notifications.models import Notification
+        organization = section_request.organization
+        if hasattr(organization, 'director'):
+            Notification.objects.create(
+                recipient=organization.director.user,
+                notification_type='athlete_section_request',
+                title='Новая заявка на вступление в секцию',
+                body=f'Спортсмен {section_request.athlete.user.get_full_name()} хочет вступить в секцию "{section_request.sport_direction.sport.name}" в вашей организации. Определите группу для спортсмена.'
+            )
+        return Response({"message": "Заявка отправлена. Директор решит, в какую группу вас определить."}, status=201)
     return Response(serializer.errors, status=400)
 
 

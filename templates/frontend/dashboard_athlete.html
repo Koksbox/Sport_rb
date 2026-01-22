@@ -1,10 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load role_names %}
 
 {% block title %}Личный кабинет спортсмена - СпортБаш{% endblock %}
 
 {% block content %}
 <div class="container">
+    {% if all_roles|length > 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for role in all_roles %}
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}">
+                    {{ role|role_name }}
+                </button>
+                {% endfor %}
+                {% if all_roles|length < 4 %}
+                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
+                        style="background: var(--primary-blue); color: white;">
+                    + Добавить роль
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% elif all_roles|length == 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>У вас одна роль. Хотите добавить ещё?</span>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <h1>👤 Личный кабинет спортсмена</h1>
     
     {% if user.athlete_profile %}
@@ -13,37 +48,104 @@
             <h2 class="card-title">Мой профиль</h2>
         </div>
         <div class="card-body">
-            <div class="profile-info">
-                <div class="profile-item">
-                    <span class="profile-label">ФИО:</span>
-                    <span class="profile-value">{{ user.get_full_name }}</span>
-                </div>
-                <div class="profile-item">
-                    <span class="profile-label">Email:</span>
-                    <span class="profile-value">{{ user.email }}</span>
-                </div>
-                {% if user.athlete_profile.city %}
-                <div class="profile-item">
-                    <span class="profile-label">Город:</span>
-                    <span class="profile-value">{{ user.athlete_profile.city.name }}</span>
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                {% if user.photo %}
+                <div style="flex-shrink: 0;">
+                    <img src="{{ user.photo.url }}" alt="Фото" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-blue);">
                 </div>
                 {% endif %}
-                {% if user.athlete_profile.main_sport %}
-                <div class="profile-item">
-                    <span class="profile-label">Основной вид спорта:</span>
-                    <span class="profile-value">{{ user.athlete_profile.main_sport.name }}</span>
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="profile-info">
+                        <div class="profile-item">
+                            <span class="profile-label">ФИО:</span>
+                            <span class="profile-value">{{ user.get_full_name }}</span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="profile-label">Email:</span>
+                            <span class="profile-value">{{ user.email }}</span>
+                        </div>
+                        {% if user.athlete_profile.city %}
+                        <div class="profile-item">
+                            <span class="profile-label">Город:</span>
+                            <span class="profile-value">{{ user.athlete_profile.city.name }}</span>
+                        </div>
+                        {% endif %}
+                        {% if user.athlete_profile.main_sport %}
+                        <div class="profile-item">
+                            <span class="profile-label">Основной вид спорта:</span>
+                            <span class="profile-value">{{ user.athlete_profile.main_sport.name }}</span>
+                        </div>
+                        {% endif %}
+                        {% if user.athlete_profile.specializations.exists %}
+                        <div class="profile-item">
+                            <span class="profile-label">Дополнительные виды спорта:</span>
+                            <span class="profile-value">
+                                {% for spec in user.athlete_profile.specializations.all %}
+                                    {% if not spec.is_primary %}
+                                        {{ spec.sport.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        {% endif %}
+                        {% if user.athlete_profile.health_group %}
+                        <div class="profile-item">
+                            <span class="profile-label">Группа здоровья:</span>
+                            <span class="profile-value">{{ user.athlete_profile.health_group }}</span>
+                        </div>
+                        {% endif %}
+                        {% if user.athlete_profile.goals %}
+                        <div class="profile-item">
+                            <span class="profile-label">Цели:</span>
+                            <span class="profile-value">{{ user.athlete_profile.goals|join:", " }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="profile-item" id="roleIdItem" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <span class="profile-label">Мой уникальный ID:</span>
+                            <span class="profile-value" id="roleIdValue" style="font-weight: bold; font-size: 1.2rem; color: var(--primary-blue); font-family: monospace;"></span>
+                            <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
+                                📋 Поделитесь этим ID с родителем для добавления вас в список детей
+                            </small>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать общие данные</a>
+                            <a href="{% url 'frontend-athlete-profile-edit' %}" class="btn btn-primary">🏃 Редактировать профиль спортсмена</a>
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
-                {% if user.athlete_profile.health_group %}
-                <div class="profile-item">
-                    <span class="profile-label">Группа здоровья:</span>
-                    <span class="profile-value">{{ user.athlete_profile.health_group }}</span>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>
+    
+    <script>
+    // Загружаем уникальный ID роли
+    fetch('/api/parents/my-role-id/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.unique_id) {
+                document.getElementById('roleIdValue').textContent = data.unique_id;
+                document.getElementById('roleIdItem').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки ID роли:', error);
+        });
+    </script>
     {% endif %}
+    
+    <!-- График прогресса -->
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">📊 График прогресса</h2>
+        </div>
+        <div class="card-body">
+            <div id="progressChart" style="min-height: 300px;">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+        </div>
+    </div>
     
     <!-- Быстрые действия -->
     <div class="section-header" style="margin-top: 2rem;">
@@ -63,4 +165,155 @@
         </a>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Загрузка данных прогресса
+fetch('/api/athletes/progress/')
+    .then(response => response.json())
+    .then(data => {
+        const ctx = document.createElement('canvas');
+        document.getElementById('progressChart').innerHTML = '';
+        document.getElementById('progressChart').appendChild(ctx);
+        
+        // Группируем посещаемость по месяцам
+        const attendanceByMonth = {};
+        if (data.attendance) {
+            data.attendance.forEach(record => {
+                const month = new Date(record.date).toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
+                if (!attendanceByMonth[month]) {
+                    attendanceByMonth[month] = { present: 0, absent: 0, late: 0 };
+                }
+                if (record.status === 'present') attendanceByMonth[month].present++;
+                else if (record.status === 'absent') attendanceByMonth[month].absent++;
+                else if (record.status === 'late') attendanceByMonth[month].late++;
+            });
+        }
+        
+        const months = Object.keys(attendanceByMonth).sort();
+        const presentData = months.map(m => attendanceByMonth[m].present);
+        const absentData = months.map(m => attendanceByMonth[m].absent);
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Посещения',
+                        data: presentData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Пропуски',
+                        data: absentData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Статистика
+        const statsHtml = `
+            <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: bold;">${data.events ? data.events.length : 0}</div>
+                    <div style="color: var(--text-light);">Мероприятий</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: bold;">${data.achievements ? data.achievements.length : 0}</div>
+                    <div style="color: var(--text-light);">Достижений</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: bold;">${presentData.reduce((a, b) => a + b, 0)}</div>
+                    <div style="color: var(--text-light);">Посещений</div>
+                </div>
+            </div>
+        `;
+        document.getElementById('progressChart').insertAdjacentHTML('afterend', statsHtml);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки прогресса:', error);
+        document.getElementById('progressChart').innerHTML = '<p style="color: var(--text-light); text-align: center;">Данные о прогрессе пока недоступны</p>';
+    });
+</script>
+
+<script>
+function switchRole(role) {
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            // Перезагружаем страницу для обновления интерфейса
+            window.location.href = '/dashboard/';
+        } else {
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.role-switch-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}
+</style>
 {% endblock %}

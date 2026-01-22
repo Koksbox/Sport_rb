@@ -1,6 +1,6 @@
 # apps/athletes/admin.py
 from django.contrib import admin
-from .models import AthleteProfile, MedicalInfo, EmergencyContact, SocialStatus, AthleteSpecialization
+from .models import AthleteProfile, MedicalInfo, EmergencyContact, SocialStatus, AthleteSpecialization, SectionEnrollmentRequest
 
 
 @admin.register(AthleteProfile)
@@ -61,3 +61,13 @@ class AthleteSpecializationAdmin(admin.ModelAdmin):
     search_fields = ('athlete__user__email', 'sport__name')
     raw_id_fields = ('athlete', 'sport')
     readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(SectionEnrollmentRequest)
+class SectionEnrollmentRequestAdmin(admin.ModelAdmin):
+    """Админка для заявок на секцию"""
+    list_display = ('athlete', 'organization', 'sport_direction', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('athlete__user__email', 'organization__name', 'sport_direction__sport__name')
+    raw_id_fields = ('athlete', 'organization', 'sport_direction', 'assigned_group')
+    readonly_fields = ('created_at', 'updated_at', 'responded_at')

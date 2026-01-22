@@ -6,7 +6,8 @@ from rest_framework import status
 from .serializers import (
     OrganizationCreateSerializer,
     OrganizationModerationSerializer,
-    OrganizationListSerializer
+    OrganizationListSerializer,
+    OrganizationDetailSerializer
 )
 from apps.organizations.models import Organization
 from apps.organizations.services.moderation import approve_organization
@@ -35,18 +36,60 @@ def list_organizations(request):
     serializer = OrganizationListSerializer(organizations, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_my_organizations(request):
+    """Получить список организаций пользователя (директор или создатель)"""
+    organizations = Organization.objects.filter(
+        created_by=request.user
+    ) | Organization.objects.filter(
+        director__user=request.user
+    )
+    organizations = organizations.distinct()
+    serializer = OrganizationListSerializer(organizations, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_organization_detail(request, org_id):
+    """Детальная информация об организации"""
+    try:
+        organization = Organization.objects.get(id=org_id, status='approved')
+        serializer = OrganizationDetailSerializer(organization)
+        return Response(serializer.data)
+    except Organization.DoesNotExist:
+        return Response({"error": "Организация не найдена"}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_organization(request):
     """Создать организацию (черновик)"""
-    if not request.user.roles.filter(role='organization').exists():
-        return Response(
-            {"error": "Сначала выберите роль 'organization'"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # Роль 'organization' больше не требуется - создаём автоматически при создании организации
+
+    # Обработка файлов документов
+    data = request.data.copy()
+    files = request.FILES.getlist('documents')
+    
+    documents_data = []
+    if files:
+        for file in files:
+            # Определяем тип документа по расширению или используем 'license' по умолчанию
+            doc_type = 'license'  # По умолчанию лицензия
+            if 'устав' in file.name.lower() or 'charter' in file.name.lower():
+                doc_type = 'charter'
+            elif 'инн' in file.name.lower() or 'inn' in file.name.lower():
+                doc_type = 'inn'
+            
+            documents_data.append({
+                'doc_type': doc_type,
+                'file_path': file
+            })
+    
+    if documents_data:
+        data['documents'] = documents_data
 
     serializer = OrganizationCreateSerializer(
-        data=request.data,
+        data=data,
         context={'request': request}
     )
     if serializer.is_valid():
@@ -60,7 +103,14 @@ def create_organization(request):
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def moderate_organization(request, org_id):
-    if not request.user.roles.filter(role='admin_rb').exists():
+    # Проверяем роль модератора или админа
+    from apps.admin_rb.models import SystemRoleAssignment
+    is_moderator = SystemRoleAssignment.objects.filter(
+        user=request.user, role='moderator'
+    ).exists()
+    is_admin = request.user.roles.filter(role='admin_rb').exists()
+    
+    if not (is_moderator or is_admin):
         return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
 
     try:

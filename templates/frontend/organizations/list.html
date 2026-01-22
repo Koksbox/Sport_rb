@@ -3,6 +3,13 @@
 
 {% block title %}Организации - СпортБаш{% endblock %}
 
+{% block extra_js %}
+<script>
+    // Передаём API ключ в JavaScript
+    window.YANDEX_MAPS_API_KEY = '{{ YANDEX_MAPS_API_KEY|default:"" }}';
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="section-header">
@@ -12,11 +19,14 @@
     
     <!-- Фильтры -->
     <div class="card" style="margin-bottom: 2rem;">
-        <form id="filterForm" hx-get="/api/organizations/" hx-target="#organizationsList" hx-swap="innerHTML">
+        <form id="filterForm">
             <div class="grid grid-3">
-                <div class="form-group">
+                <div class="form-group" style="position: relative;">
                     <label class="form-label" for="city">Город</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="Например: Уфа">
+                    <input type="text" class="form-control" id="city" name="city" 
+                           placeholder="Начните вводить название города, села или деревни" 
+                           autocomplete="off">
+                    <div id="citySuggestions" class="city-suggestions" style="display: none;"></div>
                 </div>
                 
                 <div class="form-group">
@@ -32,13 +42,19 @@
         </form>
     </div>
     
+    <!-- Карта организаций -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Карта организаций</h2>
+        </div>
+        <div class="card-body">
+            <div id="organizationsMap" style="width: 100%; height: 500px; border-radius: 8px; background: #f0f0f0;"></div>
+        </div>
+    </div>
+    
     <!-- Список организаций -->
-    <div id="organizationsList" class="items-list" 
-         hx-get="/api/organizations/" 
-         hx-trigger="load"
-         hx-swap="innerHTML"
-         hx-indicator=".loading-indicator">
-        <div class="loading loading-indicator" style="margin: 2rem auto; display: block;"></div>
+    <div id="organizationsList" class="items-list">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
     </div>
     
     <!-- Кнопка создания организации -->
@@ -61,26 +77,197 @@
 </div>
 
 <script>
-// Обработка загрузки организаций через HTMX
-document.body.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'organizationsList') {
-        try {
-            const response = event.detail.xhr.response;
-            let organizations;
-            
-            if (typeof response === 'string') {
-                organizations = JSON.parse(response);
-            } else {
-                organizations = response;
-            }
-            
-            renderOrganizations(organizations);
-        } catch (e) {
-            console.error('Ошибка парсинга данных:', e);
-            document.getElementById('organizationsList').innerHTML = 
-                '<div class="card"><p class="text-center">Ошибка загрузки данных</p></div>';
-        }
+// Автокомплит для города в фильтре
+let citySearchTimeout;
+const cityInput = document.getElementById('city');
+const citySuggestions = document.getElementById('citySuggestions');
+
+cityInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    clearTimeout(citySearchTimeout);
+    
+    if (query.length < 2) {
+        citySuggestions.style.display = 'none';
+        return;
     }
+    
+    citySearchTimeout = setTimeout(() => {
+        fetch(`/api/geography/cities/search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(results => {
+                if (results.length === 0) {
+                    citySuggestions.style.display = 'none';
+                    return;
+                }
+                
+                citySuggestions.innerHTML = '';
+                results.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-suggestion-item';
+                    item.textContent = city.display_name;
+                    item.onclick = function() {
+                        cityInput.value = city.name;
+                        citySuggestions.style.display = 'none';
+                    };
+                    citySuggestions.appendChild(item);
+                });
+                citySuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска городов:', error);
+            });
+    }, 300);
+});
+
+// Скрываем подсказки при клике вне поля
+document.addEventListener('click', function(e) {
+    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
+        citySuggestions.style.display = 'none';
+    }
+});
+
+// Инициализация карты
+let organizationsMap = null;
+let organizationsMarkers = [];
+
+function initMap() {
+    const apiKey = window.YANDEX_MAPS_API_KEY || '';
+    if (!apiKey) {
+        console.warn('Yandex Maps API key not found, map will not be displayed');
+        loadOrganizations();
+        return;
+    }
+    
+    // Загружаем Яндекс.Карты API
+    if (!window.ymaps) {
+        const script = document.createElement('script');
+        script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
+        script.onload = () => {
+            window.ymaps.ready(() => {
+                createMap();
+                loadOrganizations();
+            });
+        };
+        document.head.appendChild(script);
+    } else {
+        window.ymaps.ready(() => {
+            createMap();
+            loadOrganizations();
+        });
+    }
+}
+
+function createMap() {
+    const mapContainer = document.getElementById('organizationsMap');
+    if (!mapContainer) return;
+    
+    // Центр карты - Уфа (Республика Башкортостан)
+    // В Yandex Maps координаты: [широта, долгота]
+    organizationsMap = new window.ymaps.Map(mapContainer, {
+        center: [54.7431, 55.9678],
+        zoom: 8,
+        controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
+    });
+}
+
+function loadOrganizations() {
+    fetch('/api/organizations/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки организаций');
+            }
+            return response.json();
+        })
+        .then(organizations => {
+            renderOrganizations(organizations);
+            if (organizationsMap) {
+                updateMap(organizations);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки организаций:', error);
+            document.getElementById('organizationsList').innerHTML = 
+                '<div class="card" style="grid-column: 1 / -1;"><p class="text-center">Ошибка загрузки данных</p></div>';
+        });
+}
+
+function updateMap(organizations) {
+    if (!organizationsMap || !window.ymaps) return;
+    
+    // Удаляем старые маркеры
+    organizationsMarkers.forEach(marker => {
+        organizationsMap.geoObjects.remove(marker);
+    });
+    organizationsMarkers = [];
+    
+    // Добавляем новые маркеры
+    organizations.forEach(org => {
+        // Проверяем наличие координат (могут быть строками или числами)
+        const lat = org.latitude ? parseFloat(org.latitude) : null;
+        const lng = org.longitude ? parseFloat(org.longitude) : null;
+        
+        if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+            // В Yandex Maps координаты: [широта, долгота]
+            const marker = new window.ymaps.Placemark(
+                [lat, lng],
+                {
+                    balloonContentHeader: `<strong>${escapeHtml(org.name)}</strong>`,
+                    balloonContentBody: `
+                        <p>${escapeHtml(org.address || 'Адрес не указан')}</p>
+                        ${org.city ? `<p>📍 ${escapeHtml(org.city)}</p>` : ''}
+                        <p><a href="/organizations/${org.id}/">Подробнее →</a></p>
+                    `,
+                    balloonContentFooter: org.org_type === 'state' ? 'Государственная' : 'Частная'
+                },
+                {
+                    preset: 'islands#blueSportIcon'
+                }
+            );
+            
+            organizationsMap.geoObjects.add(marker);
+            organizationsMarkers.push(marker);
+        }
+    });
+    
+    // Если есть маркеры, устанавливаем границы карты
+    if (organizationsMarkers.length > 0) {
+        organizationsMap.setBounds(organizationsMap.geoObjects.getBounds(), {
+            checkZoomRange: true
+        });
+    }
+}
+
+// Инициализируем карту при загрузке страницы
+initMap();
+
+// Обработка фильтров
+document.getElementById('filterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const city = document.getElementById('city').value;
+    const sport = document.getElementById('sport').value;
+    
+    let url = '/api/organizations/';
+    const params = new URLSearchParams();
+    if (city) params.append('city', city);
+    if (sport) params.append('sport', sport);
+    if (params.toString()) url += '?' + params.toString();
+    
+    document.getElementById('organizationsList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(organizations => {
+            renderOrganizations(organizations);
+            if (organizationsMap) {
+                updateMap(organizations);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            document.getElementById('organizationsList').innerHTML = 
+                '<div class="card" style="grid-column: 1 / -1;"><p class="text-center">Ошибка загрузки данных</p></div>';
+        });
 });
 
 function renderOrganizations(organizations) {
@@ -124,4 +311,34 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 </script>
+
+<style>
+.city-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.city-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background-color: var(--secondary-blue);
+}
+
+.city-suggestion-item:last-child {
+    border-bottom: none;
+}
+</style>
 {% endblock %}

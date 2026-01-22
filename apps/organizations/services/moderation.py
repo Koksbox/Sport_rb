@@ -8,12 +8,15 @@ def approve_organization(organization, moderator_user):
     from apps.organizations.models import Organization
     from apps.organizations.staff.director import Director
 
+    if not organization.created_by:
+        raise ValueError("Организация должна иметь created_by для назначения директора")
+
     organization.status = 'approved'
     organization.verified_at = timezone.now()
     organization.save(update_fields=['status', 'verified_at'])
 
     # Назначаем роль director
-    user = organization.created_by  # ← нужно добавить created_by!
+    user = organization.created_by
     UserRole.objects.get_or_create(user=user, role='director')
 
     # Создаём запись Director

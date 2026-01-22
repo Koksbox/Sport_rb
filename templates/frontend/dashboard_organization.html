@@ -1,10 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load role_names %}
 
 {% block title %}Личный кабинет организации - СпортБаш{% endblock %}
 
 {% block content %}
 <div class="container">
+    {% if all_roles|length > 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for role in all_roles %}
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}">
+                    {{ role|role_name }}
+                </button>
+                {% endfor %}
+                {% if all_roles|length < 4 %}
+                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
+                        style="background: var(--primary-blue); color: white;">
+                    + Добавить роль
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% elif all_roles|length == 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>У вас одна роль. Хотите добавить ещё?</span>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <h1>🏢 Личный кабинет организации</h1>
     
     <div class="card">
@@ -36,11 +71,95 @@
             <p class="item-card-description">Создать новую спортивную организацию</p>
         </a>
         
-        <a href="#" class="item-card">
+        <a href="{% url 'frontend-my-organizations' %}" class="item-card">
             <div class="item-icon">📊</div>
             <h3 class="item-card-title">Мои организации</h3>
             <p class="item-card-description">Управление организациями</p>
         </a>
+        
+        <a href="{% url 'frontend-director-coach-requests' %}" class="item-card">
+            <div class="item-icon">📝</div>
+            <h3 class="item-card-title">Заявки на работу</h3>
+            <p class="item-card-description">Просмотр и обработка заявок от тренеров</p>
+        </a>
+        
+        <a href="{% url 'frontend-director-free-coaches' %}" class="item-card">
+            <div class="item-icon">👥</div>
+            <h3 class="item-card-title">Свободные тренеры</h3>
+            <p class="item-card-description">Поиск и приглашение тренеров на работу</p>
+        </a>
+        
+        <a href="{% url 'frontend-events' %}" class="item-card">
+            <div class="item-icon">🏆</div>
+            <h3 class="item-card-title">Мероприятия</h3>
+            <p class="item-card-description">Зарегистрировать участника(-ов) на мероприятия</p>
+        </a>
     </div>
 </div>
+
+<script>
+function switchRole(role) {
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            // Перезагружаем страницу для обновления интерфейса
+            window.location.href = '/dashboard/';
+        } else {
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.role-switch-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}
+</style>
 {% endblock %}

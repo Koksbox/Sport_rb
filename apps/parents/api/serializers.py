@@ -13,9 +13,9 @@ class ChildProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AthleteProfile
         fields = [
-            'id', 'user_id', 'first_name', 'last_name', 'birth_date',
+            'id', 'user_id', 'first_name', 'last_name', 'full_name', 'birth_date',
             'main_sport_name', 'city_name', 'organization_name', 'coach_names',
-            'health_group', 'goals'
+            'health_group', 'goals', 'role_unique_id'
         ]
         read_only_fields = '__all__'
 
@@ -27,31 +27,71 @@ class ChildProfileSerializer(serializers.ModelSerializer):
 
     def get_coach_names(self, obj):
         # Тренеры из тех же групп
-        groups = obj.enrollments.filter(status='active').select_related('group')
-        coaches = set()
-        for enrollment in groups:
-            memberships = enrollment.group.coach_memberships.filter(status='active')
-            for m in memberships:
-                coaches.add(f"{m.coach.user.first_name} {m.coach.user.last_name}")
-        return list(coaches)
+        try:
+            groups = obj.enrollments.filter(status='active').select_related('group')
+            coaches = set()
+            for enrollment in groups:
+                memberships = enrollment.group.coach_memberships.filter(status='active')
+                for m in memberships:
+                    coaches.add(f"{m.coach.user.first_name} {m.coach.user.last_name}")
+            return list(coaches)
+        except Exception:
+            return []
+    
+    def get_full_name(self, obj):
+        return obj.user.get_full_name()
+    
+    def get_role_unique_id(self, obj):
+        """Получить уникальный ID роли спортсмена"""
+        from apps.users.models import UserRole
+        try:
+            role = UserRole.objects.get(user=obj.user, role='athlete', is_active=True)
+            return role.unique_id
+        except UserRole.DoesNotExist:
+            return None
 
 class ChildLinkRequestSerializer(serializers.Serializer):
-    child_id = serializers.IntegerField()
+    """Запрос на связь родитель-ребёнок по уникальному ID роли"""
+    role_unique_id = serializers.CharField(max_length=12, help_text="Уникальный ID роли спортсмена")
 
-    def validate_child_id(self, value):
+    def validate_role_unique_id(self, value):
+        from apps.users.models import UserRole
         try:
-            athlete = AthleteProfile.objects.get(id=value)
-            self.context['athlete'] = athlete
+            user_role = UserRole.objects.get(unique_id=value, role='athlete', is_active=True)
+            athlete_profile = user_role.user.athlete_profile
+            self.context['athlete'] = athlete_profile
+            self.context['user_role'] = user_role
             return value
-        except AthleteProfile.DoesNotExist:
-            raise serializers.ValidationError("Спортсмен с таким ID не найден.")
+        except UserRole.DoesNotExist:
+            raise serializers.ValidationError("Спортсмен с таким ID не найден или роль неактивна.")
 
     def save(self):
         parent = self.context['request'].user
         athlete = self.context['athlete']
+        
+        # Проверяем, не существует ли уже связь
         link, created = ParentChildLink.objects.get_or_create(
             parent=parent,
             child_profile=athlete,
-            defaults={'is_confirmed': False}
+            defaults={
+                'status': 'pending_child',
+                'requested_by': 'parent'
+            }
         )
+        
+        # Если связь уже существует, обновляем статус
+        if not created:
+            if link.status == 'rejected':
+                link.status = 'pending_child'
+                link.requested_by = 'parent'
+                link.save()
+        
+        # Автоматически создаём роль родителя, если её нет
+        from apps.users.models import UserRole
+        UserRole.objects.get_or_create(user=parent, role='parent')
+        
+        # Создаём профиль родителя, если его нет
+        from apps.parents.models import ParentProfile
+        ParentProfile.objects.get_or_create(user=parent)
+        
         return link

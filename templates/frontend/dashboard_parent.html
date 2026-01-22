@@ -1,14 +1,48 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load role_names %}
 
 {% block title %}Личный кабинет родителя - СпортБаш{% endblock %}
 
 {% block content %}
 <div class="container">
+    {% if all_roles|length > 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for role in all_roles %}
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}">
+                    {{ role|role_name }}
+                </button>
+                {% endfor %}
+                {% if all_roles|length < 4 %}
+                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
+                        style="background: var(--primary-blue); color: white;">
+                    + Добавить роль
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% elif all_roles|length == 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>У вас одна роль. Хотите добавить ещё?</span>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
     <h1>👨‍👩‍👧 Личный кабинет родителя</h1>
     
-    {% if user.parent_profile %}
-    <div class="card">
+    <div class="card" style="margin-bottom: 1.5rem;">
         <div class="card-header">
             <h2 class="card-title">Мой профиль</h2>
         </div>
@@ -23,6 +57,10 @@
                     <span class="profile-value">{{ user.email }}</span>
                 </div>
             </div>
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary" style="margin-right: 1rem;">Редактировать общие данные</a>
+                <a href="{% url 'frontend-parent-profile-edit' %}" class="btn btn-primary">✏️ Редактировать профиль родителя</a>
+            </div>
         </div>
     </div>
     
@@ -31,11 +69,40 @@
             <h2 class="card-title">Мои дети</h2>
         </div>
         <div class="card-body">
-            <p>Здесь будет список ваших детей и их спортивных достижений.</p>
-            <a href="#" class="btn btn-primary">Добавить ребёнка</a>
+            <div id="childrenList" style="margin-bottom: 1rem;">
+                <div class="loading" style="margin: 1rem auto; display: block;"></div>
+            </div>
+            <button class="btn btn-primary" onclick="showAddChildModal()">Добавить ребёнка</button>
+            <a href="{% url 'frontend-parent-requests' %}" class="btn btn-secondary" style="margin-left: 0.5rem;">Заявки</a>
         </div>
     </div>
-    {% endif %}
+    
+    <!-- Модальное окно для добавления ребёнка -->
+    <div id="addChildModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Добавить ребёнка</h3>
+                <span class="close" onclick="closeAddChildModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; color: var(--text-light);">
+                    Введите уникальный ID роли спортсмена вашего ребёнка. 
+                    Этот ID можно найти в личном кабинете спортсмена.
+                </p>
+                <div class="form-group">
+                    <label class="form-label" for="childRoleId">Уникальный ID роли спортсмена</label>
+                    <input type="text" class="form-control" id="childRoleId" 
+                           placeholder="Например: A1B2C3D4" maxlength="8">
+                    <small style="color: var(--text-light);">ID состоит из 8 символов (буквы и цифры)</small>
+                </div>
+                <div id="addChildMessages" style="margin-top: 1rem;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddChildModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="sendChildRequest()">Отправить заявку</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Быстрые действия -->
     <div class="section-header" style="margin-top: 2rem;">
@@ -55,4 +122,179 @@
         </a>
     </div>
 </div>
+
+<script>
+function switchRole(role) {
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            // Перезагружаем страницу для обновления интерфейса
+            window.location.href = '/dashboard/';
+        } else {
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Загрузка списка детей
+function loadChildren() {
+    fetch('/api/parents/children/')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('childrenList');
+            if (data.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light);">У вас пока нет добавленных детей.</p>';
+                return;
+            }
+            
+            let html = '<div class="grid grid-2" style="gap: 1rem;">';
+            data.forEach(child => {
+                html += `
+                    <div class="card" style="cursor: pointer;" onclick="window.location.href='/parents/children/${child.id}/'">
+                        <div class="card-body">
+                            <h3 style="margin-bottom: 0.5rem;">${escapeHtml(child.full_name || child.first_name + ' ' + child.last_name)}</h3>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                ${child.main_sport_name ? '🏃 ' + escapeHtml(child.main_sport_name) : ''}
+                            </p>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">
+                                ${child.organization_name && child.organization_name.length > 0 ? '🏢 ' + escapeHtml(child.organization_name[0]) : 'Не записан в секцию'}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки детей:', error);
+            document.getElementById('childrenList').innerHTML = 
+                '<p style="color: var(--error-color);">Ошибка загрузки списка детей.</p>';
+        });
+}
+
+// Показать модальное окно добавления ребёнка
+function showAddChildModal() {
+    document.getElementById('addChildModal').style.display = 'block';
+    document.getElementById('childRoleId').value = '';
+    document.getElementById('addChildMessages').innerHTML = '';
+}
+
+// Закрыть модальное окно
+function closeAddChildModal() {
+    document.getElementById('addChildModal').style.display = 'none';
+}
+
+// Отправить заявку на добавление ребёнка
+function sendChildRequest() {
+    const roleId = document.getElementById('childRoleId').value.trim().toUpperCase();
+    const messagesDiv = document.getElementById('addChildMessages');
+    
+    if (!roleId || roleId.length !== 8) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Введите корректный ID (8 символов)</div>';
+        return;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Отправка заявки...</div>';
+    
+    fetch('/api/parents/children/request/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role_unique_id: roleId })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 || result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">' + (result.data.message || 'Заявка отправлена') + '</div>';
+            setTimeout(() => {
+                closeAddChildModal();
+                loadChildren();
+            }, 2000);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + (result.data.error || result.data.message || 'Ошибка отправки заявки') + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке заявки</div>';
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Загружаем список детей при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadChildren();
+});
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('addChildModal');
+    if (event.target == modal) {
+        closeAddChildModal();
+    }
+}
+</script>
+
+<style>
+.role-switch-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}
+</style>
 {% endblock %}
