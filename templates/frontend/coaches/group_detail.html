@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Управление группой - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-coach-groups' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться к группам
+        </a>
+    </div>
+    
+    <h1>👥 Управление группой</h1>
+    
+    <!-- Информация о группе -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title" id="groupName">Загрузка...</h2>
+        </div>
+        <div class="card-body" id="groupInfo">
+            <div class="loading"></div>
+        </div>
+    </div>
+    
+    <!-- Статистика посещаемости -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">📊 Статистика посещаемости (за 30 дней)</h2>
+        </div>
+        <div class="card-body" id="attendanceStats">
+            <div class="loading"></div>
+        </div>
+    </div>
+    
+    <!-- Список спортсменов и отметка посещаемости -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Спортсмены группы</h2>
+        </div>
+        <div class="card-body">
+            <div style="margin-bottom: 1rem;">
+                <label class="form-label">Дата для отметки посещаемости:</label>
+                <input type="date" class="form-control" id="attendanceDate" style="max-width: 200px;" value="">
+            </div>
+            <div id="athletesList">
+                <div class="loading"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const groupId = {{ group_id }};
+
+// Установка сегодняшней даты по умолчанию
+document.getElementById('attendanceDate').value = new Date().toISOString().split('T')[0];
+
+// Загрузка информации о группе
+fetch(`/api/coaches/groups/`)
+    .then(response => response.json())
+    .then(groups => {
+        const group = groups.find(g => g.id === groupId);
+        if (group) {
+            document.getElementById('groupName').textContent = group.name || 'Без названия';
+            document.getElementById('groupInfo').innerHTML = `
+                <p><strong>Организация:</strong> ${escapeHtml(group.organization_name || '')}</p>
+                <p><strong>Вид спорта:</strong> ${escapeHtml(group.sport_name || '')}</p>
+                <p><strong>Возрастная группа:</strong> ${escapeHtml(group.age_level_name || '')}</p>
+                <p><strong>Спортсменов:</strong> ${group.enrollments ? group.enrollments.length : 0}</p>
+            `;
+            loadAthletes(group.enrollments || []);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки группы:', error);
+    });
+
+// Загрузка статистики
+fetch(`/api/attendance/group/${groupId}/stats/`)
+    .then(response => response.json())
+    .then(stats => {
+        const container = document.getElementById('attendanceStats');
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--primary-blue);">${stats.overall.attendance_rate}%</div>
+                    <div style="color: var(--text-light);">Посещаемость</div>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: green;">${stats.overall.present}</div>
+                    <div style="color: var(--text-light);">Присутствовали</div>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: red;">${stats.overall.absent}</div>
+                    <div style="color: var(--text-light);">Отсутствовали</div>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: orange;">${stats.overall.late}</div>
+                    <div style="color: var(--text-light);">Опоздали</div>
+                </div>
+            </div>
+            <h4>Посещаемость по спортсменам:</h4>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--secondary-blue);">
+                            <th style="padding: 0.5rem; text-align: left;">Спортсмен</th>
+                            <th style="padding: 0.5rem; text-align: center;">Всего</th>
+                            <th style="padding: 0.5rem; text-align: center;">Присут.</th>
+                            <th style="padding: 0.5rem; text-align: center;">Отсут.</th>
+                            <th style="padding: 0.5rem; text-align: center;">Опозд.</th>
+                            <th style="padding: 0.5rem; text-align: center;">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stats.athletes.map(a => `
+                            <tr>
+                                <td style="padding: 0.5rem;">${escapeHtml(a.athlete_name)}</td>
+                                <td style="padding: 0.5rem; text-align: center;">${a.total}</td>
+                                <td style="padding: 0.5rem; text-align: center; color: green;">${a.present}</td>
+                                <td style="padding: 0.5rem; text-align: center; color: red;">${a.absent}</td>
+                                <td style="padding: 0.5rem; text-align: center; color: orange;">${a.late}</td>
+                                <td style="padding: 0.5rem; text-align: center; font-weight: bold;">${a.attendance_rate}%</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки статистики:', error);
+        document.getElementById('attendanceStats').innerHTML = '<p style="color: var(--text-error);">Ошибка загрузки статистики</p>';
+    });
+
+function loadAthletes(enrollments) {
+    const container = document.getElementById('athletesList');
+    
+    if (!enrollments || enrollments.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">В группе пока нет спортсменов</p>';
+        return;
+    }
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+    enrollments.forEach(enrollment => {
+        if (enrollment.status === 'active' && enrollment.athlete) {
+            html += `
+                <div class="card" style="padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin-bottom: 0.5rem;">${escapeHtml(enrollment.athlete.full_name || 'Без имени')}</h4>
+                            <p style="color: var(--text-light); margin: 0;">${enrollment.athlete.main_sport || ''}</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success" onclick="markAttendance(${enrollment.athlete.id}, 'present')">✓ Присутствует</button>
+                            <button class="btn btn-danger" onclick="markAttendance(${enrollment.athlete.id}, 'absent')">✗ Отсутствует</button>
+                            <button class="btn btn-warning" onclick="markAttendance(${enrollment.athlete.id}, 'late')">⏰ Опоздал</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function markAttendance(athleteId, status) {
+    const date = document.getElementById('attendanceDate').value;
+    
+    if (!date) {
+        alert('Выберите дату');
+        return;
+    }
+    
+    fetch('/api/attendance/mark/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            athlete: athleteId,
+            group: groupId,
+            date: date,
+            status: status
+        })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 201) {
+            alert('Посещаемость отмечена!');
+            // Обновляем статистику
+            location.reload();
+        } else {
+            alert('Ошибка: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при отметке посещаемости');
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

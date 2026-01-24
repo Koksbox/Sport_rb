@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Выбор новой роли - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Выбор новой роли</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Выберите роль для добавления</h2>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                Вы можете иметь несколько ролей в системе. Выберите роль, которую хотите добавить к своему аккаунту.
+            </p>
+            
+            <div id="messages"></div>
+            
+            <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">
+                <strong>Примечание:</strong> Роль "Родитель" автоматически появится при добавлении ребёнка. 
+                Роль "Директор" автоматически появится при создании и одобрении организации.
+            </p>
+            
+            <div class="grid grid-2" style="gap: 1rem;">
+                <div class="role-card" data-role="athlete" onclick="selectRole('athlete')">
+                    <div class="role-icon">🏃</div>
+                    <h3>Спортсмен</h3>
+                    <p>Участие в соревнованиях, отслеживание прогресса</p>
+                </div>
+                
+                <div class="role-card" data-role="coach" onclick="selectRole('coach')">
+                    <div class="role-icon">🏋️</div>
+                    <h3>Тренер</h3>
+                    <p>Проведение тренировок, управление группами</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.role-card {
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+}
+
+.role-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.role-card.selected {
+    border-color: var(--primary-blue);
+    background: var(--secondary-blue);
+}
+
+.role-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.role-card h3 {
+    margin: 0.5rem 0;
+    color: var(--text-dark);
+}
+
+.role-card p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+</style>
+
+<script>
+function selectRole(role) {
+    // Показываем подтверждение
+    if (!confirm(`Вы уверены, что хотите добавить роль "${getRoleName(role)}"?\n\nПосле подтверждения вы перейдете на страницу регистрации этой роли.`)) {
+        return;
+    }
+    
+    // Отправляем запрос на выбор роли
+    fetch('/api/users/select-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            // Успешно - проверяем, нужно ли заполнить профиль
+            if (result.data.needs_profile_completion && result.data.profile_url) {
+                // Переходим на страницу заполнения профиля
+                window.location.href = result.data.profile_url;
+            } else {
+                // Переходим в личный кабинет
+                window.location.href = '/dashboard/';
+            }
+        } else {
+            // Ошибка
+            const messagesDiv = document.getElementById('messages');
+            let errorMsg = 'Произошла ошибка';
+            if (result.data.error) {
+                errorMsg = result.data.error;
+            } else if (result.data.role) {
+                errorMsg = result.data.role[0] || errorMsg;
+            }
+            messagesDiv.innerHTML = `<div class="alert alert-error">${errorMsg}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Произошла ошибка при выборе роли</div>';
+    });
+}
+
+function getRoleName(role) {
+    const names = {
+        'athlete': 'Спортсмен',
+        'parent': 'Родитель',
+        'coach': 'Тренер',
+        'organization': 'Организация'
+    };
+    return names[role] || role;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

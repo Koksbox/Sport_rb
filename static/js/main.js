@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Инициализация бургер-меню
+    initBurgerMenu();
+    
     // Обработка форм с HTMX
     initHTMXForms();
     
@@ -56,6 +59,54 @@ function initHTMXForms() {
         // Прокрутка к новому контенту
         if (event.detail.target) {
             event.detail.target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+}
+
+// Инициализация бургер-меню
+function initBurgerMenu() {
+    const burgerMenus = document.querySelectorAll('.burger-menu');
+    
+    if (burgerMenus.length === 0) {
+        return;
+    }
+    
+    burgerMenus.forEach(function(burgerMenu) {
+        const burgerBtn = burgerMenu.querySelector('.burger-btn');
+        const burgerDropdown = burgerMenu.querySelector('.burger-dropdown');
+        
+        if (!burgerBtn || !burgerDropdown) {
+            return;
+        }
+        
+        // Переключение меню при клике на кнопку
+        burgerBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            burgerBtn.classList.toggle('active');
+            burgerDropdown.classList.toggle('active');
+        });
+        
+        // Закрытие меню при клике на ссылку внутри меню
+        const burgerLinks = burgerDropdown.querySelectorAll('.burger-link');
+        burgerLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                burgerBtn.classList.remove('active');
+                burgerDropdown.classList.remove('active');
+            });
+        });
+    });
+    
+    // Закрытие всех меню при клике вне их
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.burger-menu')) {
+            burgerMenus.forEach(function(burgerMenu) {
+                const burgerBtn = burgerMenu.querySelector('.burger-btn');
+                const burgerDropdown = burgerMenu.querySelector('.burger-dropdown');
+                if (burgerBtn && burgerDropdown) {
+                    burgerBtn.classList.remove('active');
+                    burgerDropdown.classList.remove('active');
+                }
+            });
         }
     });
 }

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои организации - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Мои организации</h1>
+    
+    <div id="organizationsList" class="items-list">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+// Загрузка организаций пользователя
+fetch('/api/organizations/my/', {
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+})
+.then(response => response.json())
+.then(data => {
+    renderOrganizations(data);
+})
+.catch(error => {
+    console.error('Ошибка:', error);
+    document.getElementById('organizationsList').innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <p class="text-center" style="color: var(--text-light);">Ошибка загрузки данных</p>
+            </div>
+        </div>
+    `;
+});
+
+function renderOrganizations(organizations) {
+    const container = document.getElementById('organizationsList');
+    
+    if (!organizations || organizations.length === 0) {
+        container.innerHTML = `
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-body">
+                    <p class="text-center" style="color: var(--text-light); margin-bottom: 1rem;">
+                        У вас пока нет организаций.
+                    </p>
+                    <div style="text-align: center;">
+                        <a href="{% url 'frontend-organization-create' %}" class="btn btn-primary">
+                            Создать организацию
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    organizations.forEach(org => {
+        const sports = Array.isArray(org.sport_directions) 
+            ? org.sport_directions.join(', ') 
+            : (org.sport_directions || '');
+        
+        html += `
+            <div class="item-card" onclick="window.location.href='/organizations/${org.id}/'" style="cursor: pointer;">
+                <h3 class="item-card-title">${escapeHtml(org.name || 'Без названия')}</h3>
+                <p class="item-card-description">${org.address || 'Адрес не указан'}</p>
+                <div class="item-card-meta">
+                    ${org.city ? '<span>📍 ' + escapeHtml(org.city) + '</span>' : ''}
+                    ${sports ? '<span>⚽ ' + escapeHtml(sports) + '</span>' : ''}
+                    ${org.org_type ? '<span>🏢 ' + (org.org_type === 'state' ? 'Государственная' : 'Частная') + '</span>' : ''}
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

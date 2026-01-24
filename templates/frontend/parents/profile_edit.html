@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля родителя - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Редактирование профиля родителя</h1>
+    
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Общие данные</strong> (ФИО, фото, дата рождения, пол, город) редактируются отдельно и применяются ко всем вашим ролям.
+            </p>
+            <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">Редактировать общие данные</a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Профиль родителя</h2>
+        </div>
+        <div class="card-body">
+            <p style="color: var(--text-light);">
+                Профиль родителя не требует дополнительных полей. Все данные берутся из общих данных пользователя.
+            </p>
+            <p style="margin-top: 1rem;">
+                Для управления детьми используйте раздел "Мои дети" в личном кабинете.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

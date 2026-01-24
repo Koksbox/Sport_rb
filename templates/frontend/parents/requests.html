@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заявки - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>📋 Заявки на связь родитель-ребёнок</h1>
+    
+    <div id="requestsContainer">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function loadRequests() {
+    fetch('/api/parents/requests/')
+        .then(response => response.json())
+        .then(data => {
+            renderRequests(data);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки заявок:', error);
+            document.getElementById('requestsContainer').innerHTML = 
+                '<div class="card"><div class="card-body"><p style="color: var(--error-color);">Ошибка загрузки заявок.</p></div></div>';
+        });
+}
+
+function renderRequests(data) {
+    const container = document.getElementById('requestsContainer');
+    
+    let html = '';
+    
+    // Заявки, где пользователь - родитель
+    if (data.as_parent && data.as_parent.length > 0) {
+        html += `
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Мои заявки (как родитель)</h2>
+                </div>
+                <div class="card-body">
+                    ${data.as_parent.map(req => `
+                        <div class="card" style="margin-bottom: 1rem; background: var(--secondary-blue);">
+                            <div class="card-body">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h3 style="margin-bottom: 0.5rem;">${escapeHtml(req.child_name)}</h3>
+                                        <p style="color: var(--text-light); font-size: 0.9rem;">
+                                            Статус: ${req.status === 'pending_child' ? 'Ожидает подтверждения от ребёнка' : 
+                                                      req.status === 'pending_parent' ? 'Ожидает вашего подтверждения' : 
+                                                      req.status === 'confirmed' ? 'Подтверждено' : 'Отклонено'}
+                                        </p>
+                                    </div>
+                                    ${req.status === 'pending_parent' ? `
+                                    <div>
+                                        <button class="btn btn-primary" onclick="confirmRequest(${req.id})" style="margin-right: 0.5rem;">Подтвердить</button>
+                                        <button class="btn btn-secondary" onclick="rejectRequest(${req.id})">Отклонить</button>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Заявки, где пользователь - ребёнок
+    if (data.as_child && data.as_child.length > 0) {
+        html += `
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Заявки ко мне (как ребёнок)</h2>
+                </div>
+                <div class="card-body">
+                    ${data.as_child.map(req => `
+                        <div class="card" style="margin-bottom: 1rem; background: var(--secondary-blue);">
+                            <div class="card-body">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h3 style="margin-bottom: 0.5rem;">${escapeHtml(req.parent_name)}</h3>
+                                        <p style="color: var(--text-light); font-size: 0.9rem;">
+                                            Статус: ${req.status === 'pending_child' ? 'Ожидает вашего подтверждения' : 
+                                                      req.status === 'pending_parent' ? 'Ожидает подтверждения от родителя' : 
+                                                      req.status === 'confirmed' ? 'Подтверждено' : 'Отклонено'}
+                                        </p>
+                                    </div>
+                                    ${req.status === 'pending_child' ? `
+                                    <div>
+                                        <button class="btn btn-primary" onclick="confirmRequest(${req.id})" style="margin-right: 0.5rem;">Подтвердить</button>
+                                        <button class="btn btn-secondary" onclick="rejectRequest(${req.id})">Отклонить</button>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
+    if (!html) {
+        html = '<div class="card"><div class="card-body"><p style="color: var(--text-light);">Нет активных заявок.</p></div></div>';
+    }
+    
+    container.innerHTML = html;
+}
+
+function confirmRequest(linkId) {
+    if (!confirm('Подтвердить заявку?')) {
+        return;
+    }
+    
+    fetch(`/api/parents/requests/${linkId}/confirm/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (response.ok) {
+            alert(data.message || 'Заявка подтверждена');
+            loadRequests();
+        } else {
+            alert(data.error || 'Ошибка подтверждения заявки');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при подтверждении заявки');
+    });
+}
+
+function rejectRequest(linkId) {
+    if (!confirm('Отклонить заявку?')) {
+        return;
+    }
+    
+    fetch(`/api/parents/requests/${linkId}/reject/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert(result.data.message || 'Заявка отклонена');
+            loadRequests();
+        } else {
+            alert(result.data.error || 'Ошибка отклонения заявки');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при отклонении заявки');
+    });
+}
+
+// Загружаем заявки при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadRequests();
+});
+</script>
+{% endblock %}

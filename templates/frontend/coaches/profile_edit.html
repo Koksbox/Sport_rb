@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля тренера - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Редактирование профиля тренера</h1>
+    
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Общие данные</strong> (ФИО, фото, дата рождения, пол, город) редактируются отдельно и применяются ко всем вашим ролям.
+            </p>
+            <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">Редактировать общие данные</a>
+        </div>
+    </div>
+    
+    <form id="profileForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Сообщения об ошибках над кнопкой -->
+        <div id="messages" style="margin-bottom: 1.5rem;"></div>
+        
+        <!-- Профессиональная информация -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Профессиональная информация</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label" for="city_id">Город *</label>
+                    <select class="form-control" id="city_id" name="city_id" required>
+                        <option value="">Загрузка городов...</option>
+                    </select>
+                    <small style="color: var(--text-light);">Город будет автоматически синхронизирован с вашим профилем</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="specialization">Специализация (вид спорта) *</label>
+                    <select class="form-control" id="specialization" name="specialization" required>
+                        <option value="">Загрузка видов спорта...</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Телефон</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="telegram">Telegram</label>
+                        <input type="text" class="form-control" id="telegram" name="telegram" placeholder="@username">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="experience_years">Опыт работы (лет) *</label>
+                    <input type="number" class="form-control" id="experience_years" name="experience_years" min="0" max="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="education">Образование</label>
+                    <textarea class="form-control" id="education" name="education" rows="4" placeholder="Укажите ваше образование, квалификацию, сертификаты"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                Сохранить изменения
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Загрузка данных профиля
+fetch('/api/coaches/profile/', {
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки профиля');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Заполняем форму данными профиля тренера (только специфичные поля)
+        document.getElementById('phone').value = data.phone || '';
+        document.getElementById('telegram').value = data.telegram || '';
+        document.getElementById('experience_years').value = data.experience_years || '';
+        document.getElementById('education').value = data.education || '';
+        
+        // Загружаем города и виды спорта
+        const cityId = data.city_id || (data.city && data.city.id) || data.city;
+        const sportId = data.specialization_id || (data.specialization && data.specialization.id) || data.specialization;
+        loadCities(cityId);
+        loadSports(sportId);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки профиля:', error);
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки профиля</div>';
+    });
+
+// Загрузка городов
+function loadCities(selectedCityId) {
+    fetch('/api/geography/cities/')
+        .then(response => response.json())
+        .then(cities => {
+            const citySelect = document.getElementById('city_id');
+            citySelect.innerHTML = '<option value="">Выберите город</option>';
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.id;
+                option.textContent = city.name;
+                if (selectedCityId && city.id === selectedCityId) {
+                    option.selected = true;
+                }
+                citySelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки городов:', error);
+        });
+}
+
+// Загрузка видов спорта
+function loadSports(selectedSportId) {
+    fetch('/api/sports/')
+        .then(response => response.json())
+        .then(sports => {
+            const sportSelect = document.getElementById('specialization');
+            sportSelect.innerHTML = '<option value="">Выберите вид спорта</option>';
+            sports.forEach(sport => {
+                const option = document.createElement('option');
+                option.value = sport.id;
+                option.textContent = sport.name;
+                if (selectedSportId && sport.id === selectedSportId) {
+                    option.selected = true;
+                }
+                sportSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки видов спорта:', error);
+        });
+}
+
+// Превью фото
+document.getElementById('photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Размер файла не должен превышать 5 МБ');
+            e.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').src = e.target.result;
+            document.getElementById('photoPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Обработка отправки формы
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    messagesDiv.innerHTML = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Сохранение...';
+    
+    const formData = new FormData(this);
+    
+    // Преобразуем specialization в specialization_id для API
+    const specialization = formData.get('specialization');
+    if (specialization) {
+        formData.append('specialization_id', specialization);
+        formData.delete('specialization');
+    }
+    
+    // Удаляем общие поля, если они случайно попали в форму
+    formData.delete('first_name');
+    formData.delete('last_name');
+    formData.delete('patronymic');
+    formData.delete('email');
+    formData.delete('birth_date');
+    formData.delete('gender');
+    formData.delete('photo');
+    formData.delete('city');
+    
+    fetch('/api/coaches/profile/', {
+        method: 'PATCH',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Профиль успешно обновлен!</div>';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1500);
+        } else {
+            let errors = '';
+            if (result.data.error) {
+                errors = result.data.error;
+            } else if (typeof result.data === 'object') {
+                for (let key in result.data) {
+                    const fieldNames = {
+                        'first_name': 'Имя',
+                        'last_name': 'Фамилия',
+                        'patronymic': 'Отчество',
+                        'city': 'Город',
+                        'specialization': 'Специализация',
+                        'experience_years': 'Опыт работы',
+                        'phone': 'Телефон',
+                        'photo': 'Фото'
+                    };
+                    const fieldName = fieldNames[key] || key;
+                    
+                    if (Array.isArray(result.data[key])) {
+                        result.data[key].forEach(msg => {
+                            errors += `${fieldName}: ${msg}<br>`;
+                        });
+                    } else {
+                        errors += `${fieldName}: ${result.data[key]}<br>`;
+                    }
+                }
+            } else {
+                errors = 'Произошла ошибка при сохранении';
+            }
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
+            messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке формы</div>';
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить изменения';
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

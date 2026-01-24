@@ -1,0 +1,551 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Организация - СпортБаш{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Передаём API ключ в JavaScript
+    window.YANDEX_MAPS_API_KEY = '{{ YANDEX_MAPS_API_KEY|default:"" }}';
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+    <div id="organizationDetail">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<!-- Модальное окно для подачи заявки на группу -->
+<div id="groupRequestModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeGroupModal()">&times;</span>
+        <h2>Подать заявку в группу</h2>
+        <div id="groupDetails"></div>
+        <form id="groupRequestForm">
+            <input type="hidden" id="groupId" name="group">
+            <div class="form-group">
+                <label class="form-label" for="groupMessage">Сообщение (необязательно)</label>
+                <textarea class="form-control" id="groupMessage" name="message" rows="3" 
+                    placeholder="Расскажите о себе, почему хотите вступить в эту группу..."></textarea>
+            </div>
+            <div id="groupRequestErrors" style="color: var(--text-error); margin-bottom: 1rem;"></div>
+            <button type="submit" class="btn btn-primary">Отправить заявку</button>
+            <button type="button" class="btn btn-secondary" onclick="closeGroupModal()">Отмена</button>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для подачи заявки на секцию -->
+<div id="sectionRequestModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeSectionModal()">&times;</span>
+        <h2>Подать заявку на секцию</h2>
+        <div id="sectionDetails"></div>
+        <form id="sectionRequestForm">
+            <input type="hidden" id="sectionId" name="sport_direction">
+            <div class="form-group">
+                <label class="form-label" for="sectionMessage">Сообщение (необязательно)</label>
+                <textarea class="form-control" id="sectionMessage" name="message" rows="3" 
+                    placeholder="Расскажите о себе, почему хотите вступить в эту секцию..."></textarea>
+            </div>
+            <div id="sectionRequestErrors" style="color: var(--text-error); margin-bottom: 1rem;"></div>
+            <button type="submit" class="btn btn-primary">Отправить заявку</button>
+            <button type="button" class="btn btn-secondary" onclick="closeSectionModal()">Отмена</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
+
+.section-card {
+    border: 2px solid var(--primary-blue);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: #f8f9fa;
+}
+
+.group-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: white;
+}
+</style>
+
+<script>
+// Информация о пользователе
+const isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+const hasAthleteProfile = {% if user.is_authenticated and user.athlete_profile %}true{% else %}false{% endif %};
+let organizationData = null;
+
+// Загрузка данных организации
+fetch(`/api/organizations/{{ org_id }}/`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Организация не найдена');
+        }
+        return response.json();
+    })
+    .then(data => {
+        organizationData = data;
+        renderOrganizationDetail(data);
+    })
+    .catch(error => {
+        document.getElementById('organizationDetail').innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h2>Организация не найдена</h2>
+                    <p>Организация с указанным ID не существует или не одобрена.</p>
+                    <a href="{% url 'frontend-organizations' %}" class="btn btn-primary">Вернуться к списку организаций</a>
+                </div>
+            </div>
+        `;
+    });
+
+function renderOrganizationDetail(org) {
+    const container = document.getElementById('organizationDetail');
+    
+    // Группируем группы по секциям
+    const sectionsMap = {};
+    org.sport_directions.forEach(section => {
+        sectionsMap[section.id] = {
+            ...section,
+            groups: []
+        };
+    });
+    
+    org.groups.forEach(group => {
+        // Находим секцию по sport_id
+        const section = org.sport_directions.find(sd => sd.sport_id === group.sport_id);
+        if (section) {
+            sectionsMap[section.id].groups.push(group);
+        }
+    });
+    
+    // Формируем карту (если есть координаты)
+    let mapHtml = '';
+    const lat = org.latitude ? parseFloat(org.latitude) : null;
+    const lng = org.longitude ? parseFloat(org.longitude) : null;
+    
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        mapHtml = `
+            <div class="form-group" style="margin-top: 1rem;">
+                <label class="form-label">Расположение на карте</label>
+                <div id="map" style="width: 100%; height: 300px; border-radius: 8px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                    <p style="color: var(--text-light);">Загрузка карты...</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Формируем секции с группами
+    let sectionsHtml = '';
+    const sections = Object.values(sectionsMap);
+    
+    if (sections.length > 0) {
+        sectionsHtml = sections.map(section => {
+            let groupsHtml = '';
+            
+            if (section.groups.length > 0) {
+                groupsHtml = section.groups.map(group => {
+                    let scheduleHtml = '';
+                    if (group.schedules && group.schedules.length > 0) {
+                        scheduleHtml = '<div style="margin-top: 0.5rem;"><strong>Расписание:</strong><ul style="margin: 0.5rem 0; padding-left: 1.5rem;">';
+                        group.schedules.forEach(schedule => {
+                            scheduleHtml += `<li>${escapeHtml(schedule.weekday)}: ${escapeHtml(schedule.start_time)} - ${escapeHtml(schedule.end_time)}${schedule.location ? ' (' + escapeHtml(schedule.location) + ')' : ''}</li>`;
+                        });
+                        scheduleHtml += '</ul></div>';
+                    }
+                    
+                    return `
+                        <div class="group-card">
+                            <h4 style="margin-bottom: 0.5rem;">${escapeHtml(group.name)}</h4>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                ${group.age_level ? `<strong>Возраст:</strong> ${escapeHtml(group.age_level)}<br>` : ''}
+                                ${group.description ? escapeHtml(group.description) + '<br>' : ''}
+                                ${scheduleHtml}
+                            </p>
+                            ${hasAthleteProfile ? `
+                                <button class="btn btn-primary" onclick="openGroupRequestModal(${group.id})" style="width: 100%;">
+                                    Подать заявку в группу
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                groupsHtml = '<p style="color: var(--text-light); text-align: center;">Группы пока не созданы</p>';
+            }
+            
+            return `
+                <div class="section-card">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">${escapeHtml(section.sport_name)}</h3>
+                    ${hasAthleteProfile ? `
+                        <button class="btn btn-secondary" onclick="openSectionRequestModal(${section.id})" style="margin-bottom: 1rem;">
+                            Подать заявку на секцию
+                        </button>
+                    ` : ''}
+                    <div style="margin-top: 1rem;">
+                        ${groupsHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        sectionsHtml = '<p style="color: var(--text-light); text-align: center;">Секции пока не созданы</p>';
+    }
+    
+    // Формируем список тренеров
+    let coachesHtml = '';
+    if (org.coaches && org.coaches.length > 0) {
+        coachesHtml = `
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Тренеры</h2>
+                </div>
+                <div class="card-body">
+                    <div class="grid grid-2">
+                        ${org.coaches.map(coach => `
+                            <div class="item-card">
+                                <h3 class="item-card-title">${escapeHtml(coach.full_name || 'Не указано')}</h3>
+                                <p class="item-card-description">
+                                    ${coach.specialization ? `<strong>Специализация:</strong> ${escapeHtml(coach.specialization)}<br>` : ''}
+                                    ${coach.experience_years ? `<strong>Опыт:</strong> ${coach.experience_years} лет<br>` : ''}
+                                    ${coach.bio ? escapeHtml(coach.bio) : ''}
+                                </p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    const html = `
+        <div style="margin-bottom: 1rem;">
+            <a href="{% url 'frontend-organizations' %}" style="color: var(--primary-blue); text-decoration: none;">
+                ← Вернуться к списку организаций
+            </a>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">${escapeHtml(org.name || 'Без названия')}</h1>
+            </div>
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-item">
+                        <span class="profile-label">Тип организации:</span>
+                        <span class="profile-value">${org.org_type_display || (org.org_type === 'state' ? 'Государственная' : 'Частная')}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Город:</span>
+                        <span class="profile-value">${escapeHtml(org.city || 'Не указан')}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Адрес:</span>
+                        <span class="profile-value">${escapeHtml(org.address || 'Не указан')}</span>
+                    </div>
+                    ${org.website ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Сайт:</span>
+                        <span class="profile-value">
+                            <a href="${escapeHtml(org.website)}" target="_blank" rel="noopener">${escapeHtml(org.website)}</a>
+                        </span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                ${mapHtml}
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Секции и группы</h2>
+            </div>
+            <div class="card-body">
+                ${sectionsHtml}
+            </div>
+        </div>
+        
+        ${coachesHtml}
+    `;
+    
+    container.innerHTML = html;
+    
+    // Загружаем карту, если есть координаты
+    const lat = org.latitude ? parseFloat(org.latitude) : null;
+    const lng = org.longitude ? parseFloat(org.longitude) : null;
+    
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        loadMap(lat, lng, org.name);
+    }
+}
+
+function loadMap(lat, lng, name) {
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) return;
+    
+    const apiKey = window.YANDEX_MAPS_API_KEY || '';
+    if (!apiKey) {
+        // Fallback на iframe, если нет API ключа
+        mapContainer.innerHTML = `
+            <iframe 
+                src="https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&pt=${lng},${lat}&z=15" 
+                width="100%" 
+                height="300" 
+                frameborder="0" 
+                style="border-radius: 8px;">
+            </iframe>
+        `;
+        return;
+    }
+    
+    // Загружаем Яндекс.Карты API
+    if (!window.ymaps) {
+        const script = document.createElement('script');
+        script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
+        script.onload = () => {
+            window.ymaps.ready(() => {
+                createDetailMap(mapContainer, lat, lng, name);
+            });
+        };
+        script.onerror = () => {
+            console.error('Failed to load Yandex Maps API');
+            mapContainer.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-error);">Ошибка загрузки карты</p>';
+        };
+        document.head.appendChild(script);
+    } else {
+        window.ymaps.ready(() => {
+            createDetailMap(mapContainer, lat, lng, name);
+        });
+    }
+}
+
+function createDetailMap(container, lat, lng, name) {
+    // В Yandex Maps координаты: [широта, долгота]
+    const map = new window.ymaps.Map(container, {
+        center: [parseFloat(lat), parseFloat(lng)],
+        zoom: 15,
+        controls: ['zoomControl', 'fullscreenControl']
+    });
+    
+    const marker = new window.ymaps.Placemark(
+        [parseFloat(lat), parseFloat(lng)],
+        {
+            balloonContent: `<strong>${escapeHtml(name)}</strong>`
+        },
+        {
+            preset: 'islands#blueSportIcon'
+        }
+    );
+    
+    map.geoObjects.add(marker);
+    marker.balloon.open();
+}
+
+// Функции для работы с модальными окнами групп
+function openGroupRequestModal(groupId) {
+    const group = organizationData.groups.find(g => g.id === groupId);
+    if (!group) return;
+    
+    document.getElementById('groupId').value = groupId;
+    document.getElementById('groupDetails').innerHTML = `
+        <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h3>${escapeHtml(group.name)}</h3>
+            <p><strong>Вид спорта:</strong> ${escapeHtml(group.sport)}</p>
+            ${group.age_level ? `<p><strong>Возраст:</strong> ${escapeHtml(group.age_level)}</p>` : ''}
+        </div>
+    `;
+    
+    document.getElementById('groupRequestModal').style.display = 'block';
+    document.getElementById('groupRequestErrors').textContent = '';
+}
+
+function closeGroupModal() {
+    document.getElementById('groupRequestModal').style.display = 'none';
+    document.getElementById('groupRequestForm').reset();
+}
+
+// Функции для работы с модальными окнами секций
+function openSectionRequestModal(sectionId) {
+    const section = organizationData.sport_directions.find(sd => sd.id === sectionId);
+    if (!section) return;
+    
+    document.getElementById('sectionId').value = sectionId;
+    document.getElementById('sectionDetails').innerHTML = `
+        <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h3>${escapeHtml(section.sport_name)}</h3>
+            <p>Директор организации решит, в какую группу вас определить.</p>
+        </div>
+    `;
+    
+    document.getElementById('sectionRequestModal').style.display = 'block';
+    document.getElementById('sectionRequestErrors').textContent = '';
+}
+
+function closeSectionModal() {
+    document.getElementById('sectionRequestModal').style.display = 'none';
+    document.getElementById('sectionRequestForm').reset();
+}
+
+// Обработка формы заявки на группу
+document.getElementById('groupRequestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const groupId = document.getElementById('groupId').value;
+    const message = document.getElementById('groupMessage').value;
+    
+    const errorsDiv = document.getElementById('groupRequestErrors');
+    errorsDiv.textContent = '';
+    
+    fetch('/api/athletes/enrollment/request/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            group: parseInt(groupId),
+            message: message
+        })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 201) {
+            alert('Заявка успешно отправлена!');
+            closeGroupModal();
+        } else {
+            const errorMsg = result.data.error || result.data.message || 'Неизвестная ошибка';
+            if (typeof errorMsg === 'object') {
+                errorsDiv.textContent = Object.values(errorMsg).flat().join(', ');
+            } else {
+                errorsDiv.textContent = errorMsg;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        errorsDiv.textContent = 'Произошла ошибка при отправке заявки';
+    });
+});
+
+// Обработка формы заявки на секцию
+document.getElementById('sectionRequestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const sectionId = document.getElementById('sectionId').value;
+    const message = document.getElementById('sectionMessage').value;
+    
+    const errorsDiv = document.getElementById('sectionRequestErrors');
+    errorsDiv.textContent = '';
+    
+    fetch('/api/athletes/section-enrollment/request/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            sport_direction: parseInt(sectionId),
+            message: message
+        })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 201) {
+            alert('Заявка успешно отправлена! Директор решит, в какую группу вас определить.');
+            closeSectionModal();
+        } else {
+            const errorMsg = result.data.error || result.data.message || 'Неизвестная ошибка';
+            if (typeof errorMsg === 'object') {
+                errorsDiv.textContent = Object.values(errorMsg).flat().join(', ');
+            } else {
+                errorsDiv.textContent = errorMsg;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        errorsDiv.textContent = 'Произошла ошибка при отправке заявки';
+    });
+});
+
+// Закрытие модальных окон при клике вне их
+window.onclick = function(event) {
+    const groupModal = document.getElementById('groupRequestModal');
+    const sectionModal = document.getElementById('sectionRequestModal');
+    if (event.target === groupModal) {
+        closeGroupModal();
+    }
+    if (event.target === sectionModal) {
+        closeSectionModal();
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

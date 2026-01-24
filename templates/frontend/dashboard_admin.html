@@ -1,0 +1,763 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load role_names %}
+
+{% block title %}Кабинет администратора - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1400px;">
+    {% if all_roles|length > 1 %}
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for role in all_roles %}
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}">
+                    {{ role|role_name }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <h1>⚙️ Кабинет главного администратора</h1>
+    
+    <!-- Статистика -->
+    <div id="statsContainer" style="margin-bottom: 2rem;">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+    
+    <!-- Навигация по разделам -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Управление системой</h2>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-4" style="gap: 1rem;">
+                <button class="btn btn-primary" onclick="showSection('users')" style="padding: 1rem;">
+                    👥 Пользователи
+                </button>
+                <button class="btn btn-primary" onclick="showSection('organizations')" style="padding: 1rem;">
+                    🏢 Организации
+                </button>
+                <button class="btn btn-primary" onclick="showSection('moderation')" style="padding: 1rem;">
+                    ✅ Модерация
+                </button>
+                <button class="btn btn-primary" onclick="showSection('logs')" style="padding: 1rem;">
+                    📋 Логи системы
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Секции контента -->
+    <div id="contentSections">
+        <!-- Секция пользователей -->
+        <div id="section-users" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Управление пользователями</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" class="form-control" id="userSearch" 
+                               placeholder="Поиск по email, имени, фамилии..." 
+                               style="max-width: 400px; display: inline-block; margin-right: 1rem;">
+                        <select class="form-control" id="userRoleFilter" style="max-width: 200px; display: inline-block; margin-right: 1rem;">
+                            <option value="">Все роли</option>
+                            <option value="athlete">Спортсмен</option>
+                            <option value="coach">Тренер</option>
+                            <option value="parent">Родитель</option>
+                            <option value="director">Директор</option>
+                            <option value="admin_rb">Админ РБ</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="loadUsers()">Поиск</button>
+                    </div>
+                    <div id="usersList">
+                        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция организаций -->
+        <div id="section-organizations" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Управление организациями</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <select class="form-control" id="orgStatusFilter" style="max-width: 200px; display: inline-block; margin-right: 1rem;">
+                            <option value="">Все статусы</option>
+                            <option value="pending">Ожидают модерации</option>
+                            <option value="approved">Одобрены</option>
+                            <option value="rejected">Отклонены</option>
+                        </select>
+                        <input type="text" class="form-control" id="orgSearch" 
+                               placeholder="Поиск по названию, ИНН..." 
+                               style="max-width: 400px; display: inline-block; margin-right: 1rem;">
+                        <button class="btn btn-primary" onclick="loadOrganizations()">Поиск</button>
+                    </div>
+                    <div id="organizationsList">
+                        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция модерации -->
+        <div id="section-moderation" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Модерация организаций</h2>
+                </div>
+                <div class="card-body">
+                    <div id="pendingOrganizations">
+                        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция логов -->
+        <div id="section-logs" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Логи системы</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-secondary" onclick="loadLogs('audit')">Аудит логи</button>
+                        <button class="btn btn-secondary" onclick="loadLogs('django')" style="margin-left: 0.5rem;">Django логи</button>
+                    </div>
+                    <div id="logsContainer">
+                        <p style="color: var(--text-light);">Выберите тип логов для просмотра</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentSection = null;
+let currentLogsType = null;
+
+// Загрузка статистики
+function loadStats() {
+    fetch('/api/admin-rb/stats/')
+        .then(response => response.json())
+        .then(data => {
+            renderStats(data);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки статистики:', error);
+            document.getElementById('statsContainer').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки статистики</div>';
+        });
+}
+
+function renderStats(stats) {
+    const container = document.getElementById('statsContainer');
+    
+    let html = `
+        <div class="grid grid-4" style="gap: 1rem; margin-bottom: 1rem;">
+            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="card-body">
+                    <h3 style="margin: 0; font-size: 2rem;">${stats.users.total}</h3>
+                    <p style="margin: 0.5rem 0 0 0;">Всего пользователей</p>
+                    <small>+${stats.users.this_month} за месяц</small>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div class="card-body">
+                    <h3 style="margin: 0; font-size: 2rem;">${stats.organizations.total}</h3>
+                    <p style="margin: 0.5rem 0 0 0;">Организаций</p>
+                    <small>${stats.organizations.pending} на модерации</small>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <div class="card-body">
+                    <h3 style="margin: 0; font-size: 2rem;">${stats.events.total}</h3>
+                    <p style="margin: 0.5rem 0 0 0;">Мероприятий</p>
+                    <small>${stats.events.upcoming} предстоящих</small>
+                </div>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
+                <div class="card-body">
+                    <h3 style="margin: 0; font-size: 2rem;">${stats.attendance.rate}%</h3>
+                    <p style="margin: 0.5rem 0 0 0;">Посещаемость</p>
+                    <small>${stats.attendance.attended} из ${stats.attendance.total_records}</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-3" style="gap: 1rem;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Пользователи по ролям</h3>
+                </div>
+                <div class="card-body">
+                    <ul style="list-style: none; padding: 0;">
+                        ${stats.users.by_role.map(r => `
+                            <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                                <strong>${getRoleName(r.role)}:</strong> ${r.count}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Статусы организаций</h3>
+                </div>
+                <div class="card-body">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Одобрены:</strong> ${stats.organizations.approved}
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Ожидают:</strong> ${stats.organizations.pending}
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Отклонены:</strong> ${stats.organizations.rejected}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Активность за 30 дней</h3>
+                </div>
+                <div class="card-body">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Новых пользователей:</strong> ${stats.users.last_30_days}
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Новых организаций:</strong> ${stats.organizations.last_30_days}
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                            <strong>Новых мероприятий:</strong> ${stats.events.last_30_days}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function getRoleName(role) {
+    const roles = {
+        'athlete': 'Спортсмен',
+        'coach': 'Тренер',
+        'parent': 'Родитель',
+        'director': 'Директор',
+        'organization': 'Организация',
+        'admin_rb': 'Админ РБ',
+        'moderator': 'Модератор'
+    };
+    return roles[role] || role;
+}
+
+// Переключение секций
+function showSection(sectionName) {
+    // Скрываем все секции
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Показываем выбранную
+    const section = document.getElementById(`section-${sectionName}`);
+    if (section) {
+        section.style.display = 'block';
+        currentSection = sectionName;
+        
+        // Загружаем данные для секции
+        if (sectionName === 'users') {
+            loadUsers();
+        } else if (sectionName === 'organizations') {
+            loadOrganizations();
+        } else if (sectionName === 'moderation') {
+            loadPendingOrganizations();
+        }
+    }
+}
+
+// Загрузка пользователей
+function loadUsers(page = 1) {
+    const search = document.getElementById('userSearch').value;
+    const roleFilter = document.getElementById('userRoleFilter').value;
+    
+    let url = `/api/admin-rb/users/?page=${page}&page_size=20`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (roleFilter) url += `&role=${encodeURIComponent(roleFilter)}`;
+    
+    document.getElementById('usersList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            renderUsers(data);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки пользователей:', error);
+            document.getElementById('usersList').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки пользователей</div>';
+        });
+}
+
+function renderUsers(data) {
+    const container = document.getElementById('usersList');
+    
+    if (data.results.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Пользователи не найдены</p>';
+        return;
+    }
+    
+    let html = `
+        <div style="margin-bottom: 1rem;">
+            <p>Найдено: ${data.total} пользователей</p>
+        </div>
+        <table class="table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>ФИО</th>
+                    <th>Роли</th>
+                    <th>Статус</th>
+                    <th>Дата регистрации</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${data.results.map(user => `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${escapeHtml(user.email)}</td>
+                        <td>${escapeHtml(user.first_name || '')} ${escapeHtml(user.last_name || '')}</td>
+                        <td>${user.roles.map(r => getRoleName(r)).join(', ')}</td>
+                        <td>
+                            <span class="badge ${user.is_active ? 'badge-success' : 'badge-error'}">
+                                ${user.is_active ? 'Активен' : 'Неактивен'}
+                            </span>
+                        </td>
+                        <td>${new Date(user.created_at).toLocaleDateString('ru-RU')}</td>
+                        <td>
+                            <button class="btn btn-sm ${user.is_active ? 'btn-secondary' : 'btn-primary'}" 
+                                    onclick="toggleUserStatus(${user.id}, ${user.is_active})">
+                                ${user.is_active ? 'Деактивировать' : 'Активировать'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function toggleUserStatus(userId, currentStatus) {
+    if (!confirm(`Вы уверены, что хотите ${currentStatus ? 'деактивировать' : 'активировать'} этого пользователя?`)) {
+        return;
+    }
+    
+    fetch(`/api/admin-rb/users/${userId}/toggle-status/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert(result.data.message);
+            loadUsers();
+        } else {
+            alert(result.data.error || 'Ошибка изменения статуса');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка');
+    });
+}
+
+// Загрузка организаций
+function loadOrganizations(page = 1) {
+    const statusFilter = document.getElementById('orgStatusFilter').value;
+    const search = document.getElementById('orgSearch').value;
+    
+    let url = `/api/admin-rb/organizations/?page=${page}&page_size=20`;
+    if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    
+    document.getElementById('organizationsList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            renderOrganizations(data);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки организаций:', error);
+            document.getElementById('organizationsList').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки организаций</div>';
+        });
+}
+
+function renderOrganizations(data) {
+    const container = document.getElementById('organizationsList');
+    
+    if (data.results.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Организации не найдены</p>';
+        return;
+    }
+    
+    let html = `
+        <div style="margin-bottom: 1rem;">
+            <p>Найдено: ${data.total} организаций</p>
+        </div>
+        <table class="table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>ИНН</th>
+                    <th>Город</th>
+                    <th>Статус</th>
+                    <th>Создатель</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${data.results.map(org => `
+                    <tr>
+                        <td>${org.id}</td>
+                        <td>${escapeHtml(org.name)}</td>
+                        <td>${escapeHtml(org.inn || '-')}</td>
+                        <td>${escapeHtml(org.city || '-')}</td>
+                        <td>
+                            <span class="badge ${org.status === 'approved' ? 'badge-success' : org.status === 'pending' ? 'badge-warning' : 'badge-error'}">
+                                ${org.status === 'approved' ? 'Одобрена' : org.status === 'pending' ? 'Ожидает' : 'Отклонена'}
+                            </span>
+                        </td>
+                        <td>${org.created_by ? escapeHtml(org.created_by.email) : '-'}</td>
+                        <td>${new Date(org.created_at).toLocaleDateString('ru-RU')}</td>
+                        <td>
+                            <a href="/organizations/${org.id}/" class="btn btn-sm btn-primary">Просмотр</a>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Загрузка организаций на модерации
+function loadPendingOrganizations() {
+    document.getElementById('pendingOrganizations').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch('/api/admin-rb/organizations/pending/')
+        .then(response => response.json())
+        .then(data => {
+            renderPendingOrganizations(data);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки организаций:', error);
+            document.getElementById('pendingOrganizations').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки организаций</div>';
+        });
+}
+
+function renderPendingOrganizations(orgs) {
+    const container = document.getElementById('pendingOrganizations');
+    
+    if (orgs.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Нет организаций на модерации</p>';
+        return;
+    }
+    
+    let html = `
+        <div class="grid grid-2" style="gap: 1rem;">
+            ${orgs.map(org => `
+                <div class="card">
+                    <div class="card-body">
+                        <h3 style="margin-bottom: 0.5rem;">${escapeHtml(org.name)}</h3>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                            ИНН: ${escapeHtml(org.inn || '-')}<br>
+                            Город: ${escapeHtml(org.city || '-')}<br>
+                            Создатель: ${org.created_by ? escapeHtml(org.created_by.email) : '-'}
+                        </p>
+                        <div style="margin-top: 1rem;">
+                            <a href="/organizations/${org.id}/" class="btn btn-primary" style="margin-right: 0.5rem;">Просмотр</a>
+                            <button class="btn btn-success" onclick="approveOrganization(${org.id})">Одобрить</button>
+                            <button class="btn btn-secondary" onclick="rejectOrganization(${org.id})" style="margin-left: 0.5rem;">Отклонить</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function approveOrganization(orgId) {
+    if (!confirm('Одобрить эту организацию?')) return;
+    
+    fetch(`/api/organizations/${orgId}/moderate/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ action: 'approve' })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert('Организация одобрена');
+            loadPendingOrganizations();
+        } else {
+            alert(result.data.error || 'Ошибка одобрения организации');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка');
+    });
+}
+
+function rejectOrganization(orgId) {
+    const reason = prompt('Укажите причину отклонения:');
+    if (!reason) return;
+    
+    fetch(`/api/organizations/${orgId}/moderate/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ action: 'reject', reason: reason })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert('Организация отклонена');
+            loadPendingOrganizations();
+        } else {
+            alert(result.data.error || 'Ошибка отклонения организации');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка');
+    });
+}
+
+// Загрузка логов
+function loadLogs(type) {
+    currentLogsType = type;
+    document.getElementById('logsContainer').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch('/api/admin-rb/logs/')
+        .then(response => response.json())
+        .then(data => {
+            renderLogs(data, type);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки логов:', error);
+            document.getElementById('logsContainer').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки логов</div>';
+        });
+}
+
+function renderLogs(data, type) {
+    const container = document.getElementById('logsContainer');
+    
+    if (type === 'audit') {
+        if (data.audit_logs.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-light);">Нет аудит логов</p>';
+            return;
+        }
+        
+        let html = `
+            <div style="max-height: 600px; overflow-y: auto;">
+                <table class="table" style="width: 100%; font-size: 0.9rem;">
+                    <thead>
+                        <tr>
+                            <th>Дата/Время</th>
+                            <th>Пользователь</th>
+                            <th>Действие</th>
+                            <th>IP адрес</th>
+                            <th>Детали</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.audit_logs.map(log => `
+                            <tr>
+                                <td>${new Date(log.timestamp).toLocaleString('ru-RU')}</td>
+                                <td>${escapeHtml(log.user)}</td>
+                                <td>${escapeHtml(log.action)}</td>
+                                <td>${escapeHtml(log.ip_address || '-')}</td>
+                                <td>${JSON.stringify(log.details)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        container.innerHTML = html;
+    } else if (type === 'django') {
+        if (data.django_logs.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-light);">Нет Django логов</p>';
+            return;
+        }
+        
+        let html = `
+            <div style="max-height: 600px; overflow-y: auto; background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: var(--border-radius); font-family: monospace; font-size: 0.85rem;">
+                ${data.django_logs.map(line => `<div style="margin-bottom: 0.25rem;">${escapeHtml(line)}</div>`).join('')}
+            </div>
+        `;
+        container.innerHTML = html;
+    }
+}
+
+function switchRole(role) {
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            window.location.href = '/dashboard/';
+        } else {
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Загружаем статистику при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+});
+</script>
+
+<style>
+.role-switch-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    background: white;
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table th, .table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background-color: var(--secondary-blue);
+    font-weight: 600;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.badge-error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Редактирование профиля спортсмена</h1>
+    
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Общие данные</strong> (ФИО, фото, дата рождения, пол, город) редактируются отдельно и применяются ко всем вашим ролям.
+            </p>
+            <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">Редактировать общие данные</a>
+        </div>
+    </div>
+    
+    <form id="profileForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Сообщения об ошибках над кнопкой -->
+        <div id="messages" style="margin-bottom: 1.5rem;"></div>
+        
+        <!-- Спортивная информация -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Спортивная информация</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label" for="main_sport">Основной вид спорта *</label>
+                    <select class="form-control" id="main_sport" name="main_sport" required>
+                        <option value="">-- Выберите вид спорта --</option>
+                    </select>
+                    <small style="color: var(--text-light);">Выберите основной вид спорта, которым вы занимаетесь</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="additional_sports">Дополнительные виды спорта</label>
+                    <select class="form-control" id="additional_sports" name="additional_sports" multiple style="min-height: 120px;">
+                        <option value="">-- Выберите дополнительные виды спорта --</option>
+                    </select>
+                    <small style="color: var(--text-light);">Удерживайте Ctrl (или Cmd на Mac) для выбора нескольких видов спорта</small>
+                    <div id="selectedAdditionalSports" style="margin-top: 0.5rem;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Цели занятий</label>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="checkbox" name="goals" value="ЗОЖ"> ЗОЖ
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="checkbox" name="goals" value="Соревнования"> Соревнования
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem;">
+                            <input type="checkbox" name="goals" value="ГТО"> Выполнение нормативов ГТО
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Здоровье -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Информация о здоровье</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label" for="health_group">Группа здоровья</label>
+                    <select class="form-control" id="health_group" name="health_group">
+                        <option value="">-- Не указано --</option>
+                        <option value="I">I группа - Здоровые</option>
+                        <option value="II">II группа - Практически здоровые</option>
+                        <option value="III">III группа - С хроническими заболеваниями</option>
+                        <option value="IV">IV группа - С ограничениями</option>
+                    </select>
+                    <small style="color: var(--text-light);">Группа здоровья по классификации Минздрава</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="health_issues_description">Описание проблем со здоровьем</label>
+                    <textarea class="form-control" id="health_issues_description" name="health_issues_description" rows="4" placeholder="Опишите проблемы со здоровьем, если есть (необязательно)"></textarea>
+                    <small style="color: var(--text-light);">Эта информация видна только тренерам, в которых вы записаны</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Сообщения об ошибках над кнопкой -->
+        <div id="messagesBottom" style="margin-bottom: 1.5rem;"></div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Сохранить изменения</button>
+    </form>
+</div>
+
+<script>
+let allSports = [];
+let currentMainSportId = null;
+let currentAdditionalSports = [];
+
+// Загрузка списка видов спорта
+fetch('/api/sports/')
+    .then(response => response.json())
+    .then(sports => {
+        allSports = sports;
+        const mainSportSelect = document.getElementById('main_sport');
+        const additionalSportSelect = document.getElementById('additional_sports');
+        
+        // Заполняем основной вид спорта
+        sports.forEach(sport => {
+            const option = document.createElement('option');
+            option.value = sport.id;
+            option.textContent = sport.name;
+            mainSportSelect.appendChild(option);
+        });
+        
+        // Заполняем дополнительные виды спорта
+        sports.forEach(sport => {
+            const option = document.createElement('option');
+            option.value = sport.id;
+            option.textContent = sport.name;
+            additionalSportSelect.appendChild(option);
+        });
+        
+        // Загружаем текущие данные профиля
+        loadProfileData();
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки видов спорта:', error);
+        showError('Не удалось загрузить список видов спорта. Обновите страницу.');
+    });
+
+// Загрузка текущих данных профиля
+function loadProfileData() {
+    fetch('/api/athletes/profile/')
+        .then(response => response.json())
+        .then(data => {
+            // Заполняем форму данными пользователя
+            // Общие данные (ФИО, фото, дата рождения, пол, город) загружаются отдельно
+            // Здесь загружаем только специфичные для спортсмена данные
+            
+            // Данные профиля спортсмена
+            if (data.main_sport) {
+                document.getElementById('main_sport').value = data.main_sport;
+                currentMainSportId = data.main_sport;
+            }
+            if (data.health_group) {
+                document.getElementById('health_group').value = data.health_group;
+            }
+            if (data.goals) {
+                data.goals.forEach(goal => {
+                    const checkbox = document.querySelector(`input[name="goals"][value="${goal}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            
+            // Дополнительные виды спорта
+            if (data.additional_sports) {
+                currentAdditionalSports = data.additional_sports.map(s => s.id);
+                const additionalSelect = document.getElementById('additional_sports');
+                Array.from(additionalSelect.options).forEach(option => {
+                    if (currentAdditionalSports.includes(parseInt(option.value))) {
+                        option.selected = true;
+                    }
+                });
+                updateSelectedAdditionalSports();
+            }
+            
+            // Описание проблем со здоровьем
+            if (data.medical_info && data.medical_info.health_issues_description) {
+                document.getElementById('health_issues_description').value = data.medical_info.health_issues_description;
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки профиля:', error);
+            showError('Не удалось загрузить данные профиля. Обновите страницу.');
+        });
+}
+
+// Обновление отображения выбранных дополнительных видов спорта
+function updateSelectedAdditionalSports() {
+    const select = document.getElementById('additional_sports');
+    const selected = Array.from(select.selectedOptions);
+    const container = document.getElementById('selectedAdditionalSports');
+    
+    if (selected.length > 0) {
+        const badges = selected.map(option => {
+            const sport = allSports.find(s => s.id === parseInt(option.value));
+            return `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; margin: 0.25rem; font-size: 0.9rem;">${sport ? sport.name : option.text} <button type="button" onclick="removeAdditionalSport(${option.value})" style="background: none; border: none; color: white; cursor: pointer; margin-left: 0.5rem;">×</button></span>`;
+        }).join('');
+        container.innerHTML = '<div style="margin-top: 0.5rem;"><strong>Выбрано:</strong> ' + badges + '</div>';
+    } else {
+        container.innerHTML = '';
+    }
+}
+
+// Удаление дополнительного вида спорта
+function removeAdditionalSport(sportId) {
+    const select = document.getElementById('additional_sports');
+    const option = Array.from(select.options).find(opt => parseInt(opt.value) === sportId);
+    if (option) {
+        option.selected = false;
+        updateSelectedAdditionalSports();
+    }
+}
+
+// Отслеживание изменений в дополнительных видах спорта
+document.getElementById('additional_sports').addEventListener('change', updateSelectedAdditionalSports);
+
+// Превью фото удалено - фото редактируется в общих данных через /users/basic-data/edit/
+
+// Функция для отображения ошибок
+function showError(message) {
+    const messagesDiv = document.getElementById('messagesBottom');
+    messagesDiv.innerHTML = '<div class="alert alert-error" style="padding: 1rem; background: #fee; border: 1px solid #fcc; border-radius: 8px; color: #c33;">' + message + '</div>';
+    messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showSuccess(message) {
+    const messagesDiv = document.getElementById('messagesBottom');
+    messagesDiv.innerHTML = '<div class="alert alert-success" style="padding: 1rem; background: #efe; border: 1px solid #cfc; border-radius: 8px; color: #3c3;">' + message + '</div>';
+}
+
+// Обработка отправки формы
+document.getElementById('profileForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // Очищаем предыдущие сообщения
+    document.getElementById('messages').innerHTML = '';
+    document.getElementById('messagesBottom').innerHTML = '';
+    
+    const formData = new FormData(this);
+    
+    // Убираем общие поля (они редактируются отдельно)
+    formData.delete('email');
+    formData.delete('first_name');
+    formData.delete('last_name');
+    formData.delete('patronymic');
+    formData.delete('birth_date');
+    formData.delete('gender');
+    formData.delete('city');
+    formData.delete('photo');
+    
+    // Собираем дополнительные виды спорта
+    const additionalSelect = document.getElementById('additional_sports');
+    const additionalSports = Array.from(additionalSelect.selectedOptions).map(opt => parseInt(opt.value));
+    if (additionalSports.length > 0) {
+        formData.append('additional_sports', JSON.stringify(additionalSports));
+    }
+    
+    // Собираем цели
+    const goals = Array.from(document.querySelectorAll('input[name="goals"]:checked')).map(cb => cb.value);
+    if (goals.length > 0) {
+        formData.append('goals', JSON.stringify(goals));
+    }
+    
+    // Собираем медицинские данные
+    const healthIssuesDesc = document.getElementById('health_issues_description').value.trim();
+    if (healthIssuesDesc) {
+        const medicalInfo = {
+            health_issues_description: healthIssuesDesc
+        };
+        formData.append('medical_info', JSON.stringify(medicalInfo));
+    }
+    
+    fetch('/api/athletes/profile/', {
+        method: 'PATCH',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        },
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json().then(data => ({ success: true, data }));
+        } else {
+            return response.json().then(data => ({ success: false, data, status: response.status }));
+        }
+    })
+    .then(result => {
+        if (result.success) {
+            showSuccess('Профиль успешно обновлен!');
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1500);
+        } else {
+            // Форматируем ошибки для пользователя
+            let errorMessages = [];
+            
+            if (typeof result.data === 'object') {
+                for (let key in result.data) {
+                    let fieldName = key;
+                    // Переводим названия полей на русский
+                    const fieldNames = {
+                        'main_sport': 'Основной вид спорта',
+                        'health_group': 'Группа здоровья',
+                        'health_issues_description': 'Описание проблем со здоровьем',
+                        'school_or_university': 'Школа/ВУЗ',
+                        'goals': 'Цели'
+                    };
+                    fieldName = fieldNames[key] || key;
+                    
+                    if (Array.isArray(result.data[key])) {
+                        result.data[key].forEach(msg => {
+                            errorMessages.push(`${fieldName}: ${msg}`);
+                        });
+                    } else if (typeof result.data[key] === 'object') {
+                        // Вложенные объекты (например, medical_info)
+                        for (let nestedKey in result.data[key]) {
+                            const nestedFieldName = fieldNames[nestedKey] || nestedKey;
+                            if (Array.isArray(result.data[key][nestedKey])) {
+                                result.data[key][nestedKey].forEach(msg => {
+                                    errorMessages.push(`${nestedFieldName}: ${msg}`);
+                                });
+                            } else {
+                                errorMessages.push(`${nestedFieldName}: ${result.data[key][nestedKey]}`);
+                            }
+                        }
+                    } else {
+                        errorMessages.push(`${fieldName}: ${result.data[key]}`);
+                    }
+                }
+            } else {
+                errorMessages.push(result.data || 'Произошла ошибка при сохранении');
+            }
+            
+            if (errorMessages.length === 0) {
+                errorMessages.push('Произошла ошибка при сохранении профиля');
+            }
+            
+            showError('<strong>Ошибки при сохранении:</strong><br>' + errorMessages.join('<br>'));
+        }
+    })
+    .catch(error => {
+        showError('Ошибка соединения: ' + error.message);
+    });
+});
+</script>
+{% endblock %}

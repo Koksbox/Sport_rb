@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Свободные тренеры - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>👥 Свободные тренеры</h1>
+    <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Здесь вы можете найти тренеров и отправить им приглашение на работу в вашей организации.
+    </p>
+    
+    <!-- Форма фильтров -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-body">
+            <form id="filterForm">
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="city">Город</label>
+                        <select class="form-control" id="city" name="city_id">
+                            <option value="">Все города</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="sport">Вид спорта</label>
+                        <select class="form-control" id="sport" name="sport_id">
+                            <option value="">Все виды спорта</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Применить фильтры</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Результаты -->
+    <div id="coachesList">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<!-- Модальное окно для отправки приглашения -->
+<div id="invitationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Отправить приглашение</h2>
+        <div id="coachDetails"></div>
+        <form id="invitationForm">
+            <input type="hidden" id="coachId" name="coach">
+            <div class="form-group">
+                <label class="form-label" for="specialization">Специализация (необязательно)</label>
+                <select class="form-control" id="specialization" name="specialization">
+                    <option value="">Не указана</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="message">Сообщение тренеру</label>
+                <textarea class="form-control" id="message" name="message" rows="4" 
+                    placeholder="Опишите условия работы, требования, зарплату и т.д."></textarea>
+            </div>
+            <div id="invitationErrors" style="color: var(--text-error); margin-bottom: 1rem;"></div>
+            <button type="submit" class="btn btn-primary">Отправить приглашение</button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
+</style>
+
+<script>
+let cities = [];
+let sports = [];
+let coaches = [];
+
+// Загрузка данных при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadCities();
+    loadSports();
+    loadCoaches();
+});
+
+// Загрузка городов
+function loadCities() {
+    fetch('/api/geography/cities/')
+        .then(response => response.json())
+        .then(data => {
+            cities = data;
+            const citySelect = document.getElementById('city');
+            data.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.id;
+                option.textContent = city.name;
+                citySelect.appendChild(option);
+            });
+        });
+}
+
+// Загрузка видов спорта
+function loadSports() {
+    fetch('/api/sports/')
+        .then(response => response.json())
+        .then(data => {
+            sports = data;
+            const sportSelect = document.getElementById('sport');
+            const specializationSelect = document.getElementById('specialization');
+            data.forEach(sport => {
+                const option1 = document.createElement('option');
+                option1.value = sport.id;
+                option1.textContent = sport.name;
+                sportSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = sport.id;
+                option2.textContent = sport.name;
+                specializationSelect.appendChild(option2);
+            });
+        });
+}
+
+// Загрузка тренеров
+function loadCoaches() {
+    const cityId = document.getElementById('city').value;
+    const sportId = document.getElementById('sport').value;
+    
+    let url = '/api/coaches/free-coaches/';
+    const params = new URLSearchParams();
+    if (cityId) params.append('city_id', cityId);
+    if (sportId) params.append('sport_id', sportId);
+    if (params.toString()) url += '?' + params.toString();
+    
+    document.getElementById('coachesList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url, {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            coaches = data;
+            renderCoaches(data);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            document.getElementById('coachesList').innerHTML = 
+                '<p style="color: var(--text-error);">Ошибка загрузки тренеров</p>';
+        });
+}
+
+// Отрисовка тренеров
+function renderCoaches(coachesList) {
+    const container = document.getElementById('coachesList');
+    
+    if (!coachesList || coachesList.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Нет доступных тренеров</p>';
+        return;
+    }
+    
+    let html = '<div class="grid grid-2" style="gap: 1rem;">';
+    coachesList.forEach(coach => {
+        html += `
+            <div class="card">
+                <div class="card-body">
+                    <h3 style="margin-bottom: 0.5rem;">${escapeHtml(coach.full_name || 'Не указано')}</h3>
+                    <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                        <strong>Email:</strong> ${escapeHtml(coach.email || 'Не указан')}
+                    </p>
+                    <p style="margin-bottom: 0.5rem;">
+                        <strong>Специализация:</strong> ${escapeHtml(coach.specialization_name || 'Не указана')}
+                    </p>
+                    <p style="margin-bottom: 0.5rem;">
+                        <strong>Город:</strong> ${escapeHtml(coach.city_name || 'Не указан')}
+                    </p>
+                    ${coach.experience_years ? `<p style="margin-bottom: 0.5rem;"><strong>Опыт:</strong> ${coach.experience_years} лет</p>` : ''}
+                    ${coach.bio ? `<p style="margin-bottom: 1rem; color: var(--text-light);">${escapeHtml(coach.bio)}</p>` : ''}
+                    ${coach.has_pending_invitation ? 
+                        '<button class="btn btn-secondary" disabled>Приглашение уже отправлено</button>' :
+                        `<button class="btn btn-primary" onclick="openInvitationModal(${coach.id})">Отправить приглашение</button>`
+                    }
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Открытие модального окна для отправки приглашения
+function openInvitationModal(coachId) {
+    const coach = coaches.find(c => c.id === coachId);
+    if (!coach) return;
+    
+    document.getElementById('coachId').value = coachId;
+    document.getElementById('coachDetails').innerHTML = `
+        <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+            <h3>${escapeHtml(coach.full_name || 'Не указано')}</h3>
+            <p><strong>Email:</strong> ${escapeHtml(coach.email || 'Не указан')}</p>
+            <p><strong>Специализация:</strong> ${escapeHtml(coach.specialization_name || 'Не указана')}</p>
+        </div>
+    `;
+    
+    document.getElementById('invitationModal').style.display = 'block';
+    document.getElementById('invitationErrors').textContent = '';
+}
+
+// Закрытие модального окна
+function closeModal() {
+    document.getElementById('invitationModal').style.display = 'none';
+    document.getElementById('invitationForm').reset();
+}
+
+// Обработка формы приглашения
+document.getElementById('invitationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const coachId = document.getElementById('coachId').value;
+    const specialization = document.getElementById('specialization').value;
+    const message = document.getElementById('message').value;
+    
+    const errorsDiv = document.getElementById('invitationErrors');
+    errorsDiv.textContent = '';
+    
+    const data = {
+        coach: parseInt(coachId),
+        message: message
+    };
+    
+    if (specialization) {
+        data.specialization = parseInt(specialization);
+    }
+    
+    fetch('/api/coaches/invitations/send/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 201) {
+            alert('Приглашение успешно отправлено!');
+            closeModal();
+            loadCoaches(); // Обновляем список
+        } else {
+            const errorMsg = result.data.error || result.data.message || 'Неизвестная ошибка';
+            if (typeof errorMsg === 'object') {
+                errorsDiv.textContent = Object.values(errorMsg).flat().join(', ');
+            } else {
+                errorsDiv.textContent = errorMsg;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        errorsDiv.textContent = 'Произошла ошибка при отправке приглашения';
+    });
+});
+
+// Обработка фильтров
+document.getElementById('filterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    loadCoaches();
+});
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('invitationModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

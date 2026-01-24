@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Общие данные - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>Общие данные</h1>
+    <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Эти данные будут использоваться во всех ваших ролях. Изменения применяются ко всем ролям одновременно.
+    </p>
+    
+    <form id="basicDataForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Сообщения об ошибках -->
+        <div id="messages" style="margin-bottom: 1.5rem;"></div>
+        
+        <!-- Основная информация -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">Основная информация</h2>
+            </div>
+            <div class="card-body">
+                <!-- Фото -->
+                <div class="form-group">
+                    <label class="form-label">Фото</label>
+                    <div style="margin-bottom: 1rem;">
+                        <img id="photoPreview" src="" alt="Фото" style="max-width: 200px; max-height: 200px; border-radius: 8px; display: none; margin-bottom: 1rem; border: 2px solid var(--primary-blue);">
+                    </div>
+                    <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                    <small style="color: var(--text-light);">Максимальный размер: 5 МБ (необязательно)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="full_name">ФИО *</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" required 
+                           placeholder="Фамилия Имя Отчество" 
+                           pattern="[А-Яа-яЁё\s]{2,}" 
+                           title="Введите полное ФИО (минимум Фамилия и Имя, отчество опционально)">
+                    <small style="color: var(--text-light);">Введите полное ФИО: Фамилия Имя Отчество (отчество необязательно)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" readonly style="background-color: #f5f5f5;">
+                    <small style="color: var(--text-light);">Email нельзя изменить</small>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="birth_date">Дата рождения</label>
+                        <input type="date" class="form-control" id="birth_date" name="birth_date">
+                        <small style="color: var(--text-light);">(необязательно)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="gender">Пол</label>
+                        <select class="form-control" id="gender" name="gender">
+                            <option value="">Выберите пол (необязательно)</option>
+                            <option value="M">Мужской</option>
+                            <option value="F">Женский</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="city">Город</label>
+                    <input type="text" class="form-control" id="city" name="city" 
+                           placeholder="Начните вводить название города, села или деревни" 
+                           autocomplete="off">
+                    <div id="citySuggestions" class="city-suggestions" style="display: none;"></div>
+                    <small style="color: var(--text-light);">Город будет синхронизирован со всеми вашими ролями</small>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                Сохранить изменения
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Загрузка данных пользователя
+fetch('/api/users/basic-data/', {
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки данных');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Заполняем форму данными
+        // Объединяем ФИО из отдельных полей
+        const nameParts = [];
+        if (data.last_name) nameParts.push(data.last_name);
+        if (data.first_name) nameParts.push(data.first_name);
+        if (data.patronymic) nameParts.push(data.patronymic);
+        document.getElementById('full_name').value = nameParts.join(' ') || '';
+        
+        document.getElementById('email').value = data.email || '';
+        document.getElementById('birth_date').value = data.birth_date || '';
+        document.getElementById('gender').value = data.gender || '';
+        // Используем city_display если есть, иначе city
+        document.getElementById('city').value = data.city_display || data.city || '';
+        
+        // Показываем фото, если есть
+        if (data.photo_url) {
+            document.getElementById('photoPreview').src = data.photo_url;
+            document.getElementById('photoPreview').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки данных:', error);
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки данных</div>';
+    });
+
+// Автокомплит для города
+let citySearchTimeout;
+const cityInput = document.getElementById('city');
+const citySuggestions = document.getElementById('citySuggestions');
+
+cityInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    clearTimeout(citySearchTimeout);
+    
+    if (query.length < 2) {
+        citySuggestions.style.display = 'none';
+        return;
+    }
+    
+    citySearchTimeout = setTimeout(() => {
+        fetch(`/api/geography/cities/search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(results => {
+                if (results.length === 0) {
+                    citySuggestions.style.display = 'none';
+                    return;
+                }
+                
+                citySuggestions.innerHTML = '';
+                results.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-suggestion-item';
+                    item.textContent = city.display_name;
+                    item.onclick = function() {
+                        cityInput.value = city.display_name; // Сохраняем полное название с префиксом
+                        citySuggestions.style.display = 'none';
+                    };
+                    citySuggestions.appendChild(item);
+                });
+                citySuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска городов:', error);
+            });
+    }, 300);
+});
+
+// Скрываем подсказки при клике вне поля
+document.addEventListener('click', function(e) {
+    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
+        citySuggestions.style.display = 'none';
+    }
+});
+
+// Превью фото
+document.getElementById('photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Размер файла не должен превышать 5 МБ');
+            e.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').src = e.target.result;
+            document.getElementById('photoPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Обработка отправки формы
+document.getElementById('basicDataForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    messagesDiv.innerHTML = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Сохранение...';
+    
+    const formData = new FormData(this);
+    
+    // Валидация ФИО
+    const fullName = formData.get('full_name').trim();
+    if (!fullName) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Поле ФИО обязательно для заполнения</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить изменения';
+        return;
+    }
+    
+    // Проверяем, что ФИО содержит минимум 2 слова (Фамилия и Имя)
+    const nameParts = fullName.split(/\s+/).filter(part => part.length > 0);
+    if (nameParts.length < 2) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Введите полное ФИО: минимум Фамилия и Имя</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить изменения';
+        return;
+    }
+    
+    if (nameParts.length > 3) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">ФИО должно содержать не более 3 слов (Фамилия Имя Отчество)</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить изменения';
+        return;
+    }
+    
+    fetch('/api/users/basic-data/', {
+        method: 'PATCH',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Данные успешно обновлены!</div>';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1500);
+        } else {
+            let errors = '';
+            if (result.data.error) {
+                errors = result.data.error;
+            } else if (typeof result.data === 'object') {
+                for (let key in result.data) {
+                    const fieldNames = {
+                        'full_name': 'ФИО',
+                        'birth_date': 'Дата рождения',
+                        'gender': 'Пол',
+                        'city': 'Город',
+                        'photo': 'Фото'
+                    };
+                    const fieldName = fieldNames[key] || key;
+                    
+                    if (Array.isArray(result.data[key])) {
+                        result.data[key].forEach(msg => {
+                            errors += `${fieldName}: ${msg}<br>`;
+                        });
+                    } else {
+                        errors += `${fieldName}: ${result.data[key]}<br>`;
+                    }
+                }
+            } else {
+                errors = 'Произошла ошибка при сохранении';
+            }
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
+            messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        // Показываем более детальную информацию об ошибке
+        let errorMsg = 'Произошла ошибка при отправке формы';
+        if (error.message) {
+            errorMsg += ': ' + error.message;
+        }
+        messagesDiv.innerHTML = '<div class="alert alert-error">' + errorMsg + '</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Сохранить изменения';
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.city-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.city-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background-color: var(--secondary-blue);
+}
+
+.city-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.form-group {
+    position: relative;
+}
+</style>
+{% endblock %}

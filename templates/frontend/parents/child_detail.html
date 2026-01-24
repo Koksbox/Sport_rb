@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль ребёнка - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-parent-children' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться к списку детей
+        </a>
+    </div>
+    
+    <div id="childProfile">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+function loadChildProfile() {
+    const childId = {{ child_id }};
+    
+    fetch(`/api/parents/children/${childId}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки профиля');
+            }
+            return response.json();
+        })
+        .then(data => {
+            renderChildProfile(data);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            document.getElementById('childProfile').innerHTML = 
+                '<div class="card"><div class="card-body"><p style="color: var(--error-color);">Ошибка загрузки профиля ребёнка.</p></div></div>';
+        });
+}
+
+function renderChildProfile(child) {
+    const container = document.getElementById('childProfile');
+    
+    let html = `
+        <h1>👨‍👩‍👧 Профиль ребёнка</h1>
+        
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Основная информация</h2>
+            </div>
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-item">
+                        <span class="profile-label">ФИО:</span>
+                        <span class="profile-value">${escapeHtml(child.full_name || child.first_name + ' ' + child.last_name)}</span>
+                    </div>
+                    ${child.birth_date ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Дата рождения:</span>
+                        <span class="profile-value">${escapeHtml(child.birth_date)}</span>
+                    </div>
+                    ` : ''}
+                    ${child.main_sport_name ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Основной спорт:</span>
+                        <span class="profile-value">${escapeHtml(child.main_sport_name)}</span>
+                    </div>
+                    ` : ''}
+                    ${child.city_name ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Город:</span>
+                        <span class="profile-value">${escapeHtml(child.city_name)}</span>
+                    </div>
+                    ` : ''}
+                    ${child.health_group ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Группа здоровья:</span>
+                        <span class="profile-value">${escapeHtml(child.health_group)}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+        
+        ${child.organization_name && child.organization_name.length > 0 ? `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Организации</h2>
+            </div>
+            <div class="card-body">
+                <ul>
+                    ${child.organization_name.map(org => `<li>${escapeHtml(org)}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${child.coach_names && child.coach_names.length > 0 ? `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Тренеры</h2>
+            </div>
+            <div class="card-body">
+                <ul>
+                    ${child.coach_names.map(coach => `<li>${escapeHtml(coach)}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${child.attendance_stats ? `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Посещаемость</h2>
+            </div>
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-item">
+                        <span class="profile-label">Всего занятий:</span>
+                        <span class="profile-value">${child.attendance_stats.total_sessions}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Посещено:</span>
+                        <span class="profile-value">${child.attendance_stats.attended_sessions}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Процент посещаемости:</span>
+                        <span class="profile-value">${child.attendance_stats.attendance_rate}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${child.events && child.events.length > 0 ? `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Мероприятия</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-2" style="gap: 1rem;">
+                    ${child.events.map(event => `
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 style="margin-bottom: 0.5rem;">${escapeHtml(event.title)}</h3>
+                                <p style="color: var(--text-light); font-size: 0.9rem;">
+                                    ${event.date ? '📅 ' + escapeHtml(event.date) : ''}
+                                </p>
+                                <p style="color: var(--text-light); font-size: 0.9rem;">
+                                    Статус: ${escapeHtml(event.status)}
+                                </p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${child.goals ? `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="card-title">Цели</h2>
+            </div>
+            <div class="card-body">
+                <p>${escapeHtml(child.goals)}</p>
+            </div>
+        </div>
+        ` : ''}
+    `;
+    
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Загружаем профиль при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadChildProfile();
+});
+</script>
+{% endblock %}

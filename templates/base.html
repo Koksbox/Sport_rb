@@ -26,6 +26,7 @@
             </div>
             <div class="nav-menu">
                 {% if user.is_authenticated %}
+                    <!-- Основные ссылки -->
                     <a href="{% url 'frontend-dashboard' %}" class="nav-link">
                         {% if active_role and active_role_icon and active_role_name %}
                             {{ active_role_icon }} {{ active_role_name }}
@@ -33,20 +34,55 @@
                             Личный кабинет
                         {% endif %}
                     </a>
-                    {% if active_role == 'coach' %}
-                        <a href="{% url 'frontend-coach-find-organization' %}" class="nav-link">🔍 Найти организацию</a>
-                    {% endif %}
-                    {% if active_role == 'organization' or active_role == 'director' %}
-                        <a href="{% url 'frontend-my-organizations' %}" class="nav-link">🏢 Мои организации</a>
-                    {% endif %}
-                    <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
-                    <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>
                     <a href="{% url 'frontend-logout' %}" class="nav-link">Выход</a>
+                    
+                    <!-- Бургер-меню -->
+                    <div class="burger-menu">
+                        <button class="burger-btn" aria-label="Меню">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <div class="burger-dropdown">
+                            <a href="{% url 'frontend-events' %}" class="burger-link">📅 Мероприятия</a>
+                            <a href="{% url 'frontend-organizations' %}" class="burger-link">🏢 Организации</a>
+                            {% if active_role == 'coach' %}
+                                <div class="burger-divider"></div>
+                                <a href="{% url 'frontend-coach-find-organization' %}" class="burger-link">🔍 Найти организацию</a>
+                            {% endif %}
+                            {% if active_role == 'organization' or active_role == 'director' %}
+                                <div class="burger-divider"></div>
+                                <a href="{% url 'frontend-my-organizations' %}" class="burger-link">🏢 Мои организации</a>
+                            {% endif %}
+                            <div class="burger-divider"></div>
+                            <div class="burger-section-title">Полезные ссылки</div>
+                            <a href="#" class="burger-link">О проекте</a>
+                            <a href="#" class="burger-link">Помощь</a>
+                            <a href="#" class="burger-link">Политика конфиденциальности</a>
+                        </div>
+                    </div>
                 {% else %}
-                    <a href="{% url 'frontend-events' %}" class="nav-link">Мероприятия</a>
-                    <a href="{% url 'frontend-organizations' %}" class="nav-link">Организации</a>
+                    <!-- Для неавторизованных пользователей -->
                     <a href="{% url 'frontend-login' %}" class="nav-link">Вход</a>
                     <a href="{% url 'frontend-register' %}" class="nav-link btn-primary">Регистрация</a>
+                    
+                    <!-- Бургер-меню для неавторизованных -->
+                    <div class="burger-menu">
+                        <button class="burger-btn" aria-label="Меню">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <div class="burger-dropdown">
+                            <a href="{% url 'frontend-events' %}" class="burger-link">📅 Мероприятия</a>
+                            <a href="{% url 'frontend-organizations' %}" class="burger-link">🏢 Организации</a>
+                            <div class="burger-divider"></div>
+                            <div class="burger-section-title">Полезные ссылки</div>
+                            <a href="#" class="burger-link">О проекте</a>
+                            <a href="#" class="burger-link">Помощь</a>
+                            <a href="#" class="burger-link">Политика конфиденциальности</a>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -81,10 +117,8 @@
                     <p>Телефон: +7 (347) 000-00-00</p>
                 </div>
                 <div class="footer-section">
-                    <h4>Полезные ссылки</h4>
-                    <a href="#">О проекте</a>
-                    <a href="#">Помощь</a>
-                    <a href="#">Политика конфиденциальности</a>
+                    <h4>О проекте</h4>
+                    <p>Единая цифровая платформа для управления спортивной деятельностью в Республике Башкортостан</p>
                 </div>
             </div>
             <div class="footer-bottom">

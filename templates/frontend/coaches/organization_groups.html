@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Группы организации - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>👥 Группы организации</h1>
+    
+    <div id="organizationInfo" style="margin-bottom: 2rem;">
+        <div class="loading"></div>
+    </div>
+    
+    <!-- Статистика по организации -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">📊 Статистика посещаемости по организации</h2>
+        </div>
+        <div class="card-body" id="orgStats">
+            <div class="loading"></div>
+        </div>
+    </div>
+    
+    <!-- Список групп -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Мои группы в этой организации</h2>
+        </div>
+        <div class="card-body" id="groupsList">
+            <div class="loading"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const orgId = {{ org_id }};
+
+// Загрузка информации об организации
+fetch(`/api/organizations/${orgId}/`)
+    .then(response => response.json())
+    .then(org => {
+        document.getElementById('organizationInfo').innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h2>${escapeHtml(org.name || '')}</h2>
+                    <p>${escapeHtml(org.address || '')}</p>
+                    <p>${escapeHtml(org.city_name || '')}</p>
+                </div>
+            </div>
+        `;
+    });
+
+// Загрузка статистики
+fetch(`/api/attendance/organization/${orgId}/stats/`)
+    .then(response => response.json())
+    .then(stats => {
+        const container = document.getElementById('orgStats');
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--primary-blue);">${stats.overall.attendance_rate}%</div>
+                    <div style="color: var(--text-light);">Общая посещаемость</div>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: green;">${stats.overall.present}</div>
+                    <div style="color: var(--text-light);">Присутствовали</div>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: red;">${stats.overall.absent}</div>
+                    <div style="color: var(--text-light);">Отсутствовали</div>
+                </div>
+            </div>
+            <h4>Посещаемость по группам:</h4>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--secondary-blue);">
+                            <th style="padding: 0.5rem; text-align: left;">Группа</th>
+                            <th style="padding: 0.5rem; text-align: center;">Всего</th>
+                            <th style="padding: 0.5rem; text-align: center;">Присут.</th>
+                            <th style="padding: 0.5rem; text-align: center;">Отсут.</th>
+                            <th style="padding: 0.5rem; text-align: center;">%</th>
+                            <th style="padding: 0.5rem; text-align: center;">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stats.groups.map(g => `
+                            <tr>
+                                <td style="padding: 0.5rem;">${escapeHtml(g.group_name)}</td>
+                                <td style="padding: 0.5rem; text-align: center;">${g.total}</td>
+                                <td style="padding: 0.5rem; text-align: center; color: green;">${g.present}</td>
+                                <td style="padding: 0.5rem; text-align: center; color: red;">${g.absent}</td>
+                                <td style="padding: 0.5rem; text-align: center; font-weight: bold;">${g.attendance_rate}%</td>
+                                <td style="padding: 0.5rem; text-align: center;">
+                                    <a href="/coaches/groups/${g.group_id}/" class="btn btn-primary btn-sm">Открыть</a>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки статистики:', error);
+    });
+
+// Загрузка групп
+fetch(`/api/coaches/organizations/${orgId}/groups/`)
+    .then(response => response.json())
+    .then(groups => {
+        const container = document.getElementById('groupsList');
+        if (groups && groups.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+            groups.forEach(group => {
+                html += `
+                    <div class="card" style="padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">${escapeHtml(group.name || 'Без названия')}</h4>
+                                <p style="color: var(--text-light); margin: 0;">
+                                    ${escapeHtml(group.sport_name || '')} • ${escapeHtml(group.age_level_name || '')}
+                                </p>
+                                <p style="color: var(--text-light); margin: 0;">Спортсменов: ${group.enrollments ? group.enrollments.length : 0}</p>
+                            </div>
+                            <a href="/coaches/groups/${group.id}/" class="btn btn-primary">Управлять</a>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-light);">У вас пока нет групп в этой организации</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки групп:', error);
+        document.getElementById('groupsList').innerHTML = '<p style="color: var(--text-error);">Ошибка загрузки групп</p>';
+    });
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заявки на работу - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться в личный кабинет
+        </a>
+    </div>
+    
+    <h1>📝 Заявки на работу</h1>
+    <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Здесь вы можете просматривать заявки от тренеров, желающих работать в вашей организации.
+    </p>
+    
+    <div id="requestsList">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+// Загрузка заявок
+function loadRequests() {
+    fetch('/api/coaches/requests/', {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            renderRequests(data);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            document.getElementById('requestsList').innerHTML = 
+                '<p style="color: var(--text-error);">Ошибка загрузки заявок</p>';
+        });
+}
+
+// Отрисовка заявок
+function renderRequests(requests) {
+    const container = document.getElementById('requestsList');
+    
+    if (!requests || requests.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--text-light);">Нет заявок на рассмотрении</p>';
+        return;
+    }
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+    requests.forEach(req => {
+        const ageLevels = req.age_levels ? req.age_levels.map(al => al.name).join(', ') : 'Не указаны';
+        html += `
+            <div class="card">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h3 style="margin-bottom: 0.5rem;">${escapeHtml(req.coach_name || 'Не указано')}</h3>
+                            <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                                <strong>Email:</strong> ${escapeHtml(req.coach_email || 'Не указан')}
+                            </p>
+                            ${req.coach_phone ? `<p style="color: var(--text-light); margin-bottom: 0.5rem;"><strong>Телефон:</strong> ${escapeHtml(req.coach_phone)}</p>` : ''}
+                            <p style="margin-bottom: 0.5rem;">
+                                <strong>Специализация:</strong> ${escapeHtml(req.specialization_name || 'Не указана')}
+                            </p>
+                            <p style="margin-bottom: 0.5rem;">
+                                <strong>Возрастные группы:</strong> ${ageLevels}
+                            </p>
+                            ${req.message ? `<p style="margin-bottom: 0.5rem;"><strong>Сообщение:</strong> ${escapeHtml(req.message)}</p>` : ''}
+                            <p style="color: var(--text-light); font-size: 0.9rem;">
+                                Подана: ${new Date(req.created_at).toLocaleString('ru-RU')}
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-success" onclick="approveRequest(${req.id})">Одобрить</button>
+                        <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Отклонить</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Одобрение заявки
+function approveRequest(requestId) {
+    if (!confirm('Одобрить заявку этого тренера?')) {
+        return;
+    }
+    
+    fetch(`/api/coaches/requests/${requestId}/approve/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+        .then(response => {
+            return response.json().then(data => ({ status: response.status, data }));
+        })
+        .then(result => {
+            if (result.status === 200) {
+                alert('Заявка одобрена!');
+                loadRequests();
+            } else {
+                alert('Ошибка: ' + (result.data.error || 'Неизвестная ошибка'));
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при одобрении заявки');
+        });
+}
+
+// Отклонение заявки
+function rejectRequest(requestId) {
+    const reason = prompt('Укажите причину отклонения (необязательно):');
+    if (reason === null) return; // Пользователь отменил
+    
+    fetch(`/api/coaches/requests/${requestId}/reject/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            rejected_reason: reason || ''
+        })
+    })
+        .then(response => {
+            return response.json().then(data => ({ status: response.status, data }));
+        })
+        .then(result => {
+            if (result.status === 200) {
+                alert('Заявка отклонена');
+                loadRequests();
+            } else {
+                alert('Ошибка: ' + (result.data.error || 'Неизвестная ошибка'));
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при отклонении заявки');
+        });
+}
+
+// Загрузка при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadRequests();
+});
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

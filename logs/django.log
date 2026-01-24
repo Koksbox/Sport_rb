@@ -2778,3 +2778,77 @@ INFO 2026-01-23 01:03:00,358 autoreload 9448 29096 Watching for file changes wit
 INFO 2026-01-23 01:41:15,668 log 9448 1060 "GET /organizations/ HTTP/1.1" 200 14795
 INFO 2026-01-23 01:41:15,731 log 9448 1060 "GET /api/organizations/ HTTP/1.1" 200 1434
 INFO 2026-01-23 01:41:19,188 log 9448 1060 "GET / HTTP/1.1" 200 6448
+INFO 2026-01-24 11:25:20,312 autoreload 22008 30388 Watching for file changes with StatReloader
+INFO 2026-01-24 11:25:34,693 log 22008 16156 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-24 11:25:34,723 log 22008 16156 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-01-24 11:25:38,715 log 22008 16156 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-24 11:25:38,797 log 22008 19388 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-24 11:25:38,797 log 22008 16156 "GET /static/css/main.css HTTP/1.1" 200 13294
+INFO 2026-01-24 11:25:39,151 log 22008 19388 "GET /login/ HTTP/1.1" 200 5732
+INFO 2026-01-24 11:25:39,190 log 22008 16156 "GET /static/js/main.js HTTP/1.1" 200 4920
+INFO 2026-01-24 11:25:39,190 log 22008 19388 "GET /static/css/main.css HTTP/1.1" 200 13294
+WARNING 2026-01-24 11:25:39,435 log 22008 16156 Not Found: /favicon.ico
+WARNING 2026-01-24 11:25:39,435 log 22008 16156 "GET /favicon.ico HTTP/1.1" 404 10963
+WARNING 2026-01-24 11:25:39,452 log 22008 19388 Not Found: /favicon.ico
+WARNING 2026-01-24 11:25:39,453 log 22008 19388 "GET /favicon.ico HTTP/1.1" 404 10963
+INFO 2026-01-24 11:31:02,428 log 22008 28540 "GET /login/ HTTP/1.1" 200 6703
+INFO 2026-01-24 11:35:40,745 log 22008 24072 "GET /login/ HTTP/1.1" 200 6798
+INFO 2026-01-24 11:35:41,416 log 22008 24072 "GET /login/ HTTP/1.1" 200 6798
+INFO 2026-01-24 11:35:48,808 log 22008 24072 "GET /login/ HTTP/1.1" 200 6798
+INFO 2026-01-24 11:35:48,851 log 22008 30308 "GET /static/js/main.js HTTP/1.1" 200 6894
+INFO 2026-01-24 11:35:48,851 log 22008 24072 "GET /static/css/main.css HTTP/1.1" 200 16206
+WARNING 2026-01-24 11:35:49,088 log 22008 30308 Not Found: /favicon.ico
+WARNING 2026-01-24 11:35:49,088 log 22008 30308 "GET /favicon.ico HTTP/1.1" 404 10963
+WARNING 2026-01-24 11:35:49,101 log 22008 24072 Not Found: /favicon.ico
+WARNING 2026-01-24 11:35:49,101 log 22008 24072 "GET /favicon.ico HTTP/1.1" 404 10963
+INFO 2026-01-24 11:35:49,251 log 22008 24072 "GET /login/ HTTP/1.1" 200 6798
+INFO 2026-01-24 11:35:49,296 log 22008 30308 "GET /static/js/main.js HTTP/1.1" 200 6894
+INFO 2026-01-24 11:35:49,296 log 22008 24072 "GET /static/css/main.css HTTP/1.1" 200 16206
+WARNING 2026-01-24 11:35:49,483 log 22008 24072 Not Found: /favicon.ico
+WARNING 2026-01-24 11:35:49,483 log 22008 24072 "GET /favicon.ico HTTP/1.1" 404 10963
+WARNING 2026-01-24 11:35:49,495 log 22008 30308 Not Found: /favicon.ico
+WARNING 2026-01-24 11:35:49,496 log 22008 30308 "GET /favicon.ico HTTP/1.1" 404 10963
+INFO 2026-01-24 11:36:07,120 log 22008 30308 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-01-24 11:36:07,149 log 22008 30308 "GET /dashboard/ HTTP/1.1" 200 9683
+INFO 2026-01-24 11:36:17,318 log 22008 30308 "POST /api/users/switch-role/ HTTP/1.1" 200 33
+INFO 2026-01-24 11:36:17,346 log 22008 30308 "GET /dashboard/ HTTP/1.1" 200 16598
+INFO 2026-01-24 11:36:17,383 log 22008 24072 "GET /media/user_photos/1e89954302eab4484d8450e0eec0b916_gdcvyhp.jpg HTTP/1.1" 304 0
+INFO 2026-01-24 11:36:17,383 log 22008 30308 "GET /static/css/main.css HTTP/1.1" 304 0
+WARNING 2026-01-24 11:36:17,436 log 22008 24072 Not Found: /api/athletes/progress/
+WARNING 2026-01-24 11:36:17,437 log 22008 24072 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+ERROR 2026-01-24 11:36:17,452 log 22008 30308 Internal Server Error: /api/parents/my-role-id/
+Traceback (most recent call last):
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\django\views\generic\base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\.venv\Lib\site-packages\rest_framework\decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mynam\Downloads\Sport_rb\apps\parents\api\views.py", line 191, in get_my_role_id
+    "role_name": dict(request.user.roles.model.ROLE_CHOICES).get(user_role.role, user_role.role)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'UserRole' has no attribute 'ROLE_CHOICES'
+ERROR 2026-01-24 11:36:17,458 log 22008 30308 "GET /api/parents/my-role-id/ HTTP/1.1" 500 102611
+INFO 2026-01-24 11:36:22,015 log 22008 30308 "POST /api/users/switch-role/ HTTP/1.1" 200 31
+INFO 2026-01-24 11:36:22,041 log 22008 30308 "GET /dashboard/ HTTP/1.1" 200 15198
+INFO 2026-01-24 11:36:22,096 log 22008 24072 "GET /api/coaches/groups/ HTTP/1.1" 200 2
+INFO 2026-01-24 11:36:22,097 log 22008 30308 "GET /api/coaches/organizations/ HTTP/1.1" 200 20
