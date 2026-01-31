@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Моё участие в мероприятии - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+    <div id="eventRegisteredContent">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+const eventId = {{ event_id }};
+let eventData = null;
+let registrationData = null;
+let participantsData = [];
+
+// Загрузка данных мероприятия и регистрации
+Promise.all([
+    fetch(`/api/events/${eventId}/`).then(r => r.json()),
+    fetch(`/api/events/${eventId}/check-registration/`, {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    }).then(r => r.json()),
+    fetch(`/api/events/${eventId}/participants/`).then(r => r.json())
+])
+.then(([event, registration, participants]) => {
+    eventData = event;
+    registrationData = registration;
+    participantsData = participants.participants || [];
+    renderRegisteredView();
+})
+.catch(error => {
+    console.error('Ошибка загрузки данных:', error);
+    document.getElementById('eventRegisteredContent').innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <h2>Ошибка загрузки данных</h2>
+                <p>Не удалось загрузить информацию о мероприятии.</p>
+                <a href="{% url 'frontend-events' %}" class="btn btn-primary">Вернуться к списку мероприятий</a>
+            </div>
+        </div>
+    `;
+});
+
+function renderRegisteredView() {
+    const container = document.getElementById('eventRegisteredContent');
+    
+    if (!registrationData.is_registered) {
+        container.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h2>Вы не зарегистрированы</h2>
+                    <p>Вы не зарегистрированы на это мероприятие.</p>
+                    <a href="/events/${eventId}/" class="btn btn-primary">Перейти к мероприятию</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const startDate = new Date(eventData.start_date);
+    const now = new Date();
+    const timeLeft = startDate - now;
+    
+    // Форматируем возрастные группы
+    const ageGroupsText = eventData.age_groups && eventData.age_groups.length > 0
+        ? eventData.age_groups.map(ag => {
+            if (ag.min_age === ag.max_age) {
+                return ag.min_age + ' лет';
+            } else {
+                return ag.min_age + '-' + ag.max_age + ' лет';
+            }
+        }).join(', ')
+        : 'Не указаны';
+    
+    const html = `
+        <div style="margin-bottom: 1rem;">
+            <a href="{% url 'frontend-events' %}" style="color: var(--primary-blue); text-decoration: none;">
+                ← Вернуться к списку мероприятий
+            </a>
+        </div>
+        
+        <!-- Отсчёт времени до начала -->
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%); color: white;">
+            <div class="card-body" style="text-align: center; padding: 2rem;">
+                <h2 style="color: white; margin-bottom: 1rem;">⏰ До начала мероприятия</h2>
+                <div id="countdown" style="font-size: 2rem; font-weight: bold; margin: 1rem 0;">
+                    <div class="loading" style="margin: 1rem auto; display: block;"></div>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.9); margin-top: 1rem;">
+                    ${startDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })} в 
+                    ${startDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+            </div>
+        </div>
+        
+        <!-- Информация о мероприятии -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">📋 Информация о мероприятии</h2>
+            </div>
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-item">
+                        <span class="profile-label">Название:</span>
+                        <span class="profile-value">${escapeHtml(eventData.name || 'Без названия')}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Дата начала:</span>
+                        <span class="profile-value">${startDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    ${eventData.end_date ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Дата окончания:</span>
+                        <span class="profile-value">${new Date(eventData.end_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    ` : ''}
+                    <div class="profile-item">
+                        <span class="profile-label">Город:</span>
+                        <span class="profile-value">${escapeHtml(eventData.city || 'Не указан')}</span>
+                    </div>
+                    ${eventData.venue ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Место проведения:</span>
+                        <span class="profile-value">${escapeHtml(eventData.venue)}</span>
+                    </div>
+                    ` : ''}
+                    <div class="profile-item">
+                        <span class="profile-label">Возрастные группы:</span>
+                        <span class="profile-value">${ageGroupsText}</span>
+                    </div>
+                    ${eventData.sport ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Вид спорта:</span>
+                        <span class="profile-value">${escapeHtml(eventData.sport)}</span>
+                    </div>
+                    ` : ''}
+                    ${eventData.organization_name ? `
+                    <div class="profile-item">
+                        <span class="profile-label">Организатор:</span>
+                        <span class="profile-value">${escapeHtml(eventData.organization_name)}</span>
+                    </div>
+                    ` : ''}
+                    ${eventData.description ? `
+                    <div class="profile-item" style="flex-direction: column; align-items: flex-start;">
+                        <span class="profile-label" style="margin-bottom: 0.5rem;">Описание:</span>
+                        <span class="profile-value" style="white-space: pre-wrap;">${escapeHtml(eventData.description)}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Статус регистрации -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">✅ Статус регистрации</h2>
+            </div>
+            <div class="card-body">
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <span style="font-size: 2rem;">${getStatusIcon(registrationData.registration.status)}</span>
+                    <div>
+                        <strong style="font-size: 1.1rem;">${getStatusText(registrationData.registration.status)}</strong>
+                        <p style="margin: 0.25rem 0 0 0; color: var(--text-light);">
+                            Дата регистрации: ${new Date(registrationData.registration.created_at).toLocaleDateString('ru-RU')}
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="cancelRegistration()">Отменить регистрацию</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Список участников -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">👥 Участники мероприятия</h2>
+                <span style="color: var(--text-light); font-size: 0.9rem;">
+                    Всего: ${participantsData.length}
+                </span>
+            </div>
+            <div class="card-body">
+                <div id="participantsList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    ${renderParticipantsList(participantsData)}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // Запускаем отсчёт времени
+    startCountdown(startDate);
+}
+
+function renderParticipantsList(participants) {
+    if (!participants || participants.length === 0) {
+        return '<p style="text-align: center; color: var(--text-light);">Пока нет зарегистрированных участников</p>';
+    }
+    
+    let html = '';
+    participants.forEach((participant, index) => {
+        html += `
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">
+                <span style="font-size: 1.2rem; color: var(--text-light);">${index + 1}</span>
+                <div style="flex: 1;">
+                    <strong>${participant.athlete_role_id ? `<a href="/profiles/${participant.athlete_role_id}/" style="color: var(--primary-blue); text-decoration: none;">${escapeHtml(participant.athlete_name)}</a>` : escapeHtml(participant.athlete_name)}</strong>
+                    ${participant.athlete_age ? `<span style="color: var(--text-light);"> (${participant.athlete_age} лет)</span>` : ''}
+                    ${participant.athlete_sport ? `<br><small style="color: var(--text-light);">${escapeHtml(participant.athlete_sport)}</small>` : ''}
+                </div>
+                <span style="padding: 0.25rem 0.75rem; background: var(--primary-blue); color: white; border-radius: 12px; font-size: 0.85rem;">
+                    ${getStatusText(participant.status)}
+                </span>
+            </div>
+        `;
+    });
+    
+    return html;
+}
+
+function getStatusIcon(status) {
+    switch(status) {
+        case 'registered': return '📝';
+        case 'confirmed': return '✅';
+        case 'cancelled': return '❌';
+        default: return '❓';
+    }
+}
+
+function getStatusText(status) {
+    switch(status) {
+        case 'registered': return 'Зарегистрирован';
+        case 'confirmed': return 'Подтверждён';
+        case 'cancelled': return 'Отменён';
+        default: return status;
+    }
+}
+
+function startCountdown(targetDate) {
+    function updateCountdown() {
+        const now = new Date();
+        const diff = targetDate - now;
+        
+        const countdownEl = document.getElementById('countdown');
+        if (!countdownEl) return;
+        
+        if (diff <= 0) {
+            countdownEl.innerHTML = '<div style="color: #ff6b6b;">Мероприятие началось!</div>';
+            return;
+        }
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        countdownEl.innerHTML = `
+            <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; line-height: 1;">${days}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">дней</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; line-height: 1;">${hours}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">часов</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; line-height: 1;">${minutes}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">минут</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; line-height: 1;">${seconds}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">секунд</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+function cancelRegistration() {
+    if (!confirm('Вы уверены, что хотите отменить регистрацию на это мероприятие?')) {
+        return;
+    }
+    
+    fetch(`/api/events/${eventId}/cancel/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            alert(result.data.message);
+            window.location.href = `/events/${eventId}/`;
+        } else {
+            alert('Ошибка: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при отмене регистрации');
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    min-width: 180px;
+}
+
+.profile-value {
+    color: var(--text-light);
+    flex: 1;
+}
+</style>
+{% endblock %}

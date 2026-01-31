@@ -92,7 +92,9 @@ function loadChildren() {
                 html += `
                     <div class="card" style="cursor: pointer;" onclick="window.location.href='/parents/children/${child.id}/'">
                         <div class="card-body">
-                            <h3 style="margin-bottom: 0.5rem;">${escapeHtml(child.full_name || child.first_name + ' ' + child.last_name)}</h3>
+                            <h3 style="margin-bottom: 0.5rem;">
+                                ${child.role_unique_id ? `<a href="/profiles/${child.role_unique_id}/" onclick="event.stopPropagation();" style="color: var(--primary-blue); text-decoration: none;">${escapeHtml(child.full_name || child.first_name + ' ' + child.last_name)}</a>` : escapeHtml(child.full_name || child.first_name + ' ' + child.last_name)}
+                            </h3>
                             <p style="color: var(--text-light); margin-bottom: 0.5rem;">
                                 ${child.main_sport_name ? '🏃 ' + escapeHtml(child.main_sport_name) : 'Спорт не указан'}
                             </p>

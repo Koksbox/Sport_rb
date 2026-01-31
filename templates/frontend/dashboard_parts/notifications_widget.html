@@ -1,0 +1,209 @@
+{% load static %}
+
+<!-- Виджет уведомлений -->
+<div class="notifications-widget">
+    <div class="notifications-widget-header">
+        <h3>🔔 Уведомления</h3>
+        <a href="{% url 'frontend-notifications' %}" class="btn btn-sm btn-secondary">Все уведомления</a>
+    </div>
+    <div class="notifications-widget-content" id="notificationsWidget">
+        <div class="loading" style="margin: 1rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    function loadNotifications() {
+        const container = document.getElementById('notificationsWidget');
+        if (!container) return;
+        
+        fetch('/api/notifications/')
+        .then(response => response.json())
+        .then(data => {
+            const unread = data.filter(n => !n.is_read).slice(0, 5); // Показываем только 5 непрочитанных
+            
+            if (unread.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem; font-size: 0.9rem;">Нет новых уведомлений</p>';
+                return;
+            }
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            unread.forEach(notif => {
+                const date = new Date(notif.created_at).toLocaleDateString('ru-RU', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const typeIcons = {
+                    'mass_notification': '📢',
+                    'event_result': '🏆',
+                    'enrollment_approved': '✅',
+                    'medical_review': '🏥',
+                };
+                
+                const icon = typeIcons[notif.notification_type] || '🔔';
+                
+                html += `
+                    <div class="notification-item" onclick="markAsReadAndRedirect(${notif.id})" style="cursor: pointer;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem; flex-shrink: 0;">${icon}</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 600;">${escapeHtml(notif.title)}</h4>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(notif.body)}</p>
+                                <small style="color: var(--text-light); font-size: 0.75rem;">${date}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            if (data.filter(n => !n.is_read).length > 5) {
+                html += `<div style="text-align: center; margin-top: 0.75rem;">
+                    <a href="{% url 'frontend-notifications' %}" class="btn btn-sm btn-secondary">Показать все (${data.filter(n => !n.is_read).length})</a>
+                </div>`;
+            }
+            
+            container.innerHTML = html;
+            
+            // Обновляем счетчик в навигации
+            updateNotificationBadge(data.filter(n => !n.is_read).length);
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки уведомлений:', error);
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 1rem; font-size: 0.9rem;">Ошибка загрузки</p>';
+        });
+    }
+    
+    function markAsReadAndRedirect(notificationId) {
+        fetch(`/api/notifications/${notificationId}/read/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookieFunc('csrftoken')
+            }
+        })
+        .then(() => {
+            window.location.href = '{% url "frontend-notifications" %}';
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            window.location.href = '{% url "frontend-notifications" %}';
+        });
+    }
+    
+    function updateNotificationBadge(count) {
+        // Обновляем бейдж в бургер-меню (для авторизованных)
+        const badge = document.getElementById('notificationBadgeBurger');
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        // Также обновляем старый бейдж для совместимости
+        const oldBadge = document.getElementById('notificationBadge');
+        if (oldBadge) {
+            if (count > 0) {
+                oldBadge.textContent = count > 99 ? '99+' : count;
+                oldBadge.style.display = 'inline-block';
+            } else {
+                oldBadge.style.display = 'none';
+            }
+        }
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Используем глобальную функцию getCookie из main.js
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    // Загружаем уведомления при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNotifications();
+        // Обновляем каждые 30 секунд
+        setInterval(loadNotifications, 30000);
+    });
+    
+    // Экспортируем функции для использования в других скриптах
+    window.markAsReadAndRedirect = markAsReadAndRedirect;
+    window.updateNotificationBadge = updateNotificationBadge;
+})();
+</script>
+
+<style>
+.notifications-widget {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.notifications-widget-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-widget-header h3 {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.1rem;
+}
+
+.notifications-widget-content {
+    padding: 1rem 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 0.75rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+    transition: background 0.2s;
+    border-left: 3px solid var(--primary-blue);
+}
+
+.notification-item:hover {
+    background: var(--secondary-blue);
+}
+
+.notification-badge {
+    background: var(--error);
+    color: var(--white);
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+</style>

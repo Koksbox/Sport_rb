@@ -116,7 +116,9 @@ fetch(`/api/attendance/group/${groupId}/stats/`)
                     <tbody>
                         ${stats.athletes.map(a => `
                             <tr>
-                                <td style="padding: 0.5rem;">${escapeHtml(a.athlete_name)}</td>
+                                <td style="padding: 0.5rem;">
+                                    ${a.athlete_role_id ? `<a href="/profiles/${a.athlete_role_id}/" style="color: var(--primary-blue); text-decoration: none; font-weight: 500;">${escapeHtml(a.athlete_name)}</a>` : escapeHtml(a.athlete_name)}
+                                </td>
                                 <td style="padding: 0.5rem; text-align: center;">${a.total}</td>
                                 <td style="padding: 0.5rem; text-align: center; color: green;">${a.present}</td>
                                 <td style="padding: 0.5rem; text-align: center; color: red;">${a.absent}</td>
@@ -149,7 +151,9 @@ function loadAthletes(enrollments) {
                 <div class="card" style="padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <h4 style="margin-bottom: 0.5rem;">${escapeHtml(enrollment.athlete.full_name || 'Без имени')}</h4>
+                            <h4 style="margin-bottom: 0.5rem;">
+                                ${enrollment.athlete.role_id ? `<a href="/profiles/${enrollment.athlete.role_id}/" style="color: var(--primary-blue); text-decoration: none;">${escapeHtml(enrollment.athlete.full_name || 'Без имени')}</a>` : escapeHtml(enrollment.athlete.full_name || 'Без имени')}
+                            </h4>
                             <p style="color: var(--text-light); margin: 0;">${enrollment.athlete.main_sport || ''}</p>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">

@@ -13,7 +13,11 @@ SIMPLE_JWT = {
 # OAuth2 (VK)
 VK_CLIENT_ID = os.getenv('VK_CLIENT_ID')
 VK_CLIENT_SECRET = os.getenv('VK_CLIENT_SECRET')
-VK_REDIRECT_URI = os.getenv('VK_REDIRECT_URI', 'https://sportbash.ru/auth/vk/callback/')
+# Для локальной разработки используем localhost, для production - реальный домен
+if DEBUG:
+    VK_REDIRECT_URI = os.getenv('VK_REDIRECT_URI', 'http://127.0.0.1:8060/api/auth/vk/callback/')
+else:
+    VK_REDIRECT_URI = os.getenv('VK_REDIRECT_URI', 'https://sportbash.ru/api/auth/vk/callback/')
 
 # Telegram
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')

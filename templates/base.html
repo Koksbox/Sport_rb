@@ -9,12 +9,17 @@
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- jsQR Library for scanning -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body {% if user.is_authenticated %}data-user-authenticated="true"{% endif %}>
     <!-- Навигация -->
     <nav class="navbar">
         <div class="container">
@@ -34,7 +39,9 @@
                             Личный кабинет
                         {% endif %}
                     </a>
-                    <a href="{% url 'frontend-logout' %}" class="nav-link">Выход</a>
+                    <a href="{% url 'frontend-events' %}" class="nav-link">📅 Мероприятия</a>
+                    <a href="{% url 'frontend-organizations' %}" class="nav-link">🏢 Организации</a>
+                    <a href="{% url 'frontend-logout' %}" class="nav-link" onclick="return confirmLogout(event)">Выход</a>
                     
                     <!-- Бургер-меню -->
                     <div class="burger-menu">
@@ -44,21 +51,43 @@
                             <span></span>
                         </button>
                         <div class="burger-dropdown">
+                            <div class="burger-section-title">Основное меню</div>
+                            <a href="{% url 'frontend-dashboard' %}" class="burger-link">
+                                {% if active_role and active_role_icon and active_role_name %}
+                                    {{ active_role_icon }} {{ active_role_name }}
+                                {% else %}
+                                    🏠 Личный кабинет
+                                {% endif %}
+                            </a>
                             <a href="{% url 'frontend-events' %}" class="burger-link">📅 Мероприятия</a>
                             <a href="{% url 'frontend-organizations' %}" class="burger-link">🏢 Организации</a>
+                            <a href="{% url 'frontend-news' %}" class="burger-link">📰 Новости</a>
+                            <a href="{% url 'frontend-notifications' %}" class="burger-link notification-bell" id="notificationsLinkBurger">
+                                🔔 Уведомления
+                                <span class="notification-badge" id="notificationBadgeBurger" style="display: none;">0</span>
+                            </a>
+                            <div class="burger-divider"></div>
                             {% if active_role == 'coach' %}
-                                <div class="burger-divider"></div>
                                 <a href="{% url 'frontend-coach-find-organization' %}" class="burger-link">🔍 Найти организацию</a>
+                                <div class="burger-divider"></div>
                             {% endif %}
                             {% if active_role == 'organization' or active_role == 'director' %}
-                                <div class="burger-divider"></div>
                                 <a href="{% url 'frontend-my-organizations' %}" class="burger-link">🏢 Мои организации</a>
+                                <div class="burger-divider"></div>
                             {% endif %}
+                            {% if active_role == 'committee_staff' %}
+                                <a href="{% url 'frontend-committee-register' %}" class="burger-link">🏛️ Регистрация сотрудника</a>
+                                <div class="burger-divider"></div>
+                            {% endif %}
+                            <a href="{% url 'frontend-profile-search' %}" class="burger-link">🔍 Поиск профилей</a>
                             <div class="burger-divider"></div>
                             <div class="burger-section-title">Полезные ссылки</div>
-                            <a href="#" class="burger-link">О проекте</a>
-                            <a href="#" class="burger-link">Помощь</a>
-                            <a href="#" class="burger-link">Политика конфиденциальности</a>
+                            <a href="{% url 'frontend-about' %}" class="burger-link">О проекте</a>
+                            <a href="{% url 'frontend-help' %}" class="burger-link">Помощь</a>
+                            <a href="{% url 'frontend-contact' %}" class="burger-link">Обратная связь</a>
+                            <a href="{% url 'frontend-privacy' %}" class="burger-link">Политика конфиденциальности</a>
+                            <div class="burger-divider"></div>
+                            <a href="{% url 'frontend-logout' %}" class="burger-link" style="color: var(--error);" onclick="return confirmLogout(event)">🚪 Выход</a>
                         </div>
                     </div>
                 {% else %}
@@ -74,13 +103,19 @@
                             <span></span>
                         </button>
                         <div class="burger-dropdown">
+                            <div class="burger-section-title">Основное меню</div>
+                            <a href="{% url 'frontend-login' %}" class="burger-link">🔐 Вход</a>
+                            <a href="{% url 'frontend-register' %}" class="burger-link" style="background: var(--primary-blue); color: var(--white); font-weight: bold;">📝 Регистрация</a>
+                            <div class="burger-divider"></div>
+                            <a href="{% url 'frontend-news' %}" class="burger-link">📰 Новости</a>
                             <a href="{% url 'frontend-events' %}" class="burger-link">📅 Мероприятия</a>
                             <a href="{% url 'frontend-organizations' %}" class="burger-link">🏢 Организации</a>
                             <div class="burger-divider"></div>
                             <div class="burger-section-title">Полезные ссылки</div>
-                            <a href="#" class="burger-link">О проекте</a>
-                            <a href="#" class="burger-link">Помощь</a>
-                            <a href="#" class="burger-link">Политика конфиденциальности</a>
+                            <a href="{% url 'frontend-about' %}" class="burger-link">О проекте</a>
+                            <a href="{% url 'frontend-help' %}" class="burger-link">Помощь</a>
+                            <a href="{% url 'frontend-contact' %}" class="burger-link">Обратная связь</a>
+                            <a href="{% url 'frontend-privacy' %}" class="burger-link">Политика конфиденциальности</a>
                         </div>
                     </div>
                 {% endif %}
@@ -129,6 +164,106 @@
 
     <!-- JavaScript -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/form-validation.js' %}"></script>
+    <script src="{% static 'js/cache-manager.js' %}"></script>
+    <script src="{% static 'js/pagination.js' %}"></script>
+    <script src="{% static 'js/lazy-loading.js' %}"></script>
+    <script src="{% static 'js/favorites.js' %}"></script>
+    <script src="{% static 'js/dark-theme.js' %}"></script>
+    <script src="{% static 'js/accessibility.js' %}"></script>
+    <script src="{% static 'js/performance.js' %}"></script>
+    <script src="{% static 'js/analytics.js' %}"></script>
+    <script>
+        // Регистрация Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{% static "sw.js" %}')
+                    .then((registration) => {
+                        console.log('Service Worker зарегистрирован:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Ошибка регистрации Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+    <script>
+        // Функция подтверждения выхода
+        function confirmLogout(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const logoutUrl = '{% url "frontend-logout" %}';
+            
+            if (typeof window.showConfirm === 'function') {
+                window.showConfirm('Вы уверены, что хотите выйти?', 'Подтверждение выхода', 'Выйти', 'Отмена')
+                    .then(confirmed => {
+                        if (confirmed === true) {
+                            // Выполняем выход
+                            window.location.href = logoutUrl;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при подтверждении выхода:', error);
+                        // Fallback на стандартный confirm
+                        if (confirm('Вы уверены, что хотите выйти?')) {
+                            window.location.href = logoutUrl;
+                        }
+                    });
+            } else {
+                // Fallback на стандартный confirm
+                if (confirm('Вы уверены, что хотите выйти?')) {
+                    window.location.href = logoutUrl;
+                }
+            }
+            return false;
+        }
+    </script>
+    <script>
+        // Принудительная инициализация бургер-меню после загрузки всех скриптов
+        (function() {
+            function ensureBurgerMenuInit() {
+                if (typeof window.initBurgerMenu === 'function') {
+                    // Удаляем атрибуты инициализации для переинициализации при переходе на новую страницу
+                    document.querySelectorAll('.burger-btn').forEach(function(btn) {
+                        btn.removeAttribute('data-burger-initialized');
+                    });
+                    // Всегда вызываем инициализацию заново при переходе на новую страницу
+                    window.initBurgerMenu();
+                } else {
+                    // Если функция еще не загружена, ждем немного
+                    setTimeout(ensureBurgerMenuInit, 50);
+                }
+            }
+            
+            // Инициализируем при полной загрузке страницы
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                // Страница уже загружена или почти загружена
+                setTimeout(ensureBurgerMenuInit, 0);
+            } else {
+                // Ждем загрузки
+                window.addEventListener('load', function() {
+                    setTimeout(ensureBurgerMenuInit, 0);
+                });
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(ensureBurgerMenuInit, 0);
+                });
+            }
+            
+            // Дополнительные попытки инициализации с задержками
+            setTimeout(ensureBurgerMenuInit, 100);
+            setTimeout(ensureBurgerMenuInit, 300);
+            setTimeout(ensureBurgerMenuInit, 500);
+            
+            // Инициализация при изменении видимости страницы (возврат на вкладку)
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    setTimeout(ensureBurgerMenuInit, 100);
+                }
+            });
+        })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

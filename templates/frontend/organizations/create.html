@@ -3,6 +3,14 @@
 
 {% block title %}Создать организацию - СпортБаш{% endblock %}
 
+{% block extra_js %}
+<script>
+    // Передаём API ключ в JavaScript
+    window.YANDEX_MAPS_API_KEY = '{{ YANDEX_MAPS_API_KEY|default:"" }}';
+</script>
+<script src="{% static 'js/yandex_maps_city_selector.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container" style="max-width: 900px;">
     <div style="margin-bottom: 1rem;">
@@ -39,20 +47,36 @@
                     </div>
                 </div>
                 
-                <div id="citySelector"></div>
+                <div class="form-group">
+                    <label class="form-label" for="city_id">Город *</label>
+                    <div id="citySelector"></div>
+                    <small style="color: var(--text-light);">Выберите город из списка или на карте</small>
+                </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="address">Адрес *</label>
                     <input type="text" class="form-control" id="address" name="address" required
                            placeholder="Например: ул. Ленина, д. 10">
-                    <small style="color: var(--text-light);">Укажите адрес или выберите точку на карте</small>
+                    <small style="color: var(--text-light);">Укажите полный адрес организации</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Расположение на карте *</label>
+                    <div id="mapContainer" style="height: 400px; margin-top: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                        <div style="padding: 1rem; text-align: center; color: var(--text-light);">
+                            Выберите точку на карте для указания точного расположения организации
+                        </div>
+                    </div>
+                    <small style="color: var(--text-light);">Обязательно укажите расположение на карте</small>
+                    <input type="hidden" id="latitude" name="latitude" required>
+                    <input type="hidden" id="longitude" name="longitude" required>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="inn">ИНН *</label>
                     <input type="text" class="form-control" id="inn" name="inn" required
                            placeholder="10 или 12 цифр" pattern="[0-9]{10}|[0-9]{12}" maxlength="12">
-                    <small style="color: var(--text-light);">ИНН должен быть уникальным</small>
+                    <small style="color: var(--text-light);">ИНН должен быть уникальным (10 или 12 цифр)</small>
                 </div>
                 
                 <div class="form-group">
@@ -87,8 +111,10 @@
 </div>
 
 <script>
-// Инициализация селектора города с картой
+// Инициализация селектора города
 let citySelector = null;
+let locationMap = null;
+let locationMarker = null;
 
 // Загружаем данные пользователя и инициализируем селектор
 fetch('/api/users/basic-data/')
@@ -97,20 +123,30 @@ fetch('/api/users/basic-data/')
         // Получаем API ключ
         const apiKey = window.YANDEX_MAPS_API_KEY || '';
         
+        // Инициализируем селектор города (без карты, так как карта отдельно)
         citySelector = window.createYandexCitySelector('citySelector', {
             apiKey: apiKey,
-            showMap: true,
-            mapHeight: '400px',
+            showMap: false, // Карта будет отдельно для выбора расположения
             initialCity: userData.city || null,
             onCitySelect: function(city) {
-                // При выборе города можно обновить адрес
-                console.log('Выбран город:', city);
+                // При выборе города обновляем карту расположения
+                if (locationMap && city && city.name) {
+                    citySelector.geocodeCity(city.name).then(() => {
+                        if (citySelector.selectedCoords) {
+                            const coords = citySelector.selectedCoords;
+                            locationMap.setCenter([coords.latitude, coords.longitude], 15);
+                            updateLocationMarker([coords.latitude, coords.longitude]);
+                        }
+                    });
+                }
             }
         });
         
+        // Инициализируем карту для выбора расположения
+        initLocationMap(apiKey, userData.city);
+        
         // Если есть город в профиле, устанавливаем его
         if (userData.city) {
-            // Ищем город в списке и устанавливаем
             setTimeout(() => {
                 fetch(`/api/geography/cities/search/?q=${encodeURIComponent(userData.city)}`)
                     .then(response => response.json())
@@ -127,14 +163,106 @@ fetch('/api/users/basic-data/')
     })
     .catch(error => {
         console.error('Ошибка загрузки данных пользователя:', error);
-        // Инициализируем без данных пользователя
         const apiKey = window.YANDEX_MAPS_API_KEY || '';
         citySelector = window.createYandexCitySelector('citySelector', {
             apiKey: apiKey,
-            showMap: true,
-            mapHeight: '400px'
+            showMap: false
         });
+        initLocationMap(apiKey);
     });
+
+// Инициализация карты для выбора расположения
+function initLocationMap(apiKey, initialCity = null) {
+    const mapContainer = document.getElementById('mapContainer');
+    if (!mapContainer) return;
+    
+    if (!window.ymaps) {
+        const script = document.createElement('script');
+        script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
+        script.onload = () => {
+            window.ymaps.ready(() => {
+                createLocationMap(mapContainer, initialCity);
+            });
+        };
+        document.head.appendChild(script);
+    } else {
+        window.ymaps.ready(() => {
+            createLocationMap(mapContainer, initialCity);
+        });
+    }
+}
+
+function createLocationMap(container, initialCity = null) {
+    // Начальные координаты (Уфа, если не указан город)
+    let initialCoords = [54.7431, 55.9678];
+    
+    // Если есть начальный город, геокодируем его
+    if (initialCity && citySelector) {
+        citySelector.geocodeCity(initialCity).then(() => {
+            if (citySelector.selectedCoords) {
+                const coords = citySelector.selectedCoords;
+                initialCoords = [coords.latitude, coords.longitude];
+            }
+            setupMap(container, initialCoords);
+        });
+    } else {
+        setupMap(container, initialCoords);
+    }
+}
+
+function setupMap(container, initialCoords) {
+    locationMap = new window.ymaps.Map(container, {
+        center: initialCoords,
+        zoom: 15,
+        controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
+    });
+    
+    // Маркер для выбранной точки
+    locationMarker = new window.ymaps.Placemark(initialCoords, {
+        balloonContent: 'Расположение организации'
+    }, {
+        draggable: true,
+        preset: 'islands#blueDotIcon'
+    });
+    
+    locationMap.geoObjects.add(locationMarker);
+    
+    // Устанавливаем начальные координаты
+    updateLocationCoordinates(initialCoords);
+    
+    // Обработчик клика на карте
+    locationMap.events.add('click', (e) => {
+        const coords = e.get('coords');
+        updateLocationMarker(coords);
+        updateLocationCoordinates(coords);
+    });
+    
+    // Обработчик перетаскивания маркера
+    locationMarker.events.add('dragend', () => {
+        const coords = locationMarker.geometry.getCoordinates();
+        updateLocationCoordinates(coords);
+    });
+}
+
+function updateLocationMarker(coords) {
+    if (locationMarker) {
+        locationMarker.geometry.setCoordinates(coords);
+    } else if (locationMap) {
+        locationMarker = new window.ymaps.Placemark(coords, {
+            balloonContent: 'Расположение организации'
+        }, {
+            draggable: true,
+            preset: 'islands#blueDotIcon'
+        });
+        locationMap.geoObjects.add(locationMarker);
+    }
+}
+
+function updateLocationCoordinates(coords) {
+    // coords в формате [широта, долгота]
+    document.getElementById('latitude').value = coords[0];
+    document.getElementById('longitude').value = coords[1];
+}
 
 // Обработка отправки формы
 document.getElementById('createOrgForm').addEventListener('submit', function(e) {
@@ -157,18 +285,25 @@ document.getElementById('createOrgForm').addEventListener('submit', function(e) 
     // Добавляем данные из селектора города
     if (citySelector) {
         const cityData = citySelector.getSelectedCity();
-        const coords = citySelector.getSelectedCoordinates();
-        
-        if (cityData.id) {
+        if (cityData && cityData.id) {
             formData.set('city_id', cityData.id);
         }
-        if (coords.latitude) {
-            formData.set('latitude', coords.latitude);
-        }
-        if (coords.longitude) {
-            formData.set('longitude', coords.longitude);
-        }
     }
+    
+    // Проверяем, что координаты указаны
+    const latitude = document.getElementById('latitude').value;
+    const longitude = document.getElementById('longitude').value;
+    
+    if (!latitude || !longitude) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Пожалуйста, укажите расположение организации на карте</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Создать организацию';
+        return;
+    }
+    
+    formData.set('latitude', latitude);
+    formData.set('longitude', longitude);
     
     // Отправка запроса
     fetch('/api/organizations/create/', {
@@ -198,6 +333,8 @@ document.getElementById('createOrgForm').addEventListener('submit', function(e) 
                         'org_type': 'Тип организации',
                         'city_id': 'Город',
                         'address': 'Адрес',
+                        'latitude': 'Широта (расположение на карте)',
+                        'longitude': 'Долгота (расположение на карте)',
                         'inn': 'ИНН',
                         'website': 'Сайт'
                     };

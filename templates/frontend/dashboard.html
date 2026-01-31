@@ -109,33 +109,16 @@
 
 <script>
 function selectRole(role) {
-    const roleNames = {
-        'athlete': 'Спортсмен',
-        'parent': 'Родитель',
-        'organization': 'Организация'
-    };
-    
-    if (confirm('Выбрать роль "' + roleNames[role] + '"?')) {
-        fetch('/api/users/select-role/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ role: role })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-                window.location.reload();
-            } else {
-                alert('Ошибка: ' + JSON.stringify(data));
-            }
-        })
-        .catch(error => {
-            alert('Ошибка: ' + error);
-        });
+    // Перекидываем на страницу заполнения данных для роли
+    if (role === 'athlete') {
+        window.location.href = '{% url "frontend-role-setup-athlete" %}';
+    } else if (role === 'coach') {
+        window.location.href = '{% url "frontend-role-setup-coach" %}';
+    } else if (role === 'organization') {
+        window.location.href = '{% url "frontend-organization-create" %}';
+    } else if (role === 'parent') {
+        // Роль родителя создаётся автоматически при добавлении ребёнка
+        alert('Роль "Родитель" будет автоматически создана при добавлении ребёнка.');
     }
 }
 </script>

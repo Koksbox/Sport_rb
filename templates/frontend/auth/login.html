@@ -21,6 +21,31 @@
                             </div>
                         {% endfor %}
                     {% endif %}
+                    {% if request.GET.error %}
+                        <div class="alert alert-error">
+                            {% if request.GET.error == 'vk_auth_error' %}
+                                Ошибка авторизации через ВКонтакте: {{ request.GET.error_description|default:"Неизвестная ошибка" }}
+                            {% elif request.GET.error == 'invalid_state' %}
+                                Ошибка безопасности при авторизации через ВКонтакте
+                            {% elif request.GET.error == 'no_code' %}
+                                Не получен код авторизации от ВКонтакте
+                            {% elif request.GET.error == 'vk_not_configured' %}
+                                Авторизация через ВКонтакте не настроена
+                            {% elif request.GET.error == 'token_exchange_failed' %}
+                                Не удалось обменять код на токен
+                            {% elif request.GET.error == 'no_access_token' %}
+                                Не получен токен доступа от ВКонтакте
+                            {% elif request.GET.error == 'user_data_failed' %}
+                                Не удалось получить данные пользователя
+                            {% elif request.GET.error == 'vk_api_error' %}
+                                Ошибка API ВКонтакте: {{ request.GET.error_description|default:"Неизвестная ошибка" }}
+                            {% elif request.GET.error == 'oauth_exception' %}
+                                Произошла ошибка при авторизации через ВКонтакте
+                            {% else %}
+                                Ошибка: {{ request.GET.error }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
@@ -56,7 +81,7 @@
 // Дополнительная обработка не требуется
 
 function loginVK() {
-    // Редирект на VK OAuth
+    // Редирект на начало VK OAuth flow
     window.location.href = '/api/auth/vk/';
 }
 
@@ -66,24 +91,66 @@ function loginTelegram() {
         const tg = window.Telegram.WebApp;
         const initData = tg.initData;
         
+        if (!initData) {
+            alert('Не удалось получить данные авторизации от Telegram. Убедитесь, что вы открыли приложение через Telegram.');
+            return;
+        }
+        
         // Отправка данных в API
+        const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+        
         fetch('/api/auth/telegram/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCookieFunc('csrftoken')
             },
             body: JSON.stringify({ init_data: initData })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.access) {
-                SportBash.saveToken(data.access, data.refresh);
+        .then(response => {
+            if (response.redirected) {
+                // Если редирект (сессионная авторизация)
+                window.location.href = response.url;
+                return;
+            }
+            return response.json().then(data => ({ status: response.status, data }));
+        })
+        .then(result => {
+            if (!result) return; // Уже был редирект
+            
+            if (result.status === 200 && result.data.access) {
+                // JWT авторизация
+                if (window.SportBash && window.SportBash.saveToken) {
+                    window.SportBash.saveToken(result.data.access, result.data.refresh);
+                }
                 const next = new URLSearchParams(window.location.search).get('next') || '/dashboard/';
                 window.location.href = next;
+            } else {
+                const errorMsg = result.data.error || result.data.init_data || 'Ошибка авторизации через Telegram';
+                document.getElementById('messages').innerHTML = 
+                    '<div class="alert alert-error">' + errorMsg + '</div>';
             }
+        })
+        .catch(error => {
+            console.error('Ошибка авторизации через Telegram:', error);
+            document.getElementById('messages').innerHTML = 
+                '<div class="alert alert-error">Произошла ошибка при авторизации через Telegram</div>';
         });
     } else {
-        alert('Telegram Mini App доступен только в Telegram');
+        alert('Telegram Mini App доступен только в Telegram. Откройте приложение через Telegram бота.');
     }
 }
 </script>

@@ -35,34 +35,46 @@ def mark_attendance(request):
         # Если это первое посещение и у спортсмена есть медицинские данные
         if not previous_attendance and record.status == 'present':
             try:
-                medical_info = record.athlete.medical_info
-                has_medical_data = (
-                    medical_info.conditions or 
-                    medical_info.other_conditions or 
-                    medical_info.allergies or
-                    record.athlete.health_group
-                )
+                from apps.athletes.models import MedicalInfo
+                from apps.notifications.models import Notification
+                from apps.organizations.staff import CoachMembership
+                
+                # Проверяем наличие медицинских данных
+                has_medical_data = False
+                try:
+                    medical_info = record.athlete.medical_info
+                    has_medical_data = (
+                        (medical_info.conditions and len(medical_info.conditions) > 0) or 
+                        (medical_info.other_conditions and medical_info.other_conditions.strip()) or 
+                        (medical_info.allergies and medical_info.allergies.strip()) or
+                        record.athlete.health_group
+                    )
+                except MedicalInfo.DoesNotExist:
+                    # Если medical_info не создан, проверяем только health_group
+                    has_medical_data = bool(record.athlete.health_group)
                 
                 if has_medical_data:
                     # Отправляем уведомление всем тренерам группы
-                    from apps.notifications.models import Notification
-                    from apps.organizations.staff import CoachMembership
-                    
                     coaches = CoachMembership.objects.filter(
                         organization=record.group.organization,
                         status='active'
                     ).select_related('coach__user')
+                    
+                    athlete_name = record.athlete.user.get_full_name() or 'Спортсмен'
+                    group_name = record.group.name
                     
                     for membership in coaches:
                         Notification.objects.create(
                             recipient=membership.coach.user,
                             notification_type='athlete_medical_info',
                             title='Ознакомьтесь с медицинскими данными ученика',
-                            body=f'Спортсмен {record.athlete.user.get_full_name()} впервые посетил группу "{record.group.name}". У него есть медицинские данные, которые требуют внимания.'
+                            body=f'Спортсмен {athlete_name} впервые посетил группу "{group_name}". У него есть медицинские данные, которые требуют внимания.'
                         )
-            except Exception:
-                # Если нет medical_info, просто пропускаем
-                pass
+            except Exception as e:
+                # Логируем ошибку, но не прерываем процесс
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f'Ошибка при отправке уведомления тренеру: {str(e)}')
         
         return Response(AttendanceRecordSerializer(record).data, status=201)
     return Response(serializer.errors, status=400)
@@ -148,9 +160,18 @@ def get_group_attendance_stats(request, group_id):
             athlete_present = athlete_records.filter(status='present').count()
             attendance_rate = (athlete_present / athlete_total * 100) if athlete_total > 0 else 0
             
+            # Получаем ID роли спортсмена
+            athlete_role_id = None
+            try:
+                athlete_role = athlete.user.roles.filter(role='athlete', is_active=True).first()
+                athlete_role_id = athlete_role.unique_id if athlete_role and athlete_role.unique_id else None
+            except:
+                pass
+            
             athletes_stats.append({
                 'athlete_id': athlete.id,
                 'athlete_name': athlete.user.get_full_name(),
+                'athlete_role_id': athlete_role_id,
                 'total': athlete_total,
                 'present': athlete_present,
                 'absent': athlete_records.filter(status='absent').count(),

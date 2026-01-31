@@ -52,11 +52,10 @@ class Command(BaseCommand):
         from apps.achievements.models import Achievement
         from apps.notifications.models import Notification
         from apps.audit.models import AuditLog
-        from apps.files.models import FileUpload
+        # FileUpload удалён из импортов, так как модель может отсутствовать
         
         # Удаляем в правильном порядке (сначала зависимые, потом основные)
-        self.stdout.write('  Удаление файлов...')
-        FileUpload.objects.all().delete()
+        # Пропускаем удаление FileUpload, так как модель может отсутствовать
         
         self.stdout.write('  Удаление уведомлений...')
         Notification.objects.all().delete()
@@ -73,6 +72,7 @@ class Command(BaseCommand):
         EventAgeGroup.objects.all().delete()
         
         self.stdout.write('  Удаление организаций...')
+        from apps.organizations.models import SportDirection
         SportDirection.objects.all().delete()
         Organization.objects.all().delete()
         

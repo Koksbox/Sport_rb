@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Новости - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+    <h1>📰 Новости</h1>
+    
+    <div id="newsList">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+function loadNews() {
+    const container = document.getElementById('newsList');
+    
+    // Загружаем новости из API
+    fetch('/api/core/news/')
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderNews(data);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки новостей');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки новостей:', error);
+        container.innerHTML = '<p style="color: var(--error); text-align: center;">Ошибка загрузки новостей: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</p>';
+    });
+}
+
+function renderNews(news) {
+    const container = document.getElementById('newsList');
+    
+    if (news.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 3rem;">Новостей пока нет</p>';
+        return;
+    }
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 1.5rem;">';
+    news.forEach(item => {
+        const date = item.published_at ? new Date(item.published_at).toLocaleDateString('ru-RU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : '';
+        
+        html += `
+            <div class="card" style="cursor: pointer;" onclick="window.location.href='/news/${item.slug || item.id}/'">
+                ${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.title)}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">` : ''}
+                <div class="card-header">
+                    <h3 style="margin: 0;">${escapeHtml(item.title)}</h3>
+                    ${date ? `<span style="color: var(--text-light); font-size: 0.9rem;">${date}</span>` : ''}
+                </div>
+                <div class="card-body">
+                    ${item.excerpt ? `<p style="color: var(--text-light); margin-bottom: 0.5rem;">${escapeHtml(item.excerpt)}</p>` : ''}
+                    <p style="white-space: pre-wrap;">${escapeHtml(item.content || '').substring(0, 200)}${item.content && item.content.length > 200 ? '...' : ''}</p>
+                    ${item.author_name ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">Автор: ${escapeHtml(item.author_name)}</p>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadNews();
+});
+</script>
+{% endblock %}

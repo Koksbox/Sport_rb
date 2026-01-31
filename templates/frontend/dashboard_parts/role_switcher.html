@@ -1,0 +1,484 @@
+{% load role_names %}
+
+<!-- Переключатель ролей -->
+<div class="role-switcher-card">
+    <div class="role-switcher-header">
+        <div class="role-switcher-title">
+            <span class="role-switcher-icon">🔄</span>
+            <h3>Мои роли</h3>
+        </div>
+        {% if all_roles|length < 4 %}
+        <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary btn-sm">
+            + Добавить роль
+        </a>
+        {% endif %}
+    </div>
+    <div class="role-switcher-content">
+        <div class="role-switcher-buttons">
+            {% for role in all_roles %}
+            <div class="role-switch-wrapper">
+                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
+                        onclick="switchRole('{{ role }}')" 
+                        data-role="{{ role }}"
+                        title="Переключиться на роль {{ role|role_name }}">
+                    <span class="role-icon">
+                        {% if role == 'coach' %}🏋️
+                        {% elif role == 'athlete' %}👤
+                        {% elif role == 'parent' %}👨‍👩‍👧
+                        {% elif role == 'organization' or role == 'director' %}🏢
+                        {% elif role == 'admin_rb' %}👨‍💼
+                        {% else %}👤{% endif %}
+                    </span>
+                    <span class="role-name">{{ role|role_name }}</span>
+                    {% if role == active_role %}
+                    <span class="role-active-badge">✓</span>
+                    {% endif %}
+                </button>
+                <button class="role-id-btn" onclick="showRoleId('{{ role }}', {{ forloop.counter0 }})" title="Показать ID роли">
+                    🆔
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.role-switcher-card {
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, rgba(230, 242, 255, 0.8) 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--primary-blue);
+    overflow: hidden;
+}
+
+.role-switcher-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.role-switcher-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.role-switcher-icon {
+    font-size: 1.5rem;
+}
+
+.role-switcher-title h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.role-switcher-content {
+    padding: 1.5rem;
+}
+
+.role-switcher-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.role-switch-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.role-id-btn {
+    background: var(--white);
+    border: 2px solid var(--primary-blue);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.role-id-btn:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: scale(1.1);
+}
+
+.role-switch-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--primary-blue);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--primary-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+    position: relative;
+    min-width: 160px;
+    justify-content: center;
+}
+
+.role-switch-btn:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-hover);
+}
+
+.role-switch-btn.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    border-color: var(--primary-blue-dark);
+    box-shadow: 0 4px 12px var(--shadow-hover);
+}
+
+.role-switch-btn.active:hover {
+    background: var(--primary-blue-dark);
+}
+
+.role-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.role-name {
+    font-weight: 600;
+}
+
+.role-active-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--success);
+    color: var(--white);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .role-switcher-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .role-switcher-buttons {
+        flex-direction: column;
+    }
+    
+    .role-switch-btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+</style>
+
+<script>
+function switchRole(role) {
+    const btn = event.target.closest('.role-switch-btn');
+    if (btn.classList.contains('active')) {
+        return; // Уже активна
+    }
+    
+    // Показываем индикатор загрузки
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading"></span> Переключение...';
+    
+    fetch('/api/users/switch-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data }));
+    })
+    .then(result => {
+        if (result.status === 200 && result.data.success) {
+            // Перезагружаем страницу для обновления интерфейса
+            // Используем reload вместо href для сохранения состояния
+            window.location.reload();
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+        alert('Произошла ошибка при переключении роли');
+    });
+}
+
+// Используем глобальную функцию getCookie из main.js (не объявляем локально!)
+const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+
+function showRoleId(role, index) {
+    // Создаём модальное окно с ID роли
+    const modal = document.createElement('div');
+    modal.className = 'role-id-modal';
+    modal.id = 'roleIdModal-' + index;
+    modal.innerHTML = `
+        <div class="role-id-modal-content">
+            <div class="role-id-modal-header">
+                <h3>ID роли: ${role}</h3>
+                <button class="role-id-modal-close" onclick="closeRoleIdModal(${index})">×</button>
+            </div>
+            <div class="role-id-modal-body" id="roleIdModalBody-${index}">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    
+    // Загружаем ID роли
+    fetch(`/api/users/roles/${role}/id/`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.unique_id) {
+            const body = document.getElementById('roleIdModalBody-' + index);
+            if (!body) return;
+            
+            body.innerHTML = `
+                <div class="role-id-display-modal">
+                    <div class="role-id-value-modal">${data.unique_id}</div>
+                    <button class="btn btn-primary" onclick="copyRoleIdModal('${data.unique_id}', ${index})">
+                        📋 Копировать ID
+                    </button>
+                </div>
+                <div class="role-id-qr-modal" id="qrCodeModal-${index}"></div>
+                <p class="role-id-description-modal">
+                    Поделитесь этим ID для связи с другими пользователями
+                </p>
+            `;
+            
+            // Генерация QR-кода
+            const qrContainer = document.getElementById('qrCodeModal-' + index);
+            if (qrContainer) {
+                if (typeof QRCode !== 'undefined') {
+                    QRCode.toCanvas(qrContainer, data.unique_id, {
+                        width: 250,
+                        margin: 2,
+                        color: {
+                            dark: '#0066CC',
+                            light: '#FFFFFF'
+                        }
+                    }, function(error) {
+                        if (error) {
+                            console.error('QR Code generation error:', error);
+                            qrContainer.innerHTML = `
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.unique_id)}" 
+                                     alt="QR Code" style="max-width: 250px; height: auto; border-radius: 8px;">
+                            `;
+                        }
+                    });
+                } else {
+                    qrContainer.innerHTML = `
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.unique_id)}" 
+                             alt="QR Code" style="max-width: 250px; height: auto; border-radius: 8px;">
+                    `;
+                }
+            }
+        } else {
+            const body = document.getElementById('roleIdModalBody-' + index);
+            if (body) {
+                body.innerHTML = '<p style="color: var(--error);">ID роли не найден</p>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки ID роли:', error);
+        const body = document.getElementById('roleIdModalBody-' + index);
+        if (body) {
+            body.innerHTML = '<p style="color: var(--error);">Ошибка загрузки ID: ' + (error.message || 'Неизвестная ошибка') + '</p>';
+        }
+    });
+}
+
+function closeRoleIdModal(index) {
+    const modal = document.getElementById('roleIdModal-' + index);
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function copyRoleIdModal(roleId, index) {
+    navigator.clipboard.writeText(roleId).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Скопировано!';
+        btn.style.background = 'var(--success)';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Ошибка копирования:', err);
+        alert('Не удалось скопировать ID');
+    });
+}
+
+// Закрытие модального окна при клике вне его
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('role-id-modal')) {
+        event.target.remove();
+    }
+});
+</script>
+
+<style>
+.role-id-modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+.role-id-modal-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.role-id-modal-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.role-id-modal-header h3 {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.role-id-modal-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.role-id-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.role-id-modal-body {
+    padding: 2rem;
+}
+
+.role-id-display-modal {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+}
+
+.role-id-value-modal {
+    font-size: 1.75rem;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    color: var(--primary-blue);
+    flex: 1;
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+.role-id-qr-modal {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+}
+
+.role-id-qr-modal canvas,
+.role-id-qr-modal img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.role-id-description-modal {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+</style>

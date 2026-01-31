@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Офлайн - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; text-align: center; padding: 3rem 0;">
+    <div class="empty-state">
+        <div class="empty-state-icon" style="font-size: 5rem;">📡</div>
+        <h1>Нет подключения к интернету</h1>
+        <p style="color: var(--text-light); margin: 1.5rem 0;">
+            Похоже, вы находитесь в офлайн режиме. Проверьте подключение к интернету и попробуйте снова.
+        </p>
+        <button class="btn btn-primary" onclick="window.location.reload()">
+            Обновить страницу
+        </button>
+    </div>
+</div>
+{% endblock %}

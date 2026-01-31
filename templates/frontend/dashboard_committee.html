@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load role_names %}
+
+{% block title %}Личный кабинет сотрудника спорткомитета - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1400px;">
+    <!-- Общие данные пользователя -->
+    <div class="user-profile-card">
+        <div class="user-profile-header">
+            <h2>Общие данные</h2>
+            <div class="user-profile-actions">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать</a>
+            </div>
+        </div>
+        <div class="user-profile-content">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
+                {% endif %}
+                {% if user.committee_role %}
+                <div class="profile-item">
+                    <span class="profile-label">Город:</span>
+                    <span class="profile-value">{{ user.committee_role.city.name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Переключатель ролей -->
+    {% if all_roles|length > 1 %}
+        {% include 'frontend/dashboard_parts/role_switcher.html' %}
+    {% elif all_roles|length == 1 %}
+    <div class="card" style="margin-bottom: 2rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <span>У вас одна роль. Хотите добавить ещё?</span>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">+ Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Виджет уведомлений -->
+    {% include 'frontend/dashboard_parts/notifications_widget.html' %}
+    
+    <h1>🏛️ Личный кабинет сотрудника спорткомитета</h1>
+    
+    <!-- Статистика организаций -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Статистика организаций</h2>
+        </div>
+        <div class="card-body">
+            <div id="organizationsStats">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="loadOrganizationsStats()">🔄 Обновить статистику</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Создание мероприятия -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Создать мероприятие</h2>
+        </div>
+        <div class="card-body">
+            <form id="createEventForm">
+                <div class="form-group">
+                    <label class="form-label" for="eventTitle">Название мероприятия *</label>
+                    <input type="text" class="form-control" id="eventTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="eventDescription">Описание *</label>
+                    <textarea class="form-control" id="eventDescription" name="description" rows="4" required></textarea>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="eventType">Тип мероприятия *</label>
+                        <select class="form-control" id="eventType" name="event_type" required>
+                            <option value="competition">Соревнование</option>
+                            <option value="marathon">Марафон</option>
+                            <option value="gto_festival">Фестиваль ГТО</option>
+                            <option value="open_doors">Дни открытых дверей</option>
+                            <option value="camp">Спортивный лагерь</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="eventLevel">Уровень *</label>
+                        <select class="form-control" id="eventLevel" name="level" required>
+                            <option value="school">Школьный</option>
+                            <option value="district">Районный</option>
+                            <option value="city">Городской</option>
+                            <option value="republic">Республиканский</option>
+                            <option value="national">Всероссийский</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="eventVenue">Место проведения *</label>
+                    <input type="text" class="form-control" id="eventVenue" name="venue" required>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="eventStartDate">Дата начала *</label>
+                        <input type="datetime-local" class="form-control" id="eventStartDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="eventEndDate">Дата окончания</label>
+                        <input type="datetime-local" class="form-control" id="eventEndDate" name="end_date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="requires_registration" checked>
+                        Требуется регистрация
+                    </label>
+                </div>
+                <div id="createEventMessages" style="margin-top: 1rem;"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Создать мероприятие</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Глобальное уведомление -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Глобальное уведомление</h2>
+        </div>
+        <div class="card-body">
+            <form id="globalNotificationForm">
+                <div class="form-group">
+                    <label class="form-label" for="notificationTitle">Заголовок *</label>
+                    <input type="text" class="form-control" id="notificationTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="notificationBody">Текст уведомления *</label>
+                    <textarea class="form-control" id="notificationBody" name="body" rows="5" required></textarea>
+                </div>
+                <div id="globalNotificationMessages" style="margin-top: 1rem;"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">📢 Отправить всем пользователям</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Загрузка статистики организаций
+function loadOrganizationsStats() {
+    const container = document.getElementById('organizationsStats');
+    container.innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch('/api/city-committee/organizations/statistics/')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.organizations && data.organizations.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+            data.organizations.forEach(org => {
+                html += `
+                    <div class="card" style="cursor: pointer;" onclick="showOrgDetails(${org.id})">
+                        <div class="card-body">
+                            <h3 style="margin-bottom: 0.5rem;">${escapeHtml(org.name)}</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                                <div>
+                                    <span style="color: var(--text-light);">Спортсмены:</span>
+                                    <strong style="display: block; font-size: 1.2rem;">${org.athletes_count || 0}</strong>
+                                </div>
+                                <div>
+                                    <span style="color: var(--text-light);">Тренеры:</span>
+                                    <strong style="display: block; font-size: 1.2rem;">${org.coaches_count || 0}</strong>
+                                </div>
+                                <div>
+                                    <span style="color: var(--text-light);">Группы:</span>
+                                    <strong style="display: block; font-size: 1.2rem;">${org.groups_count || 0}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center;">Организации не найдены</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки статистики:', error);
+        container.innerHTML = '<p style="color: var(--error); text-align: center;">Ошибка загрузки статистики</p>';
+    });
+}
+
+function showOrgDetails(orgId) {
+    fetch(`/api/city-committee/organizations/${orgId}/statistics/`)
+    .then(response => response.json())
+    .then(data => {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h3>Статистика: ${escapeHtml(data.organization.name)}</h3>
+                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div class="stat-card">
+                            <div class="stat-value">${data.statistics.athletes_count}</div>
+                            <div class="stat-label">Спортсменов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${data.statistics.coaches_count}</div>
+                            <div class="stat-label">Тренеров</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${data.statistics.groups_count}</div>
+                            <div class="stat-label">Групп</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${data.statistics.attendance_rate}%</div>
+                            <div class="stat-label">Посещаемость</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <p><strong>Всего занятий:</strong> ${data.statistics.total_sessions}</p>
+                        <p><strong>Посещено:</strong> ${data.statistics.attended_sessions}</p>
+                        <p><strong>Предстоящих мероприятий:</strong> ${data.statistics.upcoming_events}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Ошибка загрузки детальной статистики');
+    });
+}
+
+// Создание мероприятия
+document.getElementById('createEventForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const messagesDiv = document.getElementById('createEventMessages');
+    messagesDiv.innerHTML = '<div class="alert alert-info">Создание мероприятия...</div>';
+    
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    
+    // Преобразуем даты в формат ISO
+    if (data.start_date) {
+        data.start_date = new Date(data.start_date).toISOString();
+    }
+    if (data.end_date) {
+        data.end_date = new Date(data.end_date).toISOString();
+    }
+    data.requires_registration = formData.has('requires_registration');
+    
+    fetch('/api/city-committee/events/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Мероприятие успешно создано!</div>';
+            this.reset();
+            setTimeout(() => {
+                messagesDiv.innerHTML = '';
+            }, 3000);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + (result.data.error || 'Ошибка при создании мероприятия') + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при создании мероприятия</div>';
+    });
+});
+
+// Глобальное уведомление
+document.getElementById('globalNotificationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const messagesDiv = document.getElementById('globalNotificationMessages');
+    const title = document.getElementById('notificationTitle').value.trim();
+    const body = document.getElementById('notificationBody').value.trim();
+    
+    if (!title || !body) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Заполните все поля</div>';
+        return;
+    }
+    
+    if (!confirm('Вы уверены, что хотите отправить это уведомление всем пользователям системы?')) {
+        return;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Отправка уведомления...</div>';
+    
+    fetch('/api/city-committee/notifications/global/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ title, body })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Уведомление отправлено ' + result.data.recipients_count + ' пользователям!</div>';
+            this.reset();
+            setTimeout(() => {
+                messagesDiv.innerHTML = '';
+            }, 3000);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + (result.data.error || 'Ошибка при отправке уведомления') + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке уведомления</div>';
+    });
+});
+
+// Загружаем статистику при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadOrganizationsStats();
+});
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.stat-card {
+    background: var(--light-gray);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-blue);
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+</style>
+{% endblock %}

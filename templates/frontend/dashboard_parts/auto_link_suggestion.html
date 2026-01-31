@@ -1,0 +1,197 @@
+<!-- Предложение автоматически связать роли -->
+<div class="auto-link-suggestion" id="autoLinkSuggestion" style="display: none;">
+    <div class="auto-link-content">
+        <div class="auto-link-icon">🔗</div>
+        <div class="auto-link-text">
+            <h3>Связать роли в вашем аккаунте?</h3>
+            <p>У вас есть роли <strong>родителя</strong> и <strong>спортсмена</strong> в одном аккаунте. Хотите связать их автоматически?</p>
+        </div>
+        <div class="auto-link-actions">
+            <button class="btn btn-primary" onclick="confirmAutoLink()">Да, связать</button>
+            <button class="btn btn-secondary" onclick="dismissAutoLink()">Позже</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Проверка возможности автоматической связи
+function checkAutoLink() {
+    const suggestionEl = document.getElementById('autoLinkSuggestion');
+    if (!suggestionEl) return;
+    
+    fetch('/api/users/check-auto-link/')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.can_link && !data.already_linked) {
+            // Проверяем, не было ли уже отклонено
+            const dismissed = localStorage.getItem('autoLinkDismissed');
+            if (!dismissed) {
+                suggestionEl.style.display = 'block';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка проверки авто-связи:', error);
+        // Не показываем ошибку пользователю, просто не показываем предложение
+    });
+}
+
+function confirmAutoLink() {
+    fetch('/api/users/auto-link-roles/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'confirmed') {
+            document.getElementById('autoLinkSuggestion').style.display = 'none';
+            showMessage('Роли успешно связаны!', 'success');
+            // Перезагружаем страницу для обновления данных
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showMessage(data.error || 'Ошибка при связывании ролей', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        showMessage('Произошла ошибка при связывании ролей', 'error');
+    });
+}
+
+function dismissAutoLink() {
+    document.getElementById('autoLinkSuggestion').style.display = 'none';
+    localStorage.setItem('autoLinkDismissed', 'true');
+    // Сбрасываем через 7 дней
+    setTimeout(() => {
+        localStorage.removeItem('autoLinkDismissed');
+    }, 7 * 24 * 60 * 60 * 1000);
+}
+
+function showMessage(text, type) {
+    // Простое уведомление (можно заменить на более красивое)
+    const message = document.createElement('div');
+    message.className = `alert alert-${type}`;
+    message.textContent = text;
+    message.style.position = 'fixed';
+    message.style.top = '20px';
+    message.style.right = '20px';
+    message.style.zIndex = '9999';
+    message.style.padding = '1rem 1.5rem';
+    message.style.borderRadius = '8px';
+    message.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    document.body.appendChild(message);
+    
+    setTimeout(() => {
+        message.remove();
+    }, 3000);
+}
+
+// Используем глобальную функцию getCookie из main.js (не объявляем локально!)
+const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+
+// Проверяем при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    checkAutoLink();
+});
+</script>
+
+<style>
+.auto-link-suggestion {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px var(--shadow-lg);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.auto-link-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.auto-link-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.auto-link-text {
+    flex: 1;
+    min-width: 250px;
+}
+
+.auto-link-text h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.auto-link-text p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+}
+
+.auto-link-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.auto-link-actions .btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .auto-link-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .auto-link-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .auto-link-actions .btn {
+        width: 100%;
+    }
+}
+</style>

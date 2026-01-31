@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои мероприятия - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+    <div class="section-header">
+        <h1 class="section-title">📅 Мои мероприятия</h1>
+        <p class="section-subtitle">Мероприятия, на которые вы зарегистрированы</p>
+    </div>
+    
+    <div id="myEventsContent">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+fetch('/api/events/my/', {
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+})
+.then(response => {
+    if (!response.ok) {
+        return response.json().then(err => Promise.reject(err));
+    }
+    return response.json();
+})
+.then(data => {
+    const container = document.getElementById('myEventsContent');
+    
+    if (!data.events || data.events.length === 0) {
+        container.innerHTML = `
+            <div class="card">
+                <div class="card-body" style="text-align: center; padding: 3rem;">
+                    <p style="color: var(--text-light); font-size: 1.1rem;">Вы пока не зарегистрированы ни на одно мероприятие</p>
+                    <a href="{% url 'frontend-events' %}" class="btn btn-primary" style="margin-top: 1rem;">Найти мероприятия</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 1.5rem;">';
+    
+    data.events.forEach(item => {
+        const event = item.event;
+        const reg = item.registration;
+        if (!event || !reg) return; // Пропускаем некорректные данные
+        
+        const date = event.start_date ? new Date(event.start_date) : null;
+        const regType = reg.registration_type || 'athlete';
+        
+        html += `
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">${escapeHtml(event.name || event.title || 'Без названия')}</h2>
+                    <span class="badge" style="background: ${regType === 'coach' ? '#ff9800' : 'var(--primary-blue)'}; color: white;">
+                        ${regType === 'coach' ? '👨‍🏫 Тренер' : '🏃 Спортсмен'}
+                    </span>
+                </div>
+                <div class="card-body">
+                    ${date ? `<p><strong>Дата:</strong> ${date.toLocaleDateString('ru-RU')}</p>` : ''}
+                    ${event.city ? `<p><strong>Город:</strong> ${escapeHtml(event.city)}</p>` : ''}
+                    <div style="margin-top: 1rem;">
+                        <a href="/events/${event.id}/registered/" class="btn btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+})
+.catch(error => {
+    console.error('Ошибка:', error);
+    const errorMsg = error.error || error.message || 'Неизвестная ошибка';
+    document.getElementById('myEventsContent').innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <p style="color: var(--error);">Ошибка загрузки данных: ${escapeHtml(errorMsg)}</p>
+                <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem;">
+                    Проверьте консоль браузера (F12) для подробностей
+                </p>
+            </div>
+        </div>
+    `;
+});
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

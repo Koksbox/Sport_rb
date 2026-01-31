@@ -1,0 +1,340 @@
+{% load static %}
+
+<!-- Мои дети -->
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Мои дети</h3>
+    </div>
+    <div class="role-section-content">
+        <div id="parentChildren-{{ role_index }}">
+            <div class="loading" style="margin: 1rem auto; display: block;"></div>
+        </div>
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <button class="btn btn-primary" onclick="window['showAddChildModal_{{ role_index }}']()" style="width: 100%;">
+                ➕ Добавить ребёнка по ID
+            </button>
+            <button class="btn btn-secondary" onclick="window['showAddChildQR_{{ role_index }}']()" style="width: 100%;">
+                📷 Сканировать QR-код
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для добавления ребёнка -->
+<div id="addChildModal-{{ role_index }}" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3>Добавить ребёнка</h3>
+            <span class="close" onclick="window['closeAddChildModal_{{ role_index }}']()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">
+                Введите уникальный ID роли спортсмена вашего ребёнка.
+            </p>
+            <div class="form-group">
+                <label class="form-label" for="childRoleId-{{ role_index }}">Уникальный ID роли спортсмена</label>
+                <input type="text" class="form-control" id="childRoleId-{{ role_index }}" 
+                       placeholder="Например: A1B2C3D4" maxlength="8">
+            </div>
+            <div id="addChildMessages-{{ role_index }}" style="margin-top: 1rem;"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window['closeAddChildModal_{{ role_index }}']()">Отмена</button>
+            <button class="btn btn-primary" onclick="window['sendChildRequest_{{ role_index }}']()">Отправить заявку</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const roleIndex = {{ role_index|default:0 }};
+    
+    // Загрузка списка детей
+    function loadChildren() {
+        const container = document.getElementById('parentChildren-' + roleIndex);
+        if (!container) {
+            console.error('Container not found: parentChildren-' + roleIndex);
+            return;
+        }
+        
+        const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function() { return ''; };
+        
+        fetch('/api/parents/children/', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCookieFunc('csrftoken')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || data.message || `HTTP ${response.status}`);
+                }).catch(() => {
+                    throw new Error(`HTTP ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!Array.isArray(data)) {
+                console.error('Invalid data format:', data);
+                container.innerHTML = '<p style="color: var(--error); text-align: center; font-size: 0.9rem;">Ошибка формата данных</p>';
+                return;
+            }
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); text-align: center; font-size: 0.9rem;">У вас пока нет добавленных детей.</p>';
+                return;
+            }
+            
+            const escapeHtml = window.escapeHtml || function(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            data.forEach(child => {
+                const fullName = child.full_name || (child.first_name && child.last_name ? child.first_name + ' ' + child.last_name : 'Не указано');
+                html += `
+                    <div style="padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">
+                        <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">${escapeHtml(fullName)}</h4>
+                        <p style="color: var(--text-light); font-size: 0.875rem;">
+                            ${child.main_sport_name ? '🏃 ' + escapeHtml(child.main_sport_name) : ''}
+                        </p>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки детей:', error);
+            if (container) {
+                container.innerHTML = '<p style="color: var(--error); text-align: center; font-size: 0.9rem;">Ошибка загрузки: ' + (error.message || 'Неизвестная ошибка') + '</p>';
+            }
+        });
+    }
+    
+    loadChildren();
+    
+    // Создаём уникальные имена функций для этой роли
+    const showModalFunc = 'showAddChildModal_' + roleIndex;
+    const closeModalFunc = 'closeAddChildModal_' + roleIndex;
+    const sendRequestFunc = 'sendChildRequest_' + roleIndex;
+    const showQRFunc = 'showAddChildQR_' + roleIndex;
+    
+    window[showModalFunc] = function() {
+        const modal = document.getElementById('addChildModal-' + roleIndex);
+        const input = document.getElementById('childRoleId-' + roleIndex);
+        const messages = document.getElementById('addChildMessages-' + roleIndex);
+        if (modal) modal.style.display = 'block';
+        if (input) input.value = '';
+        if (messages) messages.innerHTML = '';
+    };
+    
+    window[closeModalFunc] = function() {
+        const modal = document.getElementById('addChildModal-' + roleIndex);
+        if (modal) modal.style.display = 'none';
+    };
+    
+    window[sendRequestFunc] = function() {
+        const roleIdInput = document.getElementById('childRoleId-' + roleIndex);
+        const messagesDiv = document.getElementById('addChildMessages-' + roleIndex);
+        
+        if (!roleIdInput || !messagesDiv) {
+            console.error('Elements not found');
+            return;
+        }
+        
+        const roleId = roleIdInput.value.trim().toUpperCase();
+        const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+        
+        if (!roleId || roleId.length !== 8) {
+            messagesDiv.innerHTML = '<div class="alert alert-error">Введите корректный ID (8 символов)</div>';
+            return;
+        }
+        
+        messagesDiv.innerHTML = '<div class="alert alert-info">Отправка заявки...</div>';
+        
+        fetch('/api/parents/children/request/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookieFunc('csrftoken')
+            },
+            body: JSON.stringify({ role_unique_id: roleId })
+        })
+        .then(response => {
+            return response.json().then(data => ({ status: response.status, data })).catch(() => {
+                return { status: response.status, data: { error: 'Ошибка парсинга ответа' } };
+            });
+        })
+        .then(result => {
+            if (result.status === 200 || result.status === 201) {
+                messagesDiv.innerHTML = '<div class="alert alert-success">' + (result.data.message || 'Заявка отправлена') + '</div>';
+                setTimeout(() => {
+                    window[closeModalFunc]();
+                    loadChildren();
+                }, 2000);
+            } else {
+                const errorMsg = result.data.error || result.data.message || result.data.detail || 'Ошибка отправки заявки';
+                messagesDiv.innerHTML = '<div class="alert alert-error">' + errorMsg + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке заявки: ' + (error.message || 'Неизвестная ошибка') + '</div>';
+        });
+    };
+    
+    window[showQRFunc] = function() {
+        // Создаём модальное окно для сканирования QR-кода
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.id = 'qrScannerModal-' + roleIndex;
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>Сканировать QR-код</h3>
+                    <span class="close" onclick="closeQRScanner(${roleIndex})">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="qrScanner-${roleIndex}" style="text-align: center; padding: 2rem;">
+                        <p style="margin-bottom: 1rem; color: var(--text-light);">
+                            Используйте камеру для сканирования QR-кода с ID роли спортсмена
+                        </p>
+                        <video id="qrVideo-${roleIndex}" style="width: 100%; max-width: 400px; border-radius: 8px; display: none;"></video>
+                        <canvas id="qrCanvas-${roleIndex}" style="display: none;"></canvas>
+                        <div id="qrScannerStatus-${roleIndex}">
+                            <button class="btn btn-primary" onclick="startQRScanner(${roleIndex})">
+                                📷 Начать сканирование
+                            </button>
+                        </div>
+                        <div id="qrScannerResult-${roleIndex}" style="margin-top: 1rem; display: none;">
+                            <div class="alert alert-info">ID найден: <strong id="scannedId-${roleIndex}"></strong></div>
+                            <button class="btn btn-primary" onclick="useScannedId(${roleIndex})" style="width: 100%; margin-top: 0.5rem;">
+                                Использовать этот ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.style.display = 'block';
+    };
+    
+    window['startQRScanner_' + roleIndex] = function() {
+        const video = document.getElementById('qrVideo-' + roleIndex);
+        const canvas = document.getElementById('qrCanvas-' + roleIndex);
+        const status = document.getElementById('qrScannerStatus-' + roleIndex);
+        const result = document.getElementById('qrScannerResult-' + roleIndex);
+        
+        // Проверяем поддержку камеры
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.style.display = 'block';
+                status.innerHTML = '<p style="color: var(--text-light);">Наведите камеру на QR-код</p>';
+                
+                // Простая проверка QR-кода (можно использовать библиотеку jsQR)
+                const checkQR = setInterval(() => {
+                    // Здесь можно добавить реальное распознавание QR-кода
+                    // Для примера используем простой способ через API
+                }, 500);
+                
+                // Альтернатива: использовать библиотеку jsQR
+                if (typeof jsQR !== 'undefined') {
+                    const context = canvas.getContext('2d');
+                    const checkQR = setInterval(() => {
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                            const code = jsQR(imageData.data, imageData.width, imageData.height);
+                            
+                            if (code) {
+                                clearInterval(checkQR);
+                                video.srcObject.getTracks().forEach(track => track.stop());
+                                video.style.display = 'none';
+                                document.getElementById('scannedId-' + roleIndex).textContent = code.data;
+                                result.style.display = 'block';
+                                window['scannedRoleId_' + roleIndex] = code.data;
+                            }
+                        }
+                    }, 100);
+                } else {
+                    status.innerHTML = '<p style="color: var(--text-light);">Библиотека распознавания QR-кода не загружена. Используйте ручной ввод.</p>';
+                }
+            })
+            .catch(function(err) {
+                console.error('Ошибка доступа к камере:', err);
+                status.innerHTML = '<div class="alert alert-error">Не удалось получить доступ к камере. Используйте ручной ввод ID.</div>';
+            });
+        } else {
+            status.innerHTML = '<div class="alert alert-error">Ваш браузер не поддерживает доступ к камере. Используйте ручной ввод ID.</div>';
+        }
+    };
+    
+    window['useScannedId_' + roleIndex] = function() {
+        const scannedId = window['scannedRoleId_' + roleIndex];
+        if (scannedId) {
+            window['closeQRScanner_' + roleIndex]();
+            // Заполняем форму и отправляем запрос
+            const input = document.getElementById('childRoleId-' + roleIndex);
+            if (input) input.value = scannedId;
+            window[showModalFunc]();
+            setTimeout(() => {
+                window[sendRequestFunc]();
+            }, 100);
+        }
+    };
+    
+    window['closeQRScanner_' + roleIndex] = function() {
+        const modal = document.getElementById('qrScannerModal-' + roleIndex);
+        const video = document.getElementById('qrVideo-' + roleIndex);
+        if (video && video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        }
+        if (modal) {
+            modal.remove();
+        }
+    };
+    
+    // Глобальные функции для вызова из onclick (для совместимости)
+    // Но лучше использовать прямые вызовы через window[funcName]
+    if (!window.showAddChildModal) {
+        window.showAddChildModal = window[showModalFunc];
+        window.closeAddChildModal = window[closeModalFunc];
+        window.sendChildRequest = window[sendRequestFunc];
+        window.showAddChildQR = window[showQRFunc];
+    }
+    
+    // Закрытие модального окна при клике вне его
+    const modal = document.getElementById('addChildModal-' + roleIndex);
+    if (modal) {
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                window[closeModalFunc]();
+            }
+        });
+    }
+})();
+</script>

@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заполнение данных тренера - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться назад
+        </a>
+    </div>
+    
+    <h1>Заполнение данных тренера</h1>
+    
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <p style="margin-bottom: 0;">
+                Заполните необходимые данные для добавления роли "Тренер". Вы сможете изменить их позже в личном кабинете.
+            </p>
+        </div>
+    </div>
+    
+    <div id="messages"></div>
+    
+    <form id="coachSetupForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="city_coach" class="form-label">Город *</label>
+            <input type="text" id="city_coach" name="city_coach" class="form-control" required 
+                   placeholder="Например: Уфа" value="{{ user.city|default:'' }}">
+            <small style="color: var(--text-light);">Укажите город, где вы работаете тренером</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="specialization_id" class="form-label">Специализация (вид спорта) *</label>
+            <select id="specialization_id" name="specialization_id" class="form-control" required>
+                <option value="">Выберите специализацию</option>
+            </select>
+            <small style="color: var(--text-light);">Выберите вид спорта, по которому вы работаете</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="experience_years" class="form-label">Опыт работы (лет) *</label>
+            <input type="number" id="experience_years" name="experience_years" class="form-control" 
+                   min="0" required placeholder="0">
+            <small style="color: var(--text-light);">Укажите количество лет опыта работы тренером</small>
+        </div>
+        
+        <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+            <a href="{% url 'frontend-dashboard' %}" class="btn btn-secondary">Отмена</a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Создать роль</button>
+        </div>
+    </form>
+</div>
+
+<script>
+let sports = [];
+
+// Загрузка видов спорта
+document.addEventListener('DOMContentLoaded', function() {
+    loadSports();
+});
+
+function loadSports() {
+    fetch('/api/sports/')
+        .then(response => response.json())
+        .then(data => {
+            sports = data;
+            const select = document.getElementById('specialization_id');
+            
+            data.forEach(sport => {
+                const option = document.createElement('option');
+                option.value = sport.id;
+                option.textContent = sport.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки видов спорта:', error);
+            document.getElementById('messages').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки видов спорта</div>';
+        });
+}
+
+// Обработка формы
+document.getElementById('coachSetupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Валидация
+    const city = document.getElementById('city_coach').value.trim();
+    const specializationId = document.getElementById('specialization_id').value;
+    const experience = document.getElementById('experience_years').value;
+    
+    if (!city) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Необходимо указать город</div>';
+        return;
+    }
+    
+    if (!specializationId) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Необходимо выбрать специализацию</div>';
+        return;
+    }
+    
+    if (!experience || parseInt(experience) < 0) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Необходимо указать опыт работы (0 или больше лет)</div>';
+        return;
+    }
+    
+    // Блокируем кнопку
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Создание...';
+    messagesDiv.innerHTML = '<div class="alert alert-info">Создание роли...</div>';
+    
+    const formData = {
+        role: 'coach',
+        city_coach: city,
+        specialization_id: parseInt(specializationId),
+        experience_years: parseInt(experience)
+    };
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch('/api/users/select-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                const data = await response.json();
+                return { status: response.status, data };
+            } catch (e) {
+                console.error('Ошибка парсинга JSON:', e);
+                return { status: response.status, data: { error: 'Ошибка парсинга ответа сервера' } };
+            }
+        } else {
+            // Если ответ не JSON, читаем как текст
+            const text = await response.text();
+            console.error('Неожиданный формат ответа:', text);
+            return { status: response.status, data: { error: 'Сервер вернул неожиданный формат ответа' } };
+        }
+    })
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Роль "Тренер" успешно создана!</div>';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1000);
+        } else {
+            let errorMsg = 'Произошла ошибка';
+            let errorDetails = [];
+            
+            // Собираем все ошибки валидации
+            if (result.data.error) {
+                errorDetails.push(result.data.error);
+            }
+            if (result.data.specialization_id && Array.isArray(result.data.specialization_id)) {
+                errorDetails.push('Специализация: ' + result.data.specialization_id[0]);
+            }
+            if (result.data.experience_years && Array.isArray(result.data.experience_years)) {
+                errorDetails.push('Опыт работы: ' + result.data.experience_years[0]);
+            }
+            if (result.data.city_coach && Array.isArray(result.data.city_coach)) {
+                errorDetails.push('Город: ' + result.data.city_coach[0]);
+            }
+            if (result.data.role && Array.isArray(result.data.role)) {
+                errorDetails.push('Роль: ' + result.data.role[0]);
+            }
+            if (typeof result.data === 'string') {
+                errorDetails.push(result.data);
+            }
+            if (result.data.message) {
+                errorDetails.push(result.data.message);
+            }
+            
+            // Если есть детали ошибок, показываем их
+            if (errorDetails.length > 0) {
+                errorMsg = errorDetails.join('<br>');
+            } else if (typeof result.data === 'object') {
+                // Пытаемся извлечь ошибки из объекта
+                const errorKeys = Object.keys(result.data);
+                if (errorKeys.length > 0) {
+                    errorDetails = errorKeys.map(key => {
+                        const value = result.data[key];
+                        if (Array.isArray(value)) {
+                            return `${key}: ${value.join(', ')}`;
+                        } else if (typeof value === 'object') {
+                            return `${key}: ${JSON.stringify(value)}`;
+                        } else {
+                            return `${key}: ${value}`;
+                        }
+                    });
+                    errorMsg = errorDetails.join('<br>');
+                }
+            }
+            
+            messagesDiv.innerHTML = `<div class="alert alert-error">Ошибка: ${errorMsg}</div>`;
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Создать роль';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при создании роли. Проверьте подключение к интернету.</div>';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Создать роль';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% load role_names %}
+
+<!-- Карточка с ID роли -->
+<div class="role-id-card" id="roleIdCard-{{ role_index }}" style="display: none;">
+    <div class="role-id-header">
+        <h3>ID роли: {{ role_name|role_name }}</h3>
+        <button class="role-id-close" onclick="closeRoleIdCard({{ role_index }})">×</button>
+    </div>
+    <div class="role-id-content">
+        <div class="role-id-display">
+            <div class="role-id-value" id="roleIdValue-{{ role_index }}">Загрузка...</div>
+            <button class="btn btn-secondary btn-sm" onclick="copyRoleId({{ role_index }})" id="copyBtn-{{ role_index }}">
+                📋 Копировать
+            </button>
+        </div>
+        
+        <!-- QR-код -->
+        <div class="role-id-qr" id="qrCode-{{ role_index }}">
+            <div class="loading" style="margin: 1rem auto; display: block;"></div>
+        </div>
+        
+        <div class="role-id-info">
+            <p class="role-id-description">
+                {% if role == 'athlete' %}
+                    Поделитесь этим ID с родителем для добавления вас в список детей
+                {% elif role == 'parent' %}
+                    Поделитесь этим ID с ребёнком для запроса связи
+                {% elif role == 'coach' %}
+                    Используйте этот ID для приглашения в организации
+                {% else %}
+                    Уникальный идентификатор вашей роли
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const roleIndex = {{ role_index|default:0 }};
+    const roleName = '{{ role|default:"" }}';
+    
+    // Загрузка ID роли
+    fetch(`/api/users/roles/${roleName}/id/`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.unique_id) {
+            document.getElementById('roleIdValue-' + roleIndex).textContent = data.unique_id;
+            document.getElementById('roleIdCard-' + roleIndex).style.display = 'block';
+            
+            // Генерация QR-кода
+            generateQRCode(data.unique_id, roleIndex);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки ID роли:', error);
+    });
+    
+    // Генерация QR-кода
+    function generateQRCode(uniqueId, index) {
+        // Используем библиотеку qrcode.js (нужно добавить в base.html)
+        if (typeof QRCode !== 'undefined') {
+            const qrContainer = document.getElementById('qrCode-' + index);
+            qrContainer.innerHTML = '';
+            
+            QRCode.toCanvas(qrContainer, uniqueId, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#0066CC',
+                    light: '#FFFFFF'
+                }
+            }, function (error) {
+                if (error) {
+                    console.error('Ошибка генерации QR-кода:', error);
+                    qrContainer.innerHTML = '<p style="color: var(--text-light);">QR-код недоступен</p>';
+                }
+            });
+        } else {
+            // Fallback: используем API для генерации QR-кода
+            const qrContainer = document.getElementById('qrCode-' + index);
+            qrContainer.innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(uniqueId)}" 
+                     alt="QR Code" 
+                     style="max-width: 200px; height: auto; border-radius: 8px;">
+            `;
+        }
+    }
+    
+    window['copyRoleId_' + roleIndex] = function() {
+        const roleId = document.getElementById('roleIdValue-' + roleIndex).textContent;
+        navigator.clipboard.writeText(roleId).then(() => {
+            const btn = document.getElementById('copyBtn-' + roleIndex);
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Скопировано!';
+            btn.style.background = 'var(--success)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            alert('Не удалось скопировать ID');
+        });
+    };
+    
+    window['closeRoleIdCard_' + roleIndex] = function() {
+        document.getElementById('roleIdCard-' + roleIndex).style.display = 'none';
+    };
+    
+    // Глобальные функции
+    window.copyRoleId = window['copyRoleId_' + roleIndex];
+    window.closeRoleIdCard = window['closeRoleIdCard_' + roleIndex];
+})();
+</script>
+
+<style>
+.role-id-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px var(--shadow-lg);
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--primary-blue);
+    overflow: hidden;
+}
+
+.role-id-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.role-id-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--white);
+}
+
+.role-id-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.role-id-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.role-id-content {
+    padding: 1.5rem;
+}
+
+.role-id-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+}
+
+.role-id-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    color: var(--primary-blue);
+    flex: 1;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.role-id-qr {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 8px;
+}
+
+.role-id-qr canvas,
+.role-id-qr img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.role-id-info {
+    text-align: center;
+}
+
+.role-id-description {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+</style>

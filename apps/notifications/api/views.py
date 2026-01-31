@@ -26,6 +26,13 @@ def mark_notification_read(request, notification_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def get_unread_count(request):
+    """Получить количество непрочитанных уведомлений"""
+    count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+    return Response({"count": count})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def list_subscriptions(request):
     """Список подписок пользователя"""
     subscriptions = NotificationSubscription.objects.filter(user=request.user)

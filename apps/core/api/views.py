@@ -1,49 +1,54 @@
 # apps/core/api/views.py
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from .serializers import ConsentSerializer, ConsentCreateSerializer
-from apps.users.models import Consent
-from apps.geography.models import Region
-from apps.organizations.models import Organization
+from rest_framework import status
+from apps.core.models.news import NewsArticle
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def list_consents(request):
-    """Список согласий пользователя"""
-    consents = Consent.objects.filter(user=request.user)
-    return Response(ConsentSerializer(consents, many=True).data)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def update_consent(request):
-    """Обновить согласие"""
-    serializer = ConsentCreateSerializer(data=request.data, context={'request': request})
-    if serializer.is_valid():
-        consent = serializer.save()
-        return Response(ConsentSerializer(consent).data)
-    return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def system_constants(request):
-    """Системные константы"""
-    regions = [{"id": r.id, "name": r.name} for r in Region.objects.all()]
-    org_types = [{"value": t[0], "label": t[1]} for t in Organization.ORG_TYPE_CHOICES]
-    event_types = [{"value": t[0], "label": t[1]} for t in [
-        ('competition', 'Соревнование'),
-        ('marathon', 'Марафон'),
-        ('gto_festival', 'Фестиваль ГТО'),
-        ('open_doors', 'Дни открытых дверей'),
-    ]]
-    return Response({
-        "regions": regions,
-        "organization_types": org_types,
-        "event_types": event_types,
-    })
+def get_news_list(request):
+    """Получить список опубликованных новостей (публичный endpoint)"""
+    articles = NewsArticle.objects.filter(is_published=True).order_by('-published_at', '-created_at')
+    
+    data = []
+    for article in articles:
+        data.append({
+            'id': article.id,
+            'title': article.title,
+            'slug': article.slug,
+            'excerpt': article.excerpt,
+            'content': article.content,
+            'image': article.image.url if article.image else None,
+            'author_name': article.author.get_full_name() if article.author else None,
+            'published_at': article.published_at,
+            'views_count': article.views_count,
+        })
+    
+    return Response(data)
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def health_check(request):
-    """Проверка статуса системы"""
-    return Response({"status": "ok", "version": "1.0"})
+def get_news_detail(request, slug):
+    """Получить детали новостной статьи по slug (публичный endpoint)"""
+    try:
+        article = NewsArticle.objects.get(slug=slug, is_published=True)
+        # Увеличиваем счётчик просмотров
+        article.views_count += 1
+        article.save(update_fields=['views_count'])
+        
+        return Response({
+            'id': article.id,
+            'title': article.title,
+            'slug': article.slug,
+            'content': article.content,
+            'excerpt': article.excerpt,
+            'image': article.image.url if article.image else None,
+            'author_name': article.author.get_full_name() if article.author else None,
+            'published_at': article.published_at,
+            'views_count': article.views_count,
+        })
+    except NewsArticle.DoesNotExist:
+        return Response({"error": "Статья не найдена"}, status=status.HTTP_404_NOT_FOUND)

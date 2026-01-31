@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Уведомления - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <h1>🔔 Уведомления</h1>
+        <div>
+            <button class="btn btn-secondary" onclick="markAllAsRead()">✓ Отметить все как прочитанные</button>
+        </div>
+    </div>
+    
+    <div id="notificationsList">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+function loadNotifications() {
+    const container = document.getElementById('notificationsList');
+    
+    fetch('/api/notifications/')
+    .then(response => response.json())
+    .then(data => {
+        if (data.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; padding: 3rem;">У вас нет уведомлений</p>';
+            return;
+        }
+        
+        // Разделяем на прочитанные и непрочитанные
+        const unread = data.filter(n => !n.is_read);
+        const read = data.filter(n => n.is_read);
+        
+        let html = '';
+        
+        // Непрочитанные
+        if (unread.length > 0) {
+            html += '<h2 style="margin-bottom: 1rem; font-size: 1.25rem;">Непрочитанные</h2>';
+            html += '<div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">';
+            unread.forEach(notif => {
+                html += renderNotification(notif, false);
+            });
+            html += '</div>';
+        }
+        
+        // Прочитанные
+        if (read.length > 0) {
+            html += '<h2 style="margin-bottom: 1rem; font-size: 1.25rem; color: var(--text-light);">Прочитанные</h2>';
+            html += '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+            read.forEach(notif => {
+                html += renderNotification(notif, true);
+            });
+            html += '</div>';
+        }
+        
+        container.innerHTML = html;
+        
+        // Обновляем счетчик в навигации
+        updateNotificationBadge(unread.length);
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки уведомлений:', error);
+        container.innerHTML = '<p style="color: var(--error); text-align: center;">Ошибка загрузки уведомлений</p>';
+    });
+}
+
+function renderNotification(notif, isRead) {
+    const date = new Date(notif.created_at).toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const typeIcons = {
+        'mass_notification': '📢',
+        'event_result': '🏆',
+        'enrollment_approved': '✅',
+        'medical_review': '🏥',
+    };
+    
+    const icon = typeIcons[notif.notification_type] || '🔔';
+    
+    return `
+        <div class="card ${isRead ? '' : 'notification-unread'}" style="cursor: pointer;" onclick="markAsRead(${notif.id})">
+            <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.5rem;">${icon}</span>
+                            <h3 style="margin: 0; font-size: 1.1rem;">${escapeHtml(notif.title)}</h3>
+                            ${!isRead ? '<span class="badge badge-primary" style="background: var(--primary-blue); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Новое</span>' : ''}
+                        </div>
+                        <p style="color: var(--text-light); margin: 0.5rem 0; white-space: pre-wrap;">${escapeHtml(notif.body)}</p>
+                        <small style="color: var(--text-light);">${date}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function markAsRead(notificationId) {
+    fetch(`/api/notifications/${notificationId}/read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            loadNotifications();
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
+function markAllAsRead() {
+    if (!confirm('Отметить все уведомления как прочитанные?')) {
+        return;
+    }
+    
+    fetch('/api/notifications/')
+    .then(response => response.json())
+    .then(data => {
+        const unread = data.filter(n => !n.is_read);
+        const promises = unread.map(notif => 
+            fetch(`/api/notifications/${notif.id}/read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+        );
+        
+        Promise.all(promises).then(() => {
+            loadNotifications();
+        });
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
+function updateNotificationBadge(count) {
+    // Обновляем счетчик в бургер-меню (для авторизованных)
+    const badgeBurger = document.getElementById('notificationBadgeBurger');
+    if (badgeBurger) {
+        if (count > 0) {
+            badgeBurger.textContent = count > 99 ? '99+' : count;
+            badgeBurger.style.display = 'inline-block';
+        } else {
+            badgeBurger.style.display = 'none';
+        }
+    }
+    // Также обновляем все бейджи для совместимости
+    document.querySelectorAll('.notification-badge').forEach(function(badge) {
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = 'inline-block';
+        } else {
+            badge.style.display = 'none';
+        }
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadNotifications();
+});
+</script>
+
+<style>
+.notification-unread {
+    border-left: 4px solid var(--primary-blue);
+    background: var(--secondary-blue);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+</style>
+{% endblock %}

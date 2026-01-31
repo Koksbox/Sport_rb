@@ -5,10 +5,12 @@ from apps.parents.models import ParentChildLink
 
 class ChildProfileSerializer(serializers.ModelSerializer):
     """Только для просмотра — без редактирования"""
-    main_sport_name = serializers.CharField(source='main_sport.name', read_only=True)
-    city_name = serializers.CharField(source='city.name', read_only=True)
+    main_sport_name = serializers.CharField(source='main_sport.name', read_only=True, allow_null=True)
+    city_name = serializers.CharField(source='city.name', read_only=True, allow_null=True)
     organization_name = serializers.SerializerMethodField()
     coach_names = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+    role_unique_id = serializers.SerializerMethodField()
 
     class Meta:
         model = AthleteProfile
@@ -39,13 +41,26 @@ class ChildProfileSerializer(serializers.ModelSerializer):
             return []
     
     def get_full_name(self, obj):
-        return obj.user.get_full_name()
+        """Получить полное имя из user"""
+        if obj.user:
+            return obj.user.get_full_name() or f"{obj.user.first_name or ''} {obj.user.last_name or ''}".strip() or "Не указано"
+        return "Не указано"
     
     def get_role_unique_id(self, obj):
         """Получить уникальный ID роли спортсмена"""
         from apps.users.models import UserRole
         try:
-            role = UserRole.objects.get(user=obj.user, role='athlete', is_active=True)
+            role = UserRole.objects.get(user=obj.user, role='athlete')
+            # Генерируем unique_id, если его нет
+            if not role.unique_id:
+                import random
+                import string
+                while True:
+                    unique_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+                    if not UserRole.objects.filter(unique_id=unique_id).exists():
+                        role.unique_id = unique_id
+                        role.save()
+                        break
             return role.unique_id
         except UserRole.DoesNotExist:
             return None

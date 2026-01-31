@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Обратная связь - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <h1>Обратная связь</h1>
+    <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Есть вопросы, предложения или возникли проблемы? Свяжитесь с нами, и мы обязательно вам ответим.
+    </p>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Форма обратной связи</h2>
+        </div>
+        <div class="card-body">
+            <form id="contactForm">
+                {% csrf_token %}
+                <div id="messages" style="margin-bottom: 1.5rem;"></div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="name">Ваше имя *</label>
+                    <input type="text" class="form-control" id="name" name="name" required 
+                           value="{% if user.is_authenticated %}{{ user.get_full_name }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email *</label>
+                    <input type="email" class="form-control" id="email" name="email" required
+                           value="{% if user.is_authenticated %}{{ user.email }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Телефон</label>
+                    <input type="tel" class="form-control" id="phone" name="phone"
+                           value="{% if user.is_authenticated %}{{ user.phone }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="subject">Тема обращения *</label>
+                    <select class="form-control" id="subject" name="subject" required>
+                        <option value="">Выберите тему</option>
+                        <option value="technical">Техническая проблема</option>
+                        <option value="question">Вопрос по использованию</option>
+                        <option value="suggestion">Предложение по улучшению</option>
+                        <option value="registration">Проблема с регистрацией</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="message">Сообщение *</label>
+                    <textarea class="form-control" id="message" name="message" rows="6" required
+                              placeholder="Опишите ваш вопрос или проблему подробно..."></textarea>
+                </div>
+                
+                {% if user.is_authenticated and active_role_id %}
+                <div class="form-group">
+                    <label class="form-label" for="role_id">ID роли (автоматически заполнено)</label>
+                    <input type="text" class="form-control" id="role_id" name="role_id" 
+                           value="{{ active_role_id }}" readonly
+                           style="background-color: #f5f5f5; cursor: not-allowed;">
+                    <small style="color: var(--text-light);">Обращение отправляется с роли: {{ active_role_icon }} {{ active_role_name }}</small>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                    Отправить сообщение
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h2 class="card-title">Контакты</h2>
+        </div>
+        <div class="card-body">
+            <p style="line-height: 2;">
+                <strong>Email:</strong> info@sportbash.ru<br>
+                <strong>Телефон:</strong> +7 (347) 000-00-00<br>
+                <strong>Время работы:</strong> Пн-Пт: 9:00 - 18:00<br>
+                <strong>Адрес:</strong> Республика Башкортостан, г. Уфа
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    messagesDiv.innerHTML = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value.trim()
+    };
+    
+    // Добавляем ID роли, если он есть
+    const roleIdInput = document.getElementById('role_id');
+    if (roleIdInput && roleIdInput.value) {
+        formData.role_id = roleIdInput.value.trim();
+    }
+    
+    // Валидация
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Заполните все обязательные поля</div>';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить сообщение';
+        return;
+    }
+    
+    fetch('/api/core/contact/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.</div>';
+            document.getElementById('contactForm').reset();
+            // Восстанавливаем данные пользователя, если он авторизован
+            {% if user.is_authenticated %}
+            document.getElementById('name').value = '{{ user.get_full_name }}';
+            document.getElementById('email').value = '{{ user.email }}';
+            {% if user.phone %}
+            document.getElementById('phone').value = '{{ user.phone }}';
+            {% endif %}
+            {% endif %}
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + (result.data.error || 'Ошибка при отправке сообщения') + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке сообщения. Попробуйте позже.</div>';
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить сообщение';
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

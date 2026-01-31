@@ -4,7 +4,7 @@
 {% block title %}Выбор новой роли - СпортБаш{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 700px;">
+<div class="container" style="max-width: 800px;">
     <div style="margin-bottom: 1rem;">
         <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
             ← Вернуться в личный кабинет
@@ -26,22 +26,129 @@
             
             <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">
                 <strong>Примечание:</strong> Роль "Родитель" автоматически появится при добавлении ребёнка. 
-                Роль "Директор" автоматически появится при создании и одобрении организации.
+                Роль "Организация" доступна после подачи заявки и её одобрения администратором.
             </p>
             
             <div class="grid grid-2" style="gap: 1rem;">
-                <div class="role-card" data-role="athlete" onclick="selectRole('athlete')">
+                <div class="role-card" data-role="athlete" onclick="showRoleForm('athlete')">
                     <div class="role-icon">🏃</div>
                     <h3>Спортсмен</h3>
                     <p>Участие в соревнованиях, отслеживание прогресса</p>
                 </div>
                 
-                <div class="role-card" data-role="coach" onclick="selectRole('coach')">
+                <div class="role-card" data-role="coach" onclick="showRoleForm('coach')">
                     <div class="role-icon">🏋️</div>
                     <h3>Тренер</h3>
                     <p>Проведение тренировок, управление группами</p>
                 </div>
+                
+                <div class="role-card" data-role="organization" onclick="showOrganizationRequestForm()" style="cursor: pointer;">
+                    <div class="role-icon">🏢</div>
+                    <h3>Организация</h3>
+                    <p>Управление организацией, создание мероприятий</p>
+                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">Требуется одобрение администратора</small>
+                </div>
+                
+                <div class="role-card" data-role="committee_staff" onclick="window.location.href='{% url 'frontend-committee-register' %}'" style="cursor: pointer;">
+                    <div class="role-icon">🏛️</div>
+                    <h3>Сотрудник спорткомитета</h3>
+                    <p>Управление мероприятиями, статистика организаций</p>
+                    <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">Требуется код регистрации</small>
+                </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для формы спортсмена -->
+<div id="athleteModal" class="role-modal" style="display: none;">
+    <div class="role-modal-content">
+        <div class="role-modal-header">
+            <h3>Добавление роли: Спортсмен</h3>
+            <span class="role-modal-close" onclick="closeRoleModal('athleteModal')">&times;</span>
+        </div>
+        <div class="role-modal-body">
+            <form id="athleteForm">
+                <div class="form-group">
+                    <label for="athlete_city">Город *</label>
+                    <input type="text" id="athlete_city" name="city" class="form-control" required 
+                           placeholder="Например: Уфа" value="{{ user.city|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="athlete_sport">Вид спорта *</label>
+                    <select id="athlete_sport" name="sport_id" class="form-control" required>
+                        <option value="">Выберите вид спорта</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="athlete_birth_date">Дата рождения</label>
+                    <input type="date" id="athlete_birth_date" name="birth_date" class="form-control">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeRoleModal('athleteModal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить роль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для формы тренера -->
+<div id="coachModal" class="role-modal" style="display: none;">
+    <div class="role-modal-content">
+        <div class="role-modal-header">
+            <h3>Добавление роли: Тренер</h3>
+            <span class="role-modal-close" onclick="closeRoleModal('coachModal')">&times;</span>
+        </div>
+        <div class="role-modal-body">
+            <form id="coachForm">
+                <div class="form-group">
+                    <label for="coach_city">Город *</label>
+                    <input type="text" id="coach_city" name="city_coach" class="form-control" required 
+                           placeholder="Например: Уфа" value="{{ user.city|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label for="coach_specialization">Специализация (вид спорта) *</label>
+                    <select id="coach_specialization" name="specialization_id" class="form-control" required>
+                        <option value="">Выберите специализацию</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="coach_experience">Опыт работы (лет) *</label>
+                    <input type="number" id="coach_experience" name="experience_years" class="form-control" 
+                           min="0" required placeholder="0">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeRoleModal('coachModal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить роль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для заявки на роль организации -->
+<div id="organizationModal" class="role-modal" style="display: none;">
+    <div class="role-modal-content">
+        <div class="role-modal-header">
+            <h3>Заявка на роль: Организация</h3>
+            <span class="role-modal-close" onclick="closeRoleModal('organizationModal')">&times;</span>
+        </div>
+        <div class="role-modal-body">
+            <p style="margin-bottom: 1rem; color: var(--text-light);">
+                Для получения роли организации необходимо подать заявку. После одобрения администратором вы сможете создать организацию.
+            </p>
+            <form id="organizationForm">
+                <div class="form-group">
+                    <label for="org_message">Дополнительная информация (необязательно)</label>
+                    <textarea id="org_message" name="message" class="form-control" rows="4" 
+                              placeholder="Расскажите о вашей организации, целях и т.д."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeRoleModal('organizationModal')">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -83,62 +190,327 @@
     color: var(--text-light);
     font-size: 0.9rem;
 }
+
+.role-modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.role-modal-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.role-modal-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.role-modal-header h3 {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.role-modal-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.role-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.role-modal-body {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 </style>
 
 <script>
-function selectRole(role) {
-    // Показываем подтверждение
-    if (!confirm(`Вы уверены, что хотите добавить роль "${getRoleName(role)}"?\n\nПосле подтверждения вы перейдете на страницу регистрации этой роли.`)) {
+let sports = [];
+
+// Загрузка видов спорта при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadSports();
+});
+
+function loadSports() {
+    fetch('/api/sports/')
+        .then(response => response.json())
+        .then(data => {
+            sports = data;
+            const athleteSelect = document.getElementById('athlete_sport');
+            const coachSelect = document.getElementById('coach_specialization');
+            
+            data.forEach(sport => {
+                // Для спортсмена
+                const option1 = document.createElement('option');
+                option1.value = sport.id;
+                option1.textContent = sport.name;
+                athleteSelect.appendChild(option1);
+                
+                // Для тренера
+                const option2 = document.createElement('option');
+                option2.value = sport.id;
+                option2.textContent = sport.name;
+                coachSelect.appendChild(option2);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки видов спорта:', error);
+        });
+}
+
+function showRoleForm(role) {
+    if (role === 'athlete') {
+        document.getElementById('athleteModal').style.display = 'flex';
+    } else if (role === 'coach') {
+        document.getElementById('coachModal').style.display = 'flex';
+    }
+}
+
+function showOrganizationRequestForm() {
+    document.getElementById('organizationModal').style.display = 'flex';
+}
+
+function closeRoleModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    if (event.target.classList.contains('role-modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+// Обработка формы спортсмена
+document.getElementById('athleteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const sportIdValue = document.getElementById('athlete_sport').value;
+    if (!sportIdValue) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Необходимо выбрать вид спорта</div>';
         return;
     }
     
-    // Отправляем запрос на выбор роли
+    const formData = {
+        role: 'athlete',
+        city: document.getElementById('athlete_city').value.trim(),
+        sport_id: parseInt(sportIdValue),
+        birth_date: document.getElementById('athlete_birth_date').value || null
+    };
+    
+    if (!formData.city) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Необходимо указать город</div>';
+        return;
+    }
+    
+    submitRoleRequest(formData, 'athleteModal');
+});
+
+// Обработка формы тренера
+document.getElementById('coachForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const specializationIdValue = document.getElementById('coach_specialization').value;
+    if (!specializationIdValue) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Необходимо выбрать специализацию</div>';
+        return;
+    }
+    
+    const experienceValue = document.getElementById('coach_experience').value;
+    if (!experienceValue || parseInt(experienceValue) < 0) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Необходимо указать опыт работы (0 или больше лет)</div>';
+        return;
+    }
+    
+    const formData = {
+        role: 'coach',
+        city_coach: document.getElementById('coach_city').value.trim(),
+        specialization_id: parseInt(specializationIdValue),
+        experience_years: parseInt(experienceValue)
+    };
+    
+    if (!formData.city_coach) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Необходимо указать город</div>';
+        return;
+    }
+    
+    submitRoleRequest(formData, 'coachModal');
+});
+
+// Обработка формы организации
+document.getElementById('organizationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        message: document.getElementById('org_message').value
+    };
+    
+    fetch('/api/organizations/role-request/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            document.getElementById('messages').innerHTML = 
+                '<div class="alert alert-success">Заявка успешно отправлена. Ожидайте рассмотрения администратором.</div>';
+            closeRoleModal('organizationModal');
+        } else {
+            const errorMsg = result.data.error || result.data.message || 'Произошла ошибка';
+            document.getElementById('messages').innerHTML = 
+                `<div class="alert alert-error">${errorMsg}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Произошла ошибка при отправке заявки</div>';
+    });
+});
+
+function submitRoleRequest(formData, modalId) {
+    const messagesDiv = document.getElementById('messages');
+    messagesDiv.innerHTML = '<div class="alert alert-info">Отправка запроса...</div>';
+    
     fetch('/api/users/select-role/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify({ role: role })
+        body: JSON.stringify(formData)
     })
-    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(response => {
+        return response.json().then(data => ({ status: response.status, data })).catch(() => {
+            return { status: response.status, data: { error: 'Ошибка парсинга ответа' } };
+        });
+    })
     .then(result => {
         if (result.status === 201) {
-            // Успешно - проверяем, нужно ли заполнить профиль
-            if (result.data.needs_profile_completion && result.data.profile_url) {
-                // Переходим на страницу заполнения профиля
-                window.location.href = result.data.profile_url;
-            } else {
-                // Переходим в личный кабинет
+            messagesDiv.innerHTML = '<div class="alert alert-success">Роль успешно добавлена!</div>';
+            closeRoleModal(modalId);
+            // Переходим в личный кабинет через небольшую задержку
+            setTimeout(() => {
                 window.location.href = '/dashboard/';
-            }
+            }, 1000);
         } else {
-            // Ошибка
-            const messagesDiv = document.getElementById('messages');
+            // Обработка ошибок валидации
             let errorMsg = 'Произошла ошибка';
+            
             if (result.data.error) {
                 errorMsg = result.data.error;
-            } else if (result.data.role) {
-                errorMsg = result.data.role[0] || errorMsg;
+            } else if (result.data.sport_id && Array.isArray(result.data.sport_id)) {
+                errorMsg = result.data.sport_id[0];
+            } else if (result.data.specialization_id && Array.isArray(result.data.specialization_id)) {
+                errorMsg = result.data.specialization_id[0];
+            } else if (result.data.experience_years && Array.isArray(result.data.experience_years)) {
+                errorMsg = result.data.experience_years[0];
+            } else if (result.data.role && Array.isArray(result.data.role)) {
+                errorMsg = result.data.role[0];
+            } else if (result.data.city && Array.isArray(result.data.city)) {
+                errorMsg = result.data.city[0];
+            } else if (result.data.city_coach && Array.isArray(result.data.city_coach)) {
+                errorMsg = result.data.city_coach[0];
+            } else if (typeof result.data === 'string') {
+                errorMsg = result.data;
+            } else if (result.data.message) {
+                errorMsg = result.data.message;
             }
-            messagesDiv.innerHTML = `<div class="alert alert-error">${errorMsg}</div>`;
+            
+            messagesDiv.innerHTML = `<div class="alert alert-error">Ошибка: ${errorMsg}</div>`;
         }
     })
     .catch(error => {
         console.error('Ошибка:', error);
-        document.getElementById('messages').innerHTML = 
-            '<div class="alert alert-error">Произошла ошибка при выборе роли</div>';
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при добавлении роли. Проверьте подключение к интернету.</div>';
     });
-}
-
-function getRoleName(role) {
-    const names = {
-        'athlete': 'Спортсмен',
-        'parent': 'Родитель',
-        'coach': 'Тренер',
-        'organization': 'Организация'
-    };
-    return names[role] || role;
 }
 
 function getCookie(name) {

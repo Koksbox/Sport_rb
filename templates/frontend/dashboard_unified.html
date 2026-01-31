@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load role_names %}
+
+{% block title %}Личный кабинет - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1400px;">
+    <h1 style="margin-bottom: 2rem;">Личный кабинет</h1>
+    
+    <!-- Общие данные пользователя -->
+    <div class="user-profile-card">
+        <div class="user-profile-header">
+            <h2>Общие данные</h2>
+            <div class="user-profile-actions">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать</a>
+                {% if all_roles|length < 4 %}
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">+ Добавить роль</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="user-profile-content">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Колонки ролей -->
+    <div class="roles-columns">
+        {% for role in all_roles %}
+        <div class="role-column" data-role="{{ role }}">
+            <div class="role-column-header">
+                <h2 class="role-column-title">
+                    {% if role == 'coach' %}🏋️ Управление тренера
+                    {% elif role == 'athlete' %}👤 Управление спортсмена
+                    {% elif role == 'parent' %}👨‍👩‍👧 Управление родителя
+                    {% elif role == 'organization' or role == 'director' %}🏢 Управление организации
+                    {% elif role == 'admin_rb' %}👨‍💼 Управление администратора
+                    {% else %}{{ role|role_name }}{% endif %}
+                </h2>
+            </div>
+            
+            <div class="role-column-content">
+                {% if role == 'coach' %}
+                    {% include 'frontend/dashboard_parts/coach_column.html' with role_index=forloop.counter0 %}
+                {% elif role == 'athlete' %}
+                    {% include 'frontend/dashboard_parts/athlete_column.html' with role_index=forloop.counter0 %}
+                {% elif role == 'parent' %}
+                    {% include 'frontend/dashboard_parts/parent_column.html' with role_index=forloop.counter0 %}
+                {% elif role == 'organization' or role == 'director' %}
+                    {% include 'frontend/dashboard_parts/organization_column.html' with role_index=forloop.counter0 %}
+                {% elif role == 'admin_rb' %}
+                    {% include 'frontend/dashboard_parts/admin_column.html' with role_index=forloop.counter0 %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+/* Общие данные пользователя */
+.user-profile-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-blue);
+}
+
+.user-profile-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.user-profile-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--white);
+}
+
+.user-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.user-profile-content {
+    padding: 1.5rem;
+}
+
+.roles-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.role-column {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--secondary-blue);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.role-column:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--shadow-hover);
+}
+
+.role-column-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+}
+
+.role-column-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--white);
+}
+
+.role-column-content {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+.role-section {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray);
+    padding-bottom: 1.5rem;
+}
+
+.role-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.role-section-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--secondary-blue);
+}
+
+.role-section-header h3 {
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+    margin: 0;
+    font-weight: 600;
+}
+
+.role-section-content {
+    font-size: 0.95rem;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--white);
+}
+
+.close {
+    color: var(--white);
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close:hover {
+    opacity: 0.7;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--gray);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .roles-columns {
+        gap: 1.5rem;
+    }
+    
+    .user-profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .user-profile-actions {
+        width: 100%;
+    }
+    
+    .user-profile-actions .btn {
+        flex: 1;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 90%;
+    }
+}
+</style>
+{% endblock %}

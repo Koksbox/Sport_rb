@@ -20,13 +20,12 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="first_name">Имя *</label>
-                    <input type="text" class="form-control" id="first_name" name="first_name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="last_name">Фамилия *</label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    <label class="form-label" for="full_name">ФИО *</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" required 
+                           placeholder="Фамилия Имя Отчество" 
+                           pattern="[А-Яа-яЁё\s]{2,}" 
+                           title="Введите полное ФИО (минимум Фамилия и Имя, отчество опционально)">
+                    <small style="color: var(--text-light);">Введите полное ФИО: Фамилия Имя Отчество (отчество необязательно)</small>
                 </div>
                 
                 <div class="form-group">
@@ -146,6 +145,34 @@ document.getElementById('registerForm').addEventListener('submit', function(even
         }
     });
     
+    // Валидация ФИО
+    const fullName = data.full_name ? data.full_name.trim() : '';
+    if (!fullName) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Поле ФИО обязательно для заполнения</div>';
+        return;
+    }
+    
+    // Проверяем, что ФИО содержит минимум 2 слова (Фамилия и Имя)
+    const nameParts = fullName.split(/\s+/).filter(part => part.length > 0);
+    if (nameParts.length < 2) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">Введите полное ФИО: минимум Фамилия и Имя</div>';
+        return;
+    }
+    
+    if (nameParts.length > 3) {
+        document.getElementById('messages').innerHTML = 
+            '<div class="alert alert-error">ФИО должно содержать не более 3 слов (Фамилия Имя Отчество)</div>';
+        return;
+    }
+    
+    // Разбиваем ФИО на части
+    data.last_name = nameParts[0]; // Фамилия
+    data.first_name = nameParts[1]; // Имя
+    data.patronymic = nameParts.length > 2 ? nameParts[2] : ''; // Отчество (опционально)
+    delete data.full_name; // Удаляем full_name, так как отправляем отдельные поля
+    
     // Проверка совпадения паролей
     if (data.password !== data.password2) {
         document.getElementById('messages').innerHTML = 
@@ -243,30 +270,74 @@ document.getElementById('password2').addEventListener('blur', function() {
 });
 
 function registerVK() {
+    // Редирект на начало VK OAuth flow (регистрация и вход одинаковы)
     window.location.href = '/api/auth/vk/';
 }
 
 function registerTelegram() {
+    // Проверка Telegram Mini App
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
         const initData = tg.initData;
+        
+        if (!initData) {
+            alert('Не удалось получить данные авторизации от Telegram. Убедитесь, что вы открыли приложение через Telegram.');
+            return;
+        }
+        
+        const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
         
         fetch('/api/auth/telegram/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCookieFunc('csrftoken')
             },
             body: JSON.stringify({ init_data: initData })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.access) {
-                SportBash.saveToken(data.access, data.refresh);
-                window.location.href = '/dashboard/';
+        .then(response => {
+            if (response.redirected) {
+                // Если редирект (сессионная авторизация)
+                window.location.href = response.url;
+                return;
             }
+            return response.json().then(data => ({ status: response.status, data }));
+        })
+        .then(result => {
+            if (!result) return; // Уже был редирект
+            
+            if (result.status === 200 && result.data.access) {
+                // JWT авторизация
+                if (window.SportBash && window.SportBash.saveToken) {
+                    window.SportBash.saveToken(result.data.access, result.data.refresh);
+                }
+                window.location.href = '/dashboard/';
+            } else {
+                const errorMsg = result.data.error || result.data.init_data || 'Ошибка регистрации через Telegram';
+                document.getElementById('messages').innerHTML = 
+                    '<div class="alert alert-error">' + errorMsg + '</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка регистрации через Telegram:', error);
+            document.getElementById('messages').innerHTML = 
+                '<div class="alert alert-error">Произошла ошибка при регистрации через Telegram</div>';
         });
     } else {
-        alert('Telegram Mini App доступен только в Telegram');
+        alert('Telegram Mini App доступен только в Telegram. Откройте приложение через Telegram бота.');
     }
 }
 </script>

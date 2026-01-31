@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Поиск профиля - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <h1>Поиск профиля по ID роли</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                Введите ID роли (8 символов) для поиска профиля спортсмена или тренера.
+            </p>
+            
+            <div id="messages"></div>
+            
+            <form id="searchForm" onsubmit="searchProfile(event)">
+                <div class="form-group">
+                    <label for="role_id">ID роли *</label>
+                    <input type="text" id="role_id" name="role_id" class="form-control" 
+                           placeholder="Например: ABC12345" maxlength="8" required
+                           style="text-transform: uppercase; font-family: monospace; font-size: 1.2rem; letter-spacing: 2px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Найти профиль</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="profileResult" style="display: none; margin-top: 2rem;"></div>
+</div>
+
+<script>
+function searchProfile(event) {
+    event.preventDefault();
+    
+    const roleId = document.getElementById('role_id').value.trim().toUpperCase();
+    const messagesDiv = document.getElementById('messages');
+    const resultDiv = document.getElementById('profileResult');
+    
+    if (roleId.length !== 8) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">ID роли должен содержать 8 символов</div>';
+        return;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Поиск...</div>';
+    resultDiv.style.display = 'none';
+    
+    fetch(`/api/users/search-by-role-id/?id=${roleId}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            messagesDiv.innerHTML = '';
+            displayProfilePreview(result.data);
+        } else {
+            messagesDiv.innerHTML = `<div class="alert alert-error">${result.data.error || 'Профиль не найден'}</div>`;
+            resultDiv.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при поиске</div>';
+        resultDiv.style.display = 'none';
+    });
+}
+
+function displayProfilePreview(profile) {
+    const resultDiv = document.getElementById('profileResult');
+    const roleNames = {
+        'athlete': 'Спортсмен',
+        'coach': 'Тренер'
+    };
+    
+    let html = `
+        <div class="card">
+            <div class="card-header">
+                <h3>${profile.user_name}</h3>
+                <span class="badge">${roleNames[profile.role] || profile.role}</span>
+            </div>
+            <div class="card-body">
+                ${profile.photo_url ? `<img src="${profile.photo_url}" alt="Фото" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;">` : ''}
+                <div class="profile-info">
+                    ${profile.city ? `<div class="profile-item"><span class="profile-label">Город:</span> <span class="profile-value">${profile.city}</span></div>` : ''}
+                    ${profile.main_sport ? `<div class="profile-item"><span class="profile-label">Вид спорта:</span> <span class="profile-value">${profile.main_sport}</span></div>` : ''}
+                    ${profile.specialization ? `<div class="profile-item"><span class="profile-label">Специализация:</span> <span class="profile-value">${profile.specialization}</span></div>` : ''}
+                    ${profile.experience_years ? `<div class="profile-item"><span class="profile-label">Опыт:</span> <span class="profile-value">${profile.experience_years} лет</span></div>` : ''}
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a href="/profiles/${profile.role_id}/" class="btn btn-primary">Открыть профиль</a>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    resultDiv.innerHTML = html;
+    resultDiv.style.display = 'block';
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

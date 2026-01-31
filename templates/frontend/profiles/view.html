@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-profile-search' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться к поиску
+        </a>
+    </div>
+    
+    <div id="loading" style="text-align: center; padding: 3rem;">
+        <div class="loading"></div>
+        <p>Загрузка профиля...</p>
+    </div>
+    
+    <div id="profileContent" style="display: none;"></div>
+    <div id="errorMessage" style="display: none;"></div>
+</div>
+
+<script>
+const roleId = '{{ role_id }}';
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadProfile();
+});
+
+function loadProfile() {
+    fetch(`/api/users/profile/${roleId}/`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        document.getElementById('loading').style.display = 'none';
+        
+        if (result.status === 200) {
+            displayProfile(result.data);
+        } else {
+            showError(result.data.error || 'Профиль не найден');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        document.getElementById('loading').style.display = 'none';
+        showError('Произошла ошибка при загрузке профиля');
+    });
+}
+
+function displayProfile(profile) {
+    const contentDiv = document.getElementById('profileContent');
+    const roleNames = {
+        'athlete': 'Спортсмен',
+        'coach': 'Тренер'
+    };
+    
+    let html = `
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h1>${profile.user_name}</h1>
+                <span class="badge">${roleNames[profile.role] || profile.role}</span>
+            </div>
+            <div class="card-body">
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    ${profile.photo_url ? `<img src="${profile.photo_url}" alt="Фото" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-blue);">` : ''}
+                    <div style="flex: 1; min-width: 300px;">
+                        <div class="profile-info">
+                            ${profile.city ? `<div class="profile-item"><span class="profile-label">Город:</span> <span class="profile-value">${profile.city}</span></div>` : ''}
+                            ${profile.main_sport ? `<div class="profile-item"><span class="profile-label">Вид спорта:</span> <span class="profile-value">${profile.main_sport}</span></div>` : ''}
+                            ${profile.specialization ? `<div class="profile-item"><span class="profile-label">Специализация:</span> <span class="profile-value">${profile.specialization}</span></div>` : ''}
+                            ${profile.experience_years ? `<div class="profile-item"><span class="profile-label">Опыт работы:</span> <span class="profile-value">${profile.experience_years} лет</span></div>` : ''}
+                            ${profile.birth_date ? `<div class="profile-item"><span class="profile-label">Дата рождения:</span> <span class="profile-value">${new Date(profile.birth_date).toLocaleDateString('ru-RU')}</span></div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    if (profile.achievements && profile.achievements.length > 0) {
+        html += `
+            <div class="card">
+                <div class="card-header">
+                    <h2>Достижения</h2>
+                </div>
+                <div class="card-body">
+                    <div class="achievements-grid">
+                        ${profile.achievements.map(a => {
+                            const achievementTypeNames = {
+                                'competition': 'Соревнование',
+                                'medal': 'Медаль',
+                                'diploma': 'Грамота',
+                                'certificate': 'Сертификат',
+                                'gto': 'ГТО',
+                                'award': 'Награда',
+                                'qualification': 'Квалификация',
+                                'competition_result': 'Результат соревнования'
+                            };
+                            return `
+                            <div class="achievement-card">
+                                ${a.photo_url ? `<img src="${a.photo_url}" alt="${a.title}" onclick="showAchievementPhoto('${a.photo_url}', '${a.title}')" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; cursor: pointer;">` : ''}
+                                <h4>${a.title}</h4>
+                                <p style="color: var(--text-light); font-size: 0.9rem;">
+                                    <span class="badge">${achievementTypeNames[a.achievement_type] || a.achievement_type}</span>
+                                    ${new Date(a.date).toLocaleDateString('ru-RU')}
+                                </p>
+                                ${a.description ? `<p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;">${a.description}</p>` : ''}
+                                ${a.issued_by ? `<p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;"><strong>Выдано:</strong> ${a.issued_by}</p>` : ''}
+                            </div>
+                        `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    contentDiv.innerHTML = html;
+    contentDiv.style.display = 'block';
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-error">${message}</div>
+                <a href="{% url 'frontend-profile-search' %}" class="btn btn-primary">Вернуться к поиску</a>
+            </div>
+        </div>
+    `;
+    errorDiv.style.display = 'block';
+}
+
+function showAchievementPhoto(photoUrl, title) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 90%; max-height: 90%;">
+            <div class="modal-header">
+                <h3>${title}</h3>
+                <span class="modal-close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <img src="${photoUrl}" alt="${title}" style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    };
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+</style>
+
+<style>
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.achievement-card {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.achievement-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}

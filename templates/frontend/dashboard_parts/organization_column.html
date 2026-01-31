@@ -1,0 +1,80 @@
+{% load static %}
+
+<!-- Мои организации -->
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Мои организации</h3>
+    </div>
+    <div class="role-section-content">
+        <div id="myOrganizations-{{ role_index }}">
+            <div class="loading" style="margin: 1rem auto; display: block;"></div>
+        </div>
+        <div style="margin-top: 1rem;">
+            <a href="{% url 'frontend-organization-create' %}" class="btn btn-primary" style="width: 100%;">
+                ➕ Создать организацию
+            </a>
+            <a href="{% url 'frontend-my-organizations' %}" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
+                📊 Управление организациями
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Быстрые действия -->
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Быстрые действия</h3>
+    </div>
+    <div class="role-section-content">
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="{% url 'frontend-director-coach-requests' %}" class="btn btn-secondary" style="width: 100%; font-size: 0.875rem; padding: 0.5rem;">
+                📝 Заявки на работу
+            </a>
+            <a href="{% url 'frontend-director-free-coaches' %}" class="btn btn-secondary" style="width: 100%; font-size: 0.875rem; padding: 0.5rem;">
+                👥 Свободные тренеры
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const roleIndex = {{ role_index|default:0 }};
+    
+    // Загрузка организаций
+    fetch('/api/organizations/my/')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('myOrganizations-' + roleIndex);
+        if (data && data.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            data.forEach(org => {
+                html += `
+                    <div style="padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">
+                        <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">${escapeHtml(org.name || '')}</h4>
+                        <p style="color: var(--text-light); font-size: 0.875rem;">${escapeHtml(org.city_name || '')}</p>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; font-size: 0.9rem;">У вас пока нет организаций</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки организаций:', error);
+        const container = document.getElementById('myOrganizations-' + roleIndex);
+        if (container) {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; font-size: 0.9rem;">Данные недоступны</p>';
+        }
+    });
+})();
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>

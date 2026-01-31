@@ -1,0 +1,410 @@
+{% load static %}
+
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="card-title">{% if is_coach %}Достижения и сертификаты{% else %}Достижения{% endif %}</h2>
+        <button class="btn btn-primary btn-sm" onclick="showAddAchievementModal()">+ Добавить достижение</button>
+    </div>
+    <div class="card-body">
+        <div id="achievementsList" class="achievements-grid">
+            <div class="loading" style="margin: 2rem auto;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно добавления достижения -->
+<div id="addAchievementModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Добавить достижение</h3>
+            <span class="modal-close" onclick="closeAddAchievementModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="addAchievementForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="achievement_title">Название *</label>
+                    <input type="text" id="achievement_title" name="title" class="form-control" required 
+                           placeholder="Например: 1 место на соревнованиях">
+                </div>
+                <div class="form-group">
+                    <label for="achievement_type">Тип достижения *</label>
+                    <select id="achievement_type" name="achievement_type" class="form-control" required>
+                        <option value="">Выберите тип</option>
+                        {% if is_coach %}
+                        <option value="certificate">Сертификат</option>
+                        <option value="diploma">Диплом</option>
+                        <option value="award">Награда</option>
+                        <option value="qualification">Квалификация</option>
+                        <option value="competition_result">Результат соревнования</option>
+                        {% else %}
+                        <option value="competition">Соревнование</option>
+                        <option value="medal">Медаль</option>
+                        <option value="diploma">Грамота</option>
+                        <option value="certificate">Сертификат</option>
+                        <option value="gto">ГТО</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="achievement_date">Дата *</label>
+                    <input type="date" id="achievement_date" name="date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="achievement_description">Описание</label>
+                    <textarea id="achievement_description" name="description" class="form-control" rows="3" 
+                              placeholder="Дополнительная информация о достижении"></textarea>
+                </div>
+                {% if is_coach %}
+                <div class="form-group">
+                    <label for="achievement_issued_by">Кем выдано</label>
+                    <input type="text" id="achievement_issued_by" name="issued_by" class="form-control" 
+                           placeholder="Например: Федерация футбола России">
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="achievement_photo">Фото *</label>
+                    <input type="file" id="achievement_photo" name="photo" class="form-control" 
+                           accept="image/*" required>
+                    <small style="color: var(--text-light);">Фото грамоты, медали и т.д. (обязательно)</small>
+                </div>
+                <div id="achievementMessages"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddAchievementModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const isCoach = {% if is_coach %}true{% else %}false{% endif %};
+const achievementsEndpoint = isCoach ? '/api/achievements/coaches/achievements/' : '/api/achievements/achievements/';
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadAchievements();
+});
+
+function loadAchievements() {
+    const listDiv = document.getElementById('achievementsList');
+    if (!listDiv) {
+        console.error('achievementsList element not found');
+        return;
+    }
+    
+    // Используем глобальную функцию getCookie
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(achievementsEndpoint, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || data.message || `HTTP ${response.status}`);
+            }).catch(() => {
+                throw new Error(`HTTP ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (Array.isArray(data)) {
+            displayAchievements(data);
+        } else {
+            console.error('Invalid data format:', data);
+            listDiv.innerHTML = '<p style="color: var(--text-light);">Достижения не найдены</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки достижений:', error);
+        listDiv.innerHTML = '<p style="color: var(--error);">Ошибка загрузки достижений: ' + (error.message || 'Неизвестная ошибка') + '</p>';
+    });
+}
+
+function displayAchievements(achievements) {
+    const listDiv = document.getElementById('achievementsList');
+    
+    if (achievements.length === 0) {
+        listDiv.innerHTML = '<p style="color: var(--text-light);">У вас пока нет достижений</p>';
+        return;
+    }
+    
+    const achievementTypeNames = {
+        'competition': 'Соревнование',
+        'medal': 'Медаль',
+        'diploma': {% if is_coach %}'Диплом'{% else %}'Грамота'{% endif %},
+        'certificate': 'Сертификат',
+        'gto': 'ГТО',
+        'award': 'Награда',
+        'qualification': 'Квалификация',
+        'competition_result': 'Результат соревнования'
+    };
+    
+    listDiv.innerHTML = achievements.map(a => `
+        <div class="achievement-card">
+            ${a.photo_url ? `<img src="${a.photo_url}" alt="${a.title}" onclick="showAchievementPhoto('${a.photo_url}', '${a.title}')" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; cursor: pointer;">` : ''}
+            <h4>${a.title}</h4>
+            <p style="color: var(--text-light); font-size: 0.9rem;">
+                <span class="badge">${achievementTypeNames[a.achievement_type] || a.achievement_type}</span>
+                ${new Date(a.date).toLocaleDateString('ru-RU')}
+            </p>
+            ${a.description ? `<p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;">${a.description}</p>` : ''}
+            ${a.issued_by ? `<p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;"><strong>Выдано:</strong> ${a.issued_by}</p>` : ''}
+            <button class="btn btn-danger btn-sm" onclick="deleteAchievement(${a.id})" style="margin-top: 0.5rem; width: 100%;">Удалить</button>
+        </div>
+    `).join('');
+}
+
+function showAddAchievementModal() {
+    document.getElementById('addAchievementModal').style.display = 'flex';
+    document.getElementById('addAchievementForm').reset();
+    document.getElementById('achievementMessages').innerHTML = '';
+}
+
+function closeAddAchievementModal() {
+    document.getElementById('addAchievementModal').style.display = 'none';
+}
+
+document.getElementById('addAchievementForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('title', document.getElementById('achievement_title').value);
+    formData.append('achievement_type', document.getElementById('achievement_type').value);
+    formData.append('date', document.getElementById('achievement_date').value);
+    formData.append('description', document.getElementById('achievement_description').value);
+    {% if is_coach %}
+    const issuedBy = document.getElementById('achievement_issued_by');
+    if (issuedBy && issuedBy.value) {
+        formData.append('issued_by', issuedBy.value);
+    }
+    {% endif %}
+    formData.append('photo', document.getElementById('achievement_photo').files[0]);
+    
+    const messagesDiv = document.getElementById('achievementMessages');
+    messagesDiv.innerHTML = '<div class="alert alert-info">Добавление...</div>';
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(achievementsEndpoint, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Достижение добавлено!</div>';
+            setTimeout(() => {
+                closeAddAchievementModal();
+                loadAchievements();
+            }, 1000);
+        } else {
+            const errorMsg = result.data.error || result.data.photo?.[0] || 'Ошибка добавления';
+            messagesDiv.innerHTML = `<div class="alert alert-error">${errorMsg}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при добавлении достижения</div>';
+    });
+});
+
+function deleteAchievement(achievementId) {
+    if (!confirm('Вы уверены, что хотите удалить это достижение?')) {
+        return;
+    }
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`${achievementsEndpoint}${achievementId}/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            loadAchievements();
+        } else {
+            alert('Ошибка удаления: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при удалении достижения');
+    });
+}
+
+function showAchievementPhoto(photoUrl, title) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 90%; max-height: 90%;">
+            <div class="modal-header">
+                <h3>${title}</h3>
+                <span class="modal-close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <img src="${photoUrl}" alt="${title}" style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    };
+}
+
+// Используем глобальную функцию getCookie из main.js
+// НЕ объявляем getCookie здесь - он уже объявлен в main.js как window.getCookie
+</script>
+
+<style>
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.achievement-card {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.achievement-card:hover {
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+</style>

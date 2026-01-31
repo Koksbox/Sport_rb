@@ -154,7 +154,38 @@ function renderEventDetail(event) {
     
     let registerButton = '';
     if (hasAthleteProfile) {
-        registerButton = `<button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>`;
+        // Проверяем регистрацию пользователя
+        fetch(`/api/events/${event.id}/check-registration/`, {
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const btnContainer = document.querySelector('#registerButtonContainer');
+            if (btnContainer) {
+                if (data.is_registered) {
+                    btnContainer.innerHTML = `
+                        <a href="/events/${event.id}/registered/" class="btn btn-primary">Моё участие в мероприятии</a>
+                    `;
+                } else {
+                    btnContainer.innerHTML = `
+                        <button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>
+                    `;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка проверки регистрации:', error);
+            const btnContainer = document.querySelector('#registerButtonContainer');
+            if (btnContainer) {
+                btnContainer.innerHTML = `
+                    <button class="btn btn-primary" onclick="registerForEvent(${event.id})">Зарегистрироваться</button>
+                `;
+            }
+        });
+        
+        registerButton = `<div id="registerButtonContainer"><div class="loading" style="margin: 1rem auto; display: block;"></div></div>`;
     } else if (hasCoachProfile || hasDirectorRole) {
         registerButton = `<button class="btn btn-primary" onclick="openBulkRegisterModal(${event.id})">Зарегистрировать спортсменов</button>`;
     }
@@ -174,6 +205,18 @@ function renderEventDetail(event) {
                 <p><strong>Дата:</strong> ${date}</p>
                 ${event.city ? '<p><strong>Город:</strong> ' + escapeHtml(event.city) + '</p>' : ''}
                 ${event.sport ? '<p><strong>Вид спорта:</strong> ' + escapeHtml(event.sport) + '</p>' : ''}
+                ${event.age_groups && event.age_groups.length > 0 ? 
+                    '<p><strong>Возрастные группы:</strong> ' + 
+                    event.age_groups.map(ag => {
+                        if (ag.min_age === ag.max_age) {
+                            return ag.min_age + ' лет';
+                        } else {
+                            return ag.min_age + '-' + ag.max_age + ' лет';
+                        }
+                    }).join(', ') + 
+                    '</p>' : 
+                    '<p><strong>Возрастные группы:</strong> Не указаны</p>'
+                }
                 ${event.description ? '<p><strong>Описание:</strong><br>' + escapeHtml(event.description) + '</p>' : ''}
                 ${event.organization_name ? '<p><strong>Организатор:</strong> ' + escapeHtml(event.organization_name) + '</p>' : ''}
                 
@@ -195,16 +238,21 @@ function registerForEvent(eventId) {
             'X-CSRFToken': getCookie('csrftoken')
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            alert(data.message);
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200 && result.data.message) {
+            alert(result.data.message);
+            // Перенаправляем на страницу зарегистрированного участника
+            window.location.href = `/events/${eventId}/registered/`;
         } else {
-            alert('Ошибка: ' + (data.error || JSON.stringify(data)));
+            // Показываем детальную ошибку
+            const errorMsg = result.data.error || 'Неизвестная ошибка';
+            alert('Ошибка: ' + errorMsg);
         }
     })
     .catch(error => {
-        alert('Ошибка: ' + error);
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при регистрации. Попробуйте позже.');
     });
 }
 

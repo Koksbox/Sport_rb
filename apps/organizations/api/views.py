@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 from .serializers import (
     OrganizationCreateSerializer,
     OrganizationModerationSerializer,
@@ -17,12 +18,15 @@ from apps.organizations.staff.coach_membership import CoachMembership
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def list_organizations(request):
-    """Список одобренных организаций"""
-    organizations = Organization.objects.filter(status='approved')
+    """Список одобренных организаций с пагинацией"""
+    organizations = Organization.objects.filter(status='approved').select_related('city')
     
     # Фильтры
     city = request.query_params.get('city')
     sport = request.query_params.get('sport')
+    search = request.query_params.get('search', '').strip()
+    sort_by = request.query_params.get('sort', 'name')  # name, city, created_at
+    order = request.query_params.get('order', 'asc')  # asc, desc
     
     if city:
         organizations = organizations.filter(city__name__icontains=city)
@@ -33,8 +37,48 @@ def list_organizations(request):
             sport_directions__sport__name__icontains=sport
         ).distinct()
     
-    serializer = OrganizationListSerializer(organizations, many=True)
-    return Response(serializer.data)
+    if search:
+        organizations = organizations.filter(
+            Q(name__icontains=search) |
+            Q(address__icontains=search) |
+            Q(description__icontains=search)
+        )
+    
+    # Сортировка
+    sort_field = sort_by
+    if sort_by == 'name':
+        sort_field = 'name'
+    elif sort_by == 'city':
+        sort_field = 'city__name'
+    elif sort_by == 'created_at':
+        sort_field = 'created_at'
+    else:
+        sort_field = 'name'
+    
+    if order == 'desc':
+        sort_field = f'-{sort_field}'
+    
+    organizations = organizations.order_by(sort_field)
+    
+    # Пагинация
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 12))
+    total = organizations.count()
+    start = (page - 1) * page_size
+    end = start + page_size
+    
+    paginated_orgs = organizations[start:end]
+    serializer = OrganizationListSerializer(paginated_orgs, many=True)
+    
+    return Response({
+        'results': serializer.data,
+        'total': total,
+        'page': page,
+        'page_size': page_size,
+        'total_pages': (total + page_size - 1) // page_size,
+        'has_next': end < total,
+        'has_previous': page > 1
+    })
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -64,7 +108,19 @@ def get_organization_detail(request, org_id):
 @permission_classes([IsAuthenticated])
 def create_organization(request):
     """Создать организацию (черновик)"""
-    # Роль 'organization' больше не требуется - создаём автоматически при создании организации
+    # Проверяем, есть ли у пользователя одобренная заявка на роль организации
+    from apps.organizations.models.organization_role_request import OrganizationRoleRequest
+    has_approved_request = OrganizationRoleRequest.objects.filter(
+        user=request.user,
+        status='approved'
+    ).exists()
+    
+    has_director_role = request.user.roles.filter(role='director', is_active=True).exists()
+    
+    if not has_approved_request and not has_director_role:
+        return Response({
+            'error': 'Для создания организации необходимо сначала подать заявку на роль организации'
+        }, status=status.HTTP_403_FORBIDDEN)
 
     # Обработка файлов документов
     data = request.data.copy()

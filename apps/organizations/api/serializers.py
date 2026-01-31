@@ -18,9 +18,13 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
     city_id = serializers.PrimaryKeyRelatedField(
         queryset=City.objects.all(),
         source='city',
-        write_only=True
+        write_only=True,
+        required=True
     )
     website = serializers.URLField(required=False, allow_blank=True)
+    latitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=True)
+    longitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=True)
+    inn = serializers.CharField(max_length=12, required=True)
 
     class Meta:
         model = Organization
@@ -29,37 +33,78 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
             'latitude', 'longitude', 'website', 'inn',
             'documents'
         ]
+    
+    def validate_inn(self, value):
+        """Валидация ИНН"""
+        if not value:
+            raise serializers.ValidationError("ИНН обязателен для заполнения")
+        
+        # Проверяем формат ИНН (10 или 12 цифр)
+        if not value.isdigit():
+            raise serializers.ValidationError("ИНН должен содержать только цифры")
+        
+        if len(value) not in [10, 12]:
+            raise serializers.ValidationError("ИНН должен содержать 10 или 12 цифр")
+        
+        # Проверяем уникальность
+        if Organization.objects.filter(inn=value).exists():
+            raise serializers.ValidationError("Организация с таким ИНН уже существует")
+        
+        return value
+    
+    def validate(self, attrs):
+        """Дополнительная валидация"""
+        # Проверяем, что координаты указаны
+        if not attrs.get('latitude') or not attrs.get('longitude'):
+            raise serializers.ValidationError({
+                'latitude': 'Координаты обязательны для заполнения',
+                'longitude': 'Координаты обязательны для заполнения'
+            })
+        
+        return attrs
 
     def create(self, validated_data):
-        documents_data = validated_data.pop('documents', [])
-        organization = Organization.objects.create(
-            created_by=self.context['request'].user,
-            status='pending',
-            **validated_data
-        )
-
-        # Сохранение документов
-        for doc_data in documents_data:
-            file = doc_data.get('file_path')
-            if file:
-                # Сохраняем файл и получаем путь
-                # Для MVP сохраняем в media/organization_documents/
-                import os
-                from django.core.files.storage import default_storage
-                from django.conf import settings
-                
-                # Генерируем уникальное имя файла
-                file_ext = os.path.splitext(file.name)[1]
-                file_name = f"org_{organization.id}_{doc_data['doc_type']}_{timezone.now().strftime('%Y%m%d_%H%M%S')}{file_ext}"
-                file_path = default_storage.save(f'organization_documents/{file_name}', file)
-                
-                OrganizationDocument.objects.create(
-                    organization=organization,
-                    doc_type=doc_data['doc_type'],
-                    file_path=file_path
-                )
+        from django.db import transaction
+        import logging
         
-        return organization
+        logger = logging.getLogger(__name__)
+        
+        documents_data = validated_data.pop('documents', [])
+        
+        # Используем транзакцию для атомарности
+        try:
+            with transaction.atomic():
+                organization = Organization.objects.create(
+                    created_by=self.context['request'].user,
+                    status='pending',
+                    **validated_data
+                )
+
+                # Сохранение документов
+                for doc_data in documents_data:
+                    file = doc_data.get('file_path')
+                    if file:
+                        # Сохраняем файл и получаем путь
+                        # Для MVP сохраняем в media/organization_documents/
+                        import os
+                        from django.core.files.storage import default_storage
+                        from django.conf import settings
+                        
+                        # Генерируем уникальное имя файла
+                        file_ext = os.path.splitext(file.name)[1]
+                        file_name = f"org_{organization.id}_{doc_data['doc_type']}_{timezone.now().strftime('%Y%m%d_%H%M%S')}{file_ext}"
+                        file_path = default_storage.save(f'organization_documents/{file_name}', file)
+                        
+                        OrganizationDocument.objects.create(
+                            organization=organization,
+                            doc_type=doc_data['doc_type'],
+                            file_path=file_path
+                        )
+            
+                return organization
+        except Exception as e:
+            logger.error(f'Ошибка при создании организации: {str(e)}', exc_info=True)
+            raise
 
 
 class OrganizationListSerializer(serializers.ModelSerializer):

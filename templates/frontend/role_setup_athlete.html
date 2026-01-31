@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заполнение данных спортсмена - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div style="margin-bottom: 1rem;">
+        <a href="{% url 'frontend-dashboard' %}" style="color: var(--primary-blue); text-decoration: none;">
+            ← Вернуться назад
+        </a>
+    </div>
+    
+    <h1>Заполнение данных спортсмена</h1>
+    
+    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+        <div class="card-body">
+            <p style="margin-bottom: 0;">
+                Заполните необходимые данные для добавления роли "Спортсмен". Вы сможете изменить их позже в личном кабинете.
+            </p>
+        </div>
+    </div>
+    
+    <div id="messages"></div>
+    
+    <form id="athleteSetupForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="city" class="form-label">Город *</label>
+            <input type="text" id="city" name="city" class="form-control" required 
+                   placeholder="Например: Уфа" value="{{ user.city|default:'' }}">
+            <small style="color: var(--text-light);">Укажите город, где вы занимаетесь спортом</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="sport_id" class="form-label">Вид спорта *</label>
+            <select id="sport_id" name="sport_id" class="form-control" required>
+                <option value="">Выберите вид спорта</option>
+            </select>
+            <small style="color: var(--text-light);">Выберите основной вид спорта</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="birth_date" class="form-label">Дата рождения</label>
+            <input type="date" id="birth_date" name="birth_date" class="form-control" 
+                   max="{{ today|date:'Y-m-d' }}">
+            <small style="color: var(--text-light);">Необязательное поле</small>
+        </div>
+        
+        <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+            <a href="{% url 'frontend-dashboard' %}" class="btn btn-secondary">Отмена</a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Создать роль</button>
+        </div>
+    </form>
+</div>
+
+<script>
+let sports = [];
+
+// Загрузка видов спорта
+document.addEventListener('DOMContentLoaded', function() {
+    loadSports();
+});
+
+function loadSports() {
+    fetch('/api/sports/')
+        .then(response => response.json())
+        .then(data => {
+            sports = data;
+            const select = document.getElementById('sport_id');
+            
+            data.forEach(sport => {
+                const option = document.createElement('option');
+                option.value = sport.id;
+                option.textContent = sport.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки видов спорта:', error);
+            document.getElementById('messages').innerHTML = 
+                '<div class="alert alert-error">Ошибка загрузки видов спорта</div>';
+        });
+}
+
+// Обработка формы
+document.getElementById('athleteSetupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Валидация
+    const city = document.getElementById('city').value.trim();
+    const sportId = document.getElementById('sport_id').value;
+    
+    if (!city) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Необходимо указать город</div>';
+        return;
+    }
+    
+    if (!sportId) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Необходимо выбрать вид спорта</div>';
+        return;
+    }
+    
+    // Блокируем кнопку
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Создание...';
+    messagesDiv.innerHTML = '<div class="alert alert-info">Создание роли...</div>';
+    
+    const formData = {
+        role: 'athlete',
+        city: city,
+        sport_id: parseInt(sportId),
+        birth_date: document.getElementById('birth_date').value || null
+    };
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch('/api/users/select-role/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                const data = await response.json();
+                return { status: response.status, data };
+            } catch (e) {
+                console.error('Ошибка парсинга JSON:', e);
+                return { status: response.status, data: { error: 'Ошибка парсинга ответа сервера' } };
+            }
+        } else {
+            // Если ответ не JSON, читаем как текст
+            const text = await response.text();
+            console.error('Неожиданный формат ответа:', text);
+            return { status: response.status, data: { error: 'Сервер вернул неожиданный формат ответа' } };
+        }
+    })
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Роль "Спортсмен" успешно создана!</div>';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1000);
+        } else {
+            let errorMsg = 'Произошла ошибка';
+            let errorDetails = [];
+            
+            // Собираем все ошибки валидации
+            if (result.data.error) {
+                errorDetails.push(result.data.error);
+            }
+            if (result.data.sport_id && Array.isArray(result.data.sport_id)) {
+                errorDetails.push('Вид спорта: ' + result.data.sport_id[0]);
+            }
+            if (result.data.city && Array.isArray(result.data.city)) {
+                errorDetails.push('Город: ' + result.data.city[0]);
+            }
+            if (result.data.role && Array.isArray(result.data.role)) {
+                errorDetails.push('Роль: ' + result.data.role[0]);
+            }
+            if (result.data.birth_date && Array.isArray(result.data.birth_date)) {
+                errorDetails.push('Дата рождения: ' + result.data.birth_date[0]);
+            }
+            if (typeof result.data === 'string') {
+                errorDetails.push(result.data);
+            }
+            if (result.data.message) {
+                errorDetails.push(result.data.message);
+            }
+            
+            // Если есть детали ошибок, показываем их
+            if (errorDetails.length > 0) {
+                errorMsg = errorDetails.join('<br>');
+            } else if (typeof result.data === 'object') {
+                // Пытаемся извлечь ошибки из объекта
+                const errorKeys = Object.keys(result.data);
+                if (errorKeys.length > 0) {
+                    errorDetails = errorKeys.map(key => {
+                        const value = result.data[key];
+                        if (Array.isArray(value)) {
+                            return `${key}: ${value.join(', ')}`;
+                        } else if (typeof value === 'object') {
+                            return `${key}: ${JSON.stringify(value)}`;
+                        } else {
+                            return `${key}: ${value}`;
+                        }
+                    });
+                    errorMsg = errorDetails.join('<br>');
+                }
+            }
+            
+            messagesDiv.innerHTML = `<div class="alert alert-error">Ошибка: ${errorMsg}</div>`;
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Создать роль';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при создании роли. Проверьте подключение к интернету.</div>';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Создать роль';
+    });
+});
+</script>
+{% endblock %}

@@ -277,7 +277,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import timedelta
-from .serializers import AthleteProgressSerializer
+from .serializers import AttendanceProgressSerializer, EventProgressSerializer, AchievementProgressSerializer
 from apps.attendance.models import AttendanceRecord
 from apps.events.models import EventParticipation
 from apps.achievements.models import Achievement
@@ -309,13 +309,20 @@ def get_athlete_progress(request):
             date__range=[start_date, end_date]
         ).order_by('date')
 
+        # Сериализуем данные
+        attendance_serializer = AttendanceProgressSerializer(attendance, many=True)
+        events_serializer = EventProgressSerializer(events, many=True)
+        achievements_serializer = AchievementProgressSerializer(achievements, many=True)
+
         data = {
-            'attendance': attendance,
-            'events': events,
-            'achievements': achievements
+            'attendance': attendance_serializer.data,
+            'events': events_serializer.data,
+            'achievements': achievements_serializer.data
         }
 
-        serializer = AthleteProgressSerializer(data)
-        return Response(serializer.data)
-    except Exception:
+        return Response(data)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f'Ошибка получения прогресса: {str(e)}', exc_info=True)
         return Response({"error": "Профиль спортсмена не найден"}, status=404)

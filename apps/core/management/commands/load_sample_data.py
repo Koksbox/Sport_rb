@@ -40,6 +40,8 @@ class Command(BaseCommand):
 
     def clear_data(self):
         """Очистка существующих данных (кроме суперпользователя)"""
+        from django.db import connection
+        from django.core.exceptions import OperationalError
         from apps.events.models import Event
         from apps.organizations.models import Organization
         from apps.athletes.models import AthleteProfile
@@ -49,17 +51,53 @@ class Command(BaseCommand):
         from apps.geography.models import City, Region
         from apps.sports.models import Sport, SportCategory
 
-        Event.objects.all().delete()
-        Organization.objects.all().delete()
-        AthleteProfile.objects.all().delete()
-        CoachProfile.objects.all().delete()
-        ParentProfile.objects.all().delete()
-        UserRole.objects.exclude(user__is_superuser=True).delete()
-        User.objects.filter(is_superuser=False).delete()
-        Sport.objects.all().delete()
-        SportCategory.objects.all().delete()
-        City.objects.all().delete()
-        Region.objects.all().delete()
+        def safe_delete(model_class, description=""):
+            """Безопасное удаление с обработкой отсутствующих таблиц"""
+            try:
+                count = model_class.objects.all().count()
+                if count > 0:
+                    model_class.objects.all().delete()
+                    self.stdout.write(f'  Удалено {count} записей из {description or model_class.__name__}')
+            except OperationalError as e:
+                if 'no such table' in str(e).lower():
+                    self.stdout.write(self.style.WARNING(f'  Таблица для {description or model_class.__name__} не существует, пропускаем'))
+                else:
+                    raise
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f'  Ошибка при удалении {description or model_class.__name__}: {e}'))
+
+        # Удаляем в правильном порядке, учитывая зависимости
+        safe_delete(Event, "мероприятий")
+        safe_delete(Organization, "организаций")
+        safe_delete(AthleteProfile, "профилей спортсменов")
+        safe_delete(CoachProfile, "профилей тренеров")
+        safe_delete(ParentProfile, "профилей родителей")
+        safe_delete(UserRole, "ролей пользователей")
+        
+        # Удаляем пользователей (кроме суперпользователей) - это может вызвать проблемы с связанными таблицами
+        try:
+            count = User.objects.filter(is_superuser=False).count()
+            if count > 0:
+                # Используем более безопасный способ удаления
+                non_superusers = User.objects.filter(is_superuser=False)
+                for user in non_superusers:
+                    try:
+                        user.delete()
+                    except Exception as e:
+                        self.stdout.write(self.style.WARNING(f'  Не удалось удалить пользователя {user.email}: {e}'))
+                self.stdout.write(f'  Удалено {count} пользователей')
+        except OperationalError as e:
+            if 'no such table' in str(e).lower():
+                self.stdout.write(self.style.WARNING('  Таблица пользователей не существует, пропускаем'))
+            else:
+                raise
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'  Ошибка при удалении пользователей: {e}'))
+        
+        safe_delete(Sport, "видов спорта")
+        safe_delete(SportCategory, "категорий спорта")
+        safe_delete(City, "городов")
+        safe_delete(Region, "регионов")
 
     def create_regions_and_cities(self):
         """Создание регионов и городов"""

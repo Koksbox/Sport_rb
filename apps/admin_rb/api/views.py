@@ -6,7 +6,7 @@ from rest_framework import status
 from django.db.models import Count, Q, Sum
 from django.utils import timezone
 from datetime import timedelta
-from .serializers import UserSerializer, AssignRoleSerializer
+from .serializers import UserSerializer, AssignRoleSerializer, NotificationCreateSerializer, NewsArticleSerializer
 from apps.users.models import UserRole, CustomUser
 from apps.organizations.models import Organization
 from apps.athletes.models import AthleteProfile
@@ -18,7 +18,9 @@ from apps.audit.models.audit_log import ACTION_CHOICES
 
 def check_admin_permission(user):
     """Проверка прав администратора"""
-    return user.roles.filter(role='admin_rb').exists() or user.is_superuser
+    if not user or not user.is_authenticated:
+        return False
+    return user.roles.filter(role='admin_rb', is_active=True).exists() or user.is_superuser
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -54,9 +56,14 @@ def get_dashboard_stats(request):
     past_events = Event.objects.filter(start_date__lt=timezone.now()).count()
     
     # Статистика посещаемости
-    total_attendance = AttendanceRecord.objects.count()
-    attended_count = AttendanceRecord.objects.filter(attended=True).count()
-    attendance_rate = (attended_count / total_attendance * 100) if total_attendance > 0 else 0
+    try:
+        total_attendance = AttendanceRecord.objects.count()
+        attended_count = AttendanceRecord.objects.filter(attended=True).count()
+        attendance_rate = (attended_count / total_attendance * 100) if total_attendance > 0 else 0
+    except Exception:
+        total_attendance = 0
+        attended_count = 0
+        attendance_rate = 0
     
     # Статистика за последние 30 дней
     last_30_days = timezone.now() - timedelta(days=30)
@@ -286,3 +293,298 @@ def get_organizations_list(request):
         'page_size': page_size,
         'results': orgs_list
     })
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_notification(request):
+    """Создание уведомлений для пользователей с фильтрацией"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    from .serializers import NotificationCreateSerializer
+    from apps.events.models import EventRegistration
+    
+    serializer = NotificationCreateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    data = serializer.validated_data
+    title = data['title']
+    body = data['body']
+    notification_type = data.get('notification_type', 'mass_notification')
+    
+    # Определяем получателей
+    recipients = CustomUser.objects.filter(is_active=True)
+    
+    if data.get('target_all'):
+        # Все пользователи
+        pass
+    elif data.get('target_roles'):
+        # Фильтр по ролям
+        roles = data['target_roles']
+        recipients = recipients.filter(roles__role__in=roles, roles__is_active=True).distinct()
+    elif data.get('target_event_id'):
+        # Участники мероприятия
+        event_id = data['target_event_id']
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            return Response({"error": "Мероприятие не найдено"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Получаем всех зарегистрированных участников
+        registrations = EventRegistration.objects.filter(event=event, status='registered').select_related('athlete__user', 'coach__user')
+        user_ids = set()
+        for reg in registrations:
+            if reg.athlete and reg.athlete.user:
+                user_ids.add(reg.athlete.user.id)
+            elif reg.coach and reg.coach.user:
+                user_ids.add(reg.coach.user.id)
+        recipients = recipients.filter(id__in=user_ids)
+    else:
+        return Response({"error": "Необходимо указать получателей"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Создаём уведомления
+    notifications = []
+    for user in recipients:
+        notifications.append(
+            Notification(
+                recipient=user,
+                sender=request.user,
+                notification_type=notification_type,
+                title=title,
+                body=body,
+                is_read=False
+            )
+        )
+    
+    # Массовое создание
+    Notification.objects.bulk_create(notifications, batch_size=100)
+    
+    return Response({
+        "message": f"Уведомление отправлено {len(notifications)} пользователям",
+        "recipients_count": len(notifications)
+    }, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def news_articles_list(request):
+    """Список новостных статей (GET) или создание (POST)"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    from apps.core.models.news import NewsArticle
+    from .serializers import NewsArticleSerializer
+    
+    if request.method == 'GET':
+        articles = NewsArticle.objects.all().order_by('-created_at')
+        serializer = NewsArticleSerializer(articles, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = NewsArticleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            article = serializer.save()
+            return Response(NewsArticleSerializer(article).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def news_article_detail(request, article_id):
+    """Детали, редактирование или удаление новостной статьи"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    from apps.core.models.news import NewsArticle
+    from .serializers import NewsArticleSerializer
+    
+    try:
+        article = NewsArticle.objects.get(id=article_id)
+    except NewsArticle.DoesNotExist:
+        return Response({"error": "Статья не найдена"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = NewsArticleSerializer(article)
+        return Response(serializer.data)
+    
+    elif request.method == 'PATCH':
+        serializer = NewsArticleSerializer(article, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        article.delete()
+        return Response({"message": "Статья удалена"}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_committee_code(request):
+    """Генерация кодов регистрации для сотрудников спорткомитета"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    from .serializers import CommitteeCodeGenerateSerializer
+    from apps.city_committee.models import CommitteeRegistrationCode
+    from django.utils import timezone
+    from datetime import timedelta
+    import random
+    import string
+    
+    serializer = CommitteeCodeGenerateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    data = serializer.validated_data
+    city_name = data['city_name']
+    count = data['count']
+    department = data.get('department', '')
+    position = data.get('position', '')
+    expires_days = data.get('expires_days')
+    code_length = data.get('code_length', 8)
+    
+    # Определяем срок действия
+    expires_at = None
+    if expires_days:
+        expires_at = timezone.now() + timedelta(days=expires_days)
+    
+    created_codes = []
+    for i in range(count):
+        # Генерируем уникальный код
+        while True:
+            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=code_length))
+            if not CommitteeRegistrationCode.objects.filter(code=code).exists():
+                break
+        
+        # Создаём код
+        reg_code = CommitteeRegistrationCode.objects.create(
+            code=code,
+            city_name=city_name,
+            department=department,
+            position=position,
+            issued_by=request.user.get_full_name() or request.user.email,
+            expires_at=expires_at,
+            is_active=True,
+            is_used=False
+        )
+        
+        created_codes.append({
+            'id': reg_code.id,
+            'code': reg_code.code,
+            'city_name': reg_code.city_name,
+            'department': reg_code.department,
+            'position': reg_code.position,
+            'expires_at': reg_code.expires_at,
+            'created_at': reg_code.created_at
+        })
+    
+    return Response({
+        "message": f"Создано {len(created_codes)} кодов регистрации",
+        "codes": created_codes
+    }, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_committee_codes(request):
+    """Список кодов регистрации спорткомитета"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    from apps.city_committee.models import CommitteeRegistrationCode
+    
+    status_filter = request.query_params.get('status', '')  # 'active', 'used', 'all'
+    city_filter = request.query_params.get('city', '')
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 20))
+    
+    codes = CommitteeRegistrationCode.objects.all().order_by('-created_at')
+    
+    if status_filter == 'active':
+        codes = codes.filter(is_active=True, is_used=False)
+    elif status_filter == 'used':
+        codes = codes.filter(is_used=True)
+    
+    if city_filter:
+        codes = codes.filter(city_name__icontains=city_filter)
+    
+    total = codes.count()
+    start = (page - 1) * page_size
+    end = start + page_size
+    
+    codes_list = []
+    for code in codes[start:end]:
+        codes_list.append({
+            'id': code.id,
+            'code': code.code,
+            'city_name': code.city_name,
+            'department': code.department,
+            'position': code.position,
+            'issued_by': code.issued_by,
+            'is_used': code.is_used,
+            'is_active': code.is_active,
+            'used_by_email': code.used_by_email,
+            'used_at': code.used_at,
+            'expires_at': code.expires_at,
+            'created_at': code.created_at
+        })
+    
+    return Response({
+        'total': total,
+        'page': page,
+        'page_size': page_size,
+        'results': codes_list
+    })
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_committee_code(request, code_id):
+    """Удаление кода регистрации спорткомитета"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        code = CommitteeRegistrationCode.objects.get(id=code_id)
+    except CommitteeRegistrationCode.DoesNotExist:
+        return Response({"error": "Код не найден"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Проверяем, не использован ли код
+    if code.is_used:
+        return Response({"error": "Нельзя удалить использованный код"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    code.delete()
+    return Response({"message": "Код успешно удалён"}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def archive_committee_code(request, code_id):
+    """Архивирование кода регистрации спорткомитета"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        code = CommitteeRegistrationCode.objects.get(id=code_id)
+    except CommitteeRegistrationCode.DoesNotExist:
+        return Response({"error": "Код не найден"}, status=status.HTTP_404_NOT_FOUND)
+    
+    code.is_active = False
+    code.save()
+    return Response({"message": "Код успешно архивирован"}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def restore_committee_code(request, code_id):
+    """Восстановление кода регистрации спорткомитета из архива"""
+    if not check_admin_permission(request.user):
+        return Response({"error": "Доступ запрещён"}, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        code = CommitteeRegistrationCode.objects.get(id=code_id)
+    except CommitteeRegistrationCode.DoesNotExist:
+        return Response({"error": "Код не найден"}, status=status.HTTP_404_NOT_FOUND)
+    
+    code.is_active = True
+    code.save()
+    return Response({"message": "Код успешно восстановлен"}, status=status.HTTP_200_OK)

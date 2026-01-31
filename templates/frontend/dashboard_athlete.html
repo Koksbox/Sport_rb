@@ -5,40 +5,59 @@
 {% block title %}Личный кабинет спортсмена - СпортБаш{% endblock %}
 
 {% block content %}
-<div class="container">
-    {% if all_roles|length > 1 %}
-    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
-        <div class="card-body">
-            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                {% for role in all_roles %}
-                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
-                        onclick="switchRole('{{ role }}')" 
-                        data-role="{{ role }}">
-                    {{ role|role_name }}
-                </button>
-                {% endfor %}
-                {% if all_roles|length < 4 %}
-                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
-                        style="background: var(--primary-blue); color: white;">
-                    + Добавить роль
-                </button>
+<div class="container" style="max-width: 1400px;">
+    <!-- Общие данные пользователя -->
+    <div class="user-profile-card">
+        <div class="user-profile-header">
+            <h2>Общие данные</h2>
+            <div class="user-profile-actions">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать</a>
+            </div>
+        </div>
+        <div class="user-profile-content">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
+    
+    <!-- Переключатель ролей -->
+    {% if all_roles|length > 1 %}
+        {% include 'frontend/dashboard_parts/role_switcher.html' %}
     {% elif all_roles|length == 1 %}
-    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+    <div class="card" style="margin-bottom: 2rem; background: var(--secondary-blue);">
         <div class="card-body">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <span>У вас одна роль. Хотите добавить ещё?</span>
                 {% if all_roles|length < 4 %}
-                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">+ Добавить роль</a>
                 {% endif %}
             </div>
         </div>
     </div>
     {% endif %}
+    
+    <!-- Достижения -->
+    {% include 'frontend/dashboard_parts/achievements_section.html' with is_coach=False %}
+    
+    <!-- Виджет уведомлений -->
+    {% include 'frontend/dashboard_parts/notifications_widget.html' %}
+    
+    <!-- Предложение автоматической связи ролей -->
+    {% include 'frontend/dashboard_parts/auto_link_suggestion.html' %}
     
     <h1>👤 Личный кабинет спортсмена</h1>
     
@@ -100,11 +119,23 @@
                             <span class="profile-value">{{ user.athlete_profile.goals|join:", " }}</span>
                         </div>
                         {% endif %}
-                        <div class="profile-item" id="roleIdItem" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                            <span class="profile-label">Мой уникальный ID:</span>
-                            <span class="profile-value" id="roleIdValue" style="font-weight: bold; font-size: 1.2rem; color: var(--primary-blue); font-family: monospace;"></span>
+                        <div class="profile-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div>
+                                    <span class="profile-label">Мой уникальный ID:</span>
+                                    <span class="profile-value" id="roleIdValue" style="font-weight: bold; font-size: 1.2rem; color: var(--primary-blue); font-family: monospace; display: block; margin-top: 0.5rem;">Загрузка...</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary btn-sm" onclick="copyAthleteRoleId()" id="copyAthleteIdBtn">
+                                        📋 Копировать
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="showAthleteQRCode()">
+                                        📷 Показать QR-код
+                                    </button>
+                                </div>
+                            </div>
                             <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
-                                📋 Поделитесь этим ID с родителем для добавления вас в список детей
+                                Поделитесь этим ID с родителем для добавления вас в список детей
                             </small>
                         </div>
                     </div>
@@ -120,19 +151,206 @@
     </div>
     
     <script>
-    // Загружаем уникальный ID роли
-    fetch('/api/parents/my-role-id/')
+    // Загружаем уникальный ID роли спортсмена
+    fetch('/api/users/roles/athlete/id/')
         .then(response => response.json())
         .then(data => {
             if (data.unique_id) {
                 document.getElementById('roleIdValue').textContent = data.unique_id;
-                document.getElementById('roleIdItem').style.display = 'block';
+                window.athleteRoleId = data.unique_id;
             }
         })
         .catch(error => {
             console.error('Ошибка загрузки ID роли:', error);
+            document.getElementById('roleIdValue').textContent = 'Ошибка загрузки';
         });
+    
+    function copyAthleteRoleId() {
+        const roleId = window.athleteRoleId || document.getElementById('roleIdValue').textContent;
+        if (roleId && roleId !== 'Загрузка...' && roleId !== 'Ошибка загрузки') {
+            navigator.clipboard.writeText(roleId).then(() => {
+                const btn = document.getElementById('copyAthleteIdBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Скопировано!';
+                btn.style.background = 'var(--success)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования:', err);
+                alert('Не удалось скопировать ID');
+            });
+        }
+    }
+    
+    function showAthleteQRCode() {
+        const roleId = window.athleteRoleId || document.getElementById('roleIdValue').textContent;
+        if (!roleId || roleId === 'Загрузка...' || roleId === 'Ошибка загрузки') {
+            alert('ID роли ещё не загружен');
+            return;
+        }
+        
+        // Создаём модальное окно с QR-кодом
+        const modal = document.createElement('div');
+        modal.className = 'role-id-modal';
+        modal.innerHTML = `
+            <div class="role-id-modal-content">
+                <div class="role-id-modal-header">
+                    <h3>QR-код ID спортсмена</h3>
+                    <button class="role-id-modal-close" onclick="this.closest('.role-id-modal').remove()">×</button>
+                </div>
+                <div class="role-id-modal-body">
+                    <div class="role-id-display-modal">
+                        <div class="role-id-value-modal">${roleId}</div>
+                        <button class="btn btn-primary" onclick="copyAthleteRoleId(); this.closest('.role-id-modal').remove();">
+                            📋 Копировать ID
+                        </button>
+                    </div>
+                    <div class="role-id-qr-modal" id="athleteQRCode"></div>
+                    <p class="role-id-description-modal">
+                        Покажите этот QR-код родителю для быстрого добавления
+                    </p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.style.display = 'flex';
+        
+        // Генерация QR-кода
+        if (typeof QRCode !== 'undefined') {
+            QRCode.toCanvas(document.getElementById('athleteQRCode'), roleId, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: '#0066CC',
+                    light: '#FFFFFF'
+                }
+            });
+        } else {
+            document.getElementById('athleteQRCode').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(roleId)}" 
+                     alt="QR Code" style="max-width: 250px; height: auto; border-radius: 8px;">
+            `;
+        }
+        
+        // Закрытие при клике вне модального окна
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
     </script>
+    
+    <style>
+    .role-id-modal {
+        display: none;
+        position: fixed;
+        z-index: 3000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .role-id-modal-content {
+        background-color: var(--white);
+        margin: auto;
+        padding: 0;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+        animation: modalSlideIn 0.3s ease;
+    }
+    
+    .role-id-modal-header {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+        color: var(--white);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .role-id-modal-header h3 {
+        margin: 0;
+        color: var(--white);
+        font-size: 1.25rem;
+    }
+    
+    .role-id-modal-close {
+        background: none;
+        border: none;
+        color: var(--white);
+        font-size: 2rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    
+    .role-id-modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .role-id-modal-body {
+        padding: 2rem;
+    }
+    
+    .role-id-display-modal {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: var(--light-gray);
+        border-radius: 8px;
+    }
+    
+    .role-id-value-modal {
+        font-size: 1.75rem;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        color: var(--primary-blue);
+        flex: 1;
+        text-align: center;
+        letter-spacing: 3px;
+    }
+    
+    .role-id-qr-modal {
+        text-align: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--light-gray);
+        border-radius: 8px;
+    }
+    
+    .role-id-qr-modal canvas,
+    .role-id-qr-modal img {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .role-id-description-modal {
+        text-align: center;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    </style>
     {% endif %}
     
     <!-- График прогресса -->
@@ -169,18 +387,33 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // Загрузка данных прогресса
-fetch('/api/athletes/progress/')
-    .then(response => response.json())
+fetch('/api/athletes/progress/', {
+    headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+    },
+    credentials: 'same-origin'
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        const chartContainer = document.getElementById('progressChart');
+        chartContainer.innerHTML = '';
         const ctx = document.createElement('canvas');
-        document.getElementById('progressChart').innerHTML = '';
-        document.getElementById('progressChart').appendChild(ctx);
+        chartContainer.appendChild(ctx);
         
         // Группируем посещаемость по месяцам
         const attendanceByMonth = {};
-        if (data.attendance) {
+        if (data.attendance && Array.isArray(data.attendance)) {
             data.attendance.forEach(record => {
-                const month = new Date(record.date).toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
+                const dateStr = record.date;
+                if (!dateStr) return;
+                
+                const date = new Date(dateStr);
+                const month = date.toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
                 if (!attendanceByMonth[month]) {
                     attendanceByMonth[month] = { present: 0, absent: 0, late: 0 };
                 }
@@ -194,56 +427,65 @@ fetch('/api/athletes/progress/')
         const presentData = months.map(m => attendanceByMonth[m].present);
         const absentData = months.map(m => attendanceByMonth[m].absent);
         
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: 'Посещения',
-                        data: presentData,
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.1
-                    },
-                    {
-                        label: 'Пропуски',
-                        data: absentData,
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        tension: 0.1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+        // Создаем график только если есть данные
+        if (months.length > 0) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Посещения',
+                            data: presentData,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Пропуски',
+                            data: absentData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            ctx.parentElement.innerHTML = '<p style="color: var(--text-light); text-align: center;">Нет данных о посещаемости за последние 6 месяцев</p>';
+        }
         
         // Статистика
+        const totalPresent = presentData.reduce((a, b) => a + b, 0);
+        const eventsCount = data.events && Array.isArray(data.events) ? data.events.length : 0;
+        const achievementsCount = data.achievements && Array.isArray(data.achievements) ? data.achievements.length : 0;
+        
         const statsHtml = `
             <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                 <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
-                    <div style="font-size: 2rem; font-weight: bold;">${data.events ? data.events.length : 0}</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${eventsCount}</div>
                     <div style="color: var(--text-light);">Мероприятий</div>
                 </div>
                 <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
-                    <div style="font-size: 2rem; font-weight: bold;">${data.achievements ? data.achievements.length : 0}</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${achievementsCount}</div>
                     <div style="color: var(--text-light);">Достижений</div>
                 </div>
                 <div style="text-align: center; padding: 1rem; background: var(--secondary-blue); border-radius: 8px;">
-                    <div style="font-size: 2rem; font-weight: bold;">${presentData.reduce((a, b) => a + b, 0)}</div>
+                    <div style="font-size: 2rem; font-weight: bold;">${totalPresent}</div>
                     <div style="color: var(--text-light);">Посещений</div>
                 </div>
             </div>
         `;
-        document.getElementById('progressChart').insertAdjacentHTML('afterend', statsHtml);
+        chartContainer.insertAdjacentHTML('afterend', statsHtml);
     })
     .catch(error => {
         console.error('Ошибка загрузки прогресса:', error);
@@ -251,69 +493,48 @@ fetch('/api/athletes/progress/')
     });
 </script>
 
-<script>
-function switchRole(role) {
-    fetch('/api/users/switch-role/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ role: role })
-    })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
-    })
-    .then(result => {
-        if (result.status === 200 && result.data.success) {
-            // Перезагружаем страницу для обновления интерфейса
-            window.location.href = '/dashboard/';
-        } else {
-            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при переключении роли');
-    });
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-</script>
-
 <style>
-.role-switch-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid var(--primary-blue);
-    border-radius: var(--border-radius);
-    background: white;
-    color: var(--primary-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+.user-profile-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-blue);
 }
 
-.role-switch-btn:hover {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.role-switch-btn.active {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--white);
+}
+
+.user-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.user-profile-content {
+    padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .user-profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>
 {% endblock %}

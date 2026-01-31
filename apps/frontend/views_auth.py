@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 from django.conf import settings
+from apps.users.models import UserRole
 
 @require_http_methods(["GET", "POST"])
 def django_login(request):
@@ -28,6 +29,22 @@ def django_login(request):
             
             if user is not None:
                 login(request, user)
+                
+                # Если пользователь - суперпользователь, создаём роль admin_rb, если её нет
+                if user.is_superuser:
+                    admin_role, created = UserRole.objects.get_or_create(
+                        user=user,
+                        role='admin_rb',
+                        defaults={'is_active': True}
+                    )
+                    # Устанавливаем admin_rb как активную роль
+                    request.session['active_role'] = 'admin_rb'
+                elif user.roles.exists():
+                    # Для обычных пользователей устанавливаем первую доступную роль
+                    first_role = user.roles.filter(is_active=True).first()
+                    if first_role:
+                        request.session['active_role'] = first_role.role
+                
                 next_url = request.GET.get('next', settings.LOGIN_REDIRECT_URL)
                 return redirect(next_url)
             else:

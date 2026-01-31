@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Помощь - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <h1>Помощь</h1>
+    
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-body">
+            <h2>Часто задаваемые вопросы</h2>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Регистрация и вход</h3>
+                <div style="margin-top: 1rem;">
+                    <h4>Как зарегистрироваться?</h4>
+                    <p style="line-height: 1.8;">
+                        Нажмите кнопку "Регистрация" в правом верхнем углу, заполните форму с вашими данными 
+                        (Email, ФИО, телефон, город, пароль) и нажмите "Зарегистрироваться".
+                    </p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h4>Я забыл пароль</h4>
+                    <p style="line-height: 1.8;">
+                        Обратитесь в службу поддержки по email: <a href="mailto:support@sportbash.ru">support@sportbash.ru</a> 
+                        или по телефону: +7 (347) 000-00-00
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Роли в системе</h3>
+                <div style="margin-top: 1rem;">
+                    <h4>Как добавить роль?</h4>
+                    <p style="line-height: 1.8;">
+                        В личном кабинете нажмите кнопку "+ Добавить роль" и выберите нужную роль 
+                        (Спортсмен, Тренер или Сотрудник спорткомитета). Роль "Родитель" добавляется автоматически 
+                        при связывании с ребёнком, а роль "Директор" — при создании организации.
+                    </p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h4>Как переключиться между ролями?</h4>
+                    <p style="line-height: 1.8;">
+                        В личном кабинете в разделе "Мои роли" нажмите на нужную роль для переключения.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Спортсмены</h3>
+                <div style="margin-top: 1rem;">
+                    <h4>Как записаться в секцию?</h4>
+                    <p style="line-height: 1.8;">
+                        Перейдите в раздел "Организации", найдите нужную секцию и подайте заявку на запись.
+                    </p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h4>Как посмотреть свои результаты?</h4>
+                    <p style="line-height: 1.8;">
+                        В личном кабинете спортсмена доступна информация о ваших достижениях и участии в мероприятиях.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Родители</h3>
+                <div style="margin-top: 1rem;">
+                    <h4>Как добавить ребёнка?</h4>
+                    <p style="line-height: 1.8;">
+                        В личном кабинете родителя нажмите "Добавить ребёнка" и введите уникальный ID роли спортсмена 
+                        или отсканируйте QR-код. Также можно запросить связь через систему.
+                    </p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h4>Как посмотреть информацию о ребёнке?</h4>
+                    <p style="line-height: 1.8;">
+                        В разделе "Мои дети" вы можете просмотреть профиль ребёнка, его достижения 
+                        и информацию о его участии в секциях.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Тренеры</h3>
+                <div style="margin-top: 1rem;">
+                    <h4>Как найти организацию для работы?</h4>
+                    <p style="line-height: 1.8;">
+                        В личном кабинете тренера перейдите в раздел "Найти организацию" и подайте заявку 
+                        в интересующую вас организацию.
+                    </p>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <h4>Как вести посещаемость?</h4>
+                    <p style="line-height: 1.8;">
+                        В разделе "Мои группы" выберите нужную группу и используйте функцию отметки посещаемости.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background: var(--secondary-blue); border-radius: 8px;">
+                <h3>Не нашли ответ?</h3>
+                <p style="line-height: 1.8; margin-bottom: 1rem;">
+                    Если у вас остались вопросы, свяжитесь с нами:
+                </p>
+                <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> <a href="mailto:support@sportbash.ru">support@sportbash.ru</a></p>
+                <p style="margin-bottom: 0.5rem;"><strong>Телефон:</strong> +7 (347) 000-00-00</p>
+                <p style="margin-bottom: 0;">
+                    <a href="{% url 'frontend-contact' %}" class="btn btn-primary" style="margin-top: 1rem;">Написать в поддержку</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

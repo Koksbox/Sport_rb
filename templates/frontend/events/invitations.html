@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Приглашения на мероприятия - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px;">
+    <div class="section-header">
+        <h1 class="section-title">✉️ Приглашения на мероприятия</h1>
+        <p class="section-subtitle">Приглашения, которые вы получили</p>
+    </div>
+    
+    <div id="invitationsContent">
+        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+    </div>
+</div>
+
+<script>
+function loadInvitations() {
+    fetch('/api/events/invitations/my/', {
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('invitationsContent');
+        
+        if (!data.invitations || data.invitations.length === 0) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-body" style="text-align: center; padding: 3rem;">
+                        <p style="color: var(--text-light); font-size: 1.1rem;">У вас нет новых приглашений</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '<div style="display: flex; flex-direction: column; gap: 1.5rem;">';
+        
+        data.invitations.forEach(inv => {
+            const date = new Date(inv.event_date);
+            html += `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">${escapeHtml(inv.event_title)}</h2>
+                        <span class="badge" style="background: var(--primary-blue); color: white;">
+                            ${inv.invitation_type === 'coach' ? '👨‍🏫 Тренер' : '🏃 Спортсмен'}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Дата:</strong> ${date.toLocaleDateString('ru-RU')}</p>
+                        ${inv.event_city ? `<p><strong>Город:</strong> ${escapeHtml(inv.event_city)}</p>` : ''}
+                        ${inv.sent_by_name ? `<p><strong>От:</strong> ${escapeHtml(inv.sent_by_name)}</p>` : ''}
+                        ${inv.message ? `<p><strong>Сообщение:</strong> ${escapeHtml(inv.message)}</p>` : ''}
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" onclick="respondToInvitation(${inv.id}, 'accept')">Принять</button>
+                            <button class="btn btn-secondary" onclick="respondToInvitation(${inv.id}, 'decline')">Отклонить</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        document.getElementById('invitationsContent').innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <p style="color: var(--error);">Ошибка загрузки данных</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function respondToInvitation(invitationId, action) {
+    fetch(`/api/events/invitations/${invitationId}/respond/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ action: action })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            loadInvitations();
+        } else {
+            alert('Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка');
+    });
+}
+
+loadInvitations();
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

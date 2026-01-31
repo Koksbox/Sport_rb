@@ -24,22 +24,33 @@ def register_page(request):
 
 @login_required
 def dashboard(request):
-    """Личный кабинет с разными интерфейсами для разных ролей"""
+    """Личный кабинет с переключением ролей"""
+    from apps.users.models import UserRole
+    
     user = request.user
     
-    # Получаем активную роль из сессии или первую доступную
-    active_role = request.session.get('active_role')
-    if not active_role and user.roles.exists():
-        active_role = user.roles.first().role
-        request.session['active_role'] = active_role
+    # Если пользователь - суперпользователь, создаём роль admin_rb, если её нет
+    if user.is_superuser:
+        admin_role, created = UserRole.objects.get_or_create(
+            user=user,
+            role='admin_rb',
+            defaults={'is_active': True}
+        )
+        # Устанавливаем admin_rb как активную роль
+        request.session['active_role'] = 'admin_rb'
+        active_role = 'admin_rb'
+    else:
+        # Получаем активную роль из сессии или первую доступную
+        active_role = request.session.get('active_role')
+        if not active_role and user.roles.exists():
+            active_role = user.roles.filter(is_active=True).first()
+            if active_role:
+                active_role = active_role.role
+                request.session['active_role'] = active_role
     
-    # Если роли нет, показываем выбор роли
-    if not user.roles.exists():
-        return render(request, 'frontend/dashboard.html', {
-            'user': user,
-            'has_role': False,
-            'all_roles': [],
-        })
+    # Если роли нет (для обычных пользователей), показываем выбор роли
+    if not user.is_superuser and not user.roles.exists():
+        return redirect('frontend-new-role-selection')
     
     # Получаем все роли пользователя
     all_roles = list(user.roles.values_list('role', flat=True))
@@ -75,6 +86,12 @@ def dashboard(request):
             'active_role': active_role,
             'all_roles': all_roles,
         })
+    elif active_role == 'committee_staff':
+        return render(request, 'frontend/dashboard_committee.html', {
+            'user': user,
+            'active_role': active_role,
+            'all_roles': all_roles,
+        })
     else:
         # Для других ролей используем базовый шаблон
         return render(request, 'frontend/dashboard.html', {
@@ -88,6 +105,26 @@ def dashboard(request):
 def role_selection(request):
     """Страница выбора роли"""
     return render(request, 'frontend/role_selection.html')
+
+@login_required
+def role_setup_athlete(request):
+    """Страница заполнения данных для роли спортсмена"""
+    # Проверяем, нет ли уже этой роли
+    if request.user.roles.filter(role='athlete').exists():
+        return redirect('frontend-dashboard')
+    return render(request, 'frontend/role_setup_athlete.html', {
+        'user': request.user,
+    })
+
+@login_required
+def role_setup_coach(request):
+    """Страница заполнения данных для роли тренера"""
+    # Проверяем, нет ли уже этой роли
+    if request.user.roles.filter(role='coach').exists():
+        return redirect('frontend-dashboard')
+    return render(request, 'frontend/role_setup_coach.html', {
+        'user': request.user,
+    })
 
 def organizations_list(request):
     """Список организаций (публичная страница)"""
@@ -116,10 +153,29 @@ def events_list(request):
     """Список мероприятий (публичная страница)"""
     return render(request, 'frontend/events/list.html')
 
+@login_required
+def my_events_page(request):
+    """Страница "Мои мероприятия" - зарегистрированные мероприятия пользователя"""
+    return render(request, 'frontend/events/my_events.html')
+
+@login_required
+def event_invitations_page(request):
+    """Страница приглашений на мероприятия"""
+    return render(request, 'frontend/events/invitations.html')
+
 def event_detail_page(request, event_id):
     """Детальная страница мероприятия (публичная страница)"""
     context = {'event_id': event_id}
     return render(request, 'frontend/events/detail.html', context)
+
+@login_required
+def event_registered_page(request, event_id):
+    """Страница для зарегистрированных участников мероприятия"""
+    # Проверяем, что пользователь зарегистрирован
+    return render(request, 'frontend/events/registered.html', {
+        'event_id': event_id,
+        'user': request.user,
+    })
 
 @login_required
 def athlete_profile_edit(request):
@@ -200,11 +256,37 @@ def user_basic_data_edit(request):
     """Страница редактирования общих данных пользователя"""
     return render(request, 'frontend/users/basic_data_edit.html')
 
+@login_required
+def profile_complete(request):
+    """Страница заполнения недостающих данных после входа через соцсети (для ФЗ-152)"""
+    user = request.user
+    # Проверяем, нужна ли эта страница
+    needs_completion = not user.phone or not user.city
+    if not needs_completion:
+        # Если все данные заполнены, редиректим в личный кабинет
+        return redirect('frontend-dashboard')
+    
+    return render(request, 'frontend/users/profile_complete.html', {
+        'user': user,
+        'missing_phone': not user.phone,
+        'missing_city': not user.city,
+    })
+
 def logout_view(request):
     """Выход из аккаунта"""
     from django.contrib.auth import logout
     logout(request)
     return redirect('frontend-index')
+
+@login_required
+def profile_search(request):
+    """Страница поиска профилей по ID роли"""
+    return render(request, 'frontend/profiles/search.html')
+
+@login_required
+def profile_view(request, role_id):
+    """Страница просмотра профиля по ID роли"""
+    return render(request, 'frontend/profiles/view.html', {'role_id': role_id})
 
 @login_required
 def parent_profile_edit(request):
@@ -245,3 +327,41 @@ def admin_dashboard(request):
     return render(request, 'frontend/dashboard_admin.html', {
         'user': request.user,
     })
+
+@login_required
+def committee_register(request):
+    """Страница регистрации сотрудника спорткомитета"""
+    return render(request, 'frontend/committee/register.html', {
+        'user': request.user,
+    })
+
+def news_list(request):
+    """Страница новостей (публичная)"""
+    return render(request, 'frontend/news/list.html')
+
+@login_required
+def notifications_list(request):
+    """Страница уведомлений пользователя"""
+    return render(request, 'frontend/notifications/list.html', {
+        'user': request.user,
+    })
+
+def about_page(request):
+    """Страница "О проекте" (публичная)"""
+    return render(request, 'frontend/info/about.html')
+
+def help_page(request):
+    """Страница "Помощь" (публичная)"""
+    return render(request, 'frontend/info/help.html')
+
+def privacy_policy_page(request):
+    """Страница "Политика конфиденциальности" (публичная)"""
+    return render(request, 'frontend/info/privacy.html')
+
+def contact_page(request):
+    """Страница обратной связи (публичная)"""
+    return render(request, 'frontend/info/contact.html')
+
+def offline_page(request):
+    """Страница для офлайн режима"""
+    return render(request, 'frontend/offline.html')

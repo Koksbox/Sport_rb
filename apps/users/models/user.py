@@ -52,5 +52,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
+    def get_full_name(self):
+        """Возвращает полное ФИО в формате 'Фамилия Имя Отчество'"""
+        parts = []
+        if self.last_name:
+            parts.append(self.last_name)
+        if self.first_name:
+            parts.append(self.first_name)
+        if self.patronymic:
+            parts.append(self.patronymic)
+        return ' '.join(parts) if parts else ''
+    
     def __str__(self):
         return f"{self.last_name} {self.first_name}"

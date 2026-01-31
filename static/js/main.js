@@ -1,7 +1,7 @@
 // СпортБаш - Основной JavaScript
 
 // Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
+function initializeApp() {
     // Проверка Telegram Mini App
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
@@ -22,7 +22,65 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Автоматическое скрытие сообщений
     autoHideMessages();
+}
+
+// Функция для принудительной инициализации бургер-меню
+function forceInitBurgerMenu() {
+    // Удаляем все атрибуты инициализации для переинициализации
+    document.querySelectorAll('.burger-btn').forEach(function(btn) {
+        btn.removeAttribute('data-burger-initialized');
+    });
+    // Всегда инициализируем заново (удаление старых обработчиков происходит внутри initBurgerMenu)
+    initBurgerMenu();
+}
+
+// Запускаем инициализацию при загрузке DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+        // Дополнительная инициализация бургер-меню
+        setTimeout(forceInitBurgerMenu, 50);
+    });
+} else {
+    // DOM уже загружен
+    initializeApp();
+    setTimeout(forceInitBurgerMenu, 50);
+}
+
+// Дополнительная инициализация через небольшую задержку (на случай динамической загрузки)
+setTimeout(forceInitBurgerMenu, 100);
+setTimeout(forceInitBurgerMenu, 300);
+setTimeout(forceInitBurgerMenu, 500);
+
+// Инициализация после полной загрузки страницы (включая все ресурсы)
+window.addEventListener('load', function() {
+    forceInitBurgerMenu();
 });
+
+// Инициализация при изменении DOM (для динамически загружаемого контента)
+if (window.MutationObserver) {
+    let initTimeout;
+    const observer = new MutationObserver(function(mutations) {
+        // Используем debounce для избежания множественных вызовов
+        clearTimeout(initTimeout);
+        initTimeout = setTimeout(function() {
+            const hasBurgerMenu = document.querySelector('.burger-menu');
+            if (hasBurgerMenu) {
+                // Всегда переинициализируем при обнаружении меню
+                // Это нужно для работы при переходе на новые страницы
+                forceInitBurgerMenu();
+            }
+        }, 100);
+    });
+    
+    // Начинаем наблюдение за изменениями в body
+    if (document.body) {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+}
 
 // Инициализация HTMX форм
 function initHTMXForms() {
@@ -63,53 +121,91 @@ function initHTMXForms() {
     });
 }
 
-// Инициализация бургер-меню
+// Инициализация бургер-меню - упрощенная версия с делегированием событий
 function initBurgerMenu() {
-    const burgerMenus = document.querySelectorAll('.burger-menu');
-    
-    if (burgerMenus.length === 0) {
-        return;
+    // Удаляем старый глобальный обработчик, если есть
+    if (document._burgerMenuGlobalHandler) {
+        document.removeEventListener('click', document._burgerMenuGlobalHandler, true);
+        document._burgerMenuGlobalHandler = null;
     }
     
-    burgerMenus.forEach(function(burgerMenu) {
-        const burgerBtn = burgerMenu.querySelector('.burger-btn');
-        const burgerDropdown = burgerMenu.querySelector('.burger-dropdown');
+    // Используем делегирование событий - один обработчик на весь document
+    const globalClickHandler = function(e) {
+        const target = e.target;
         
-        if (!burgerBtn || !burgerDropdown) {
+        // Проверяем, кликнули ли на кнопку бургер-меню
+        const burgerBtn = target.closest('.burger-btn');
+        if (burgerBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const burgerMenu = burgerBtn.closest('.burger-menu');
+            const dropdown = burgerMenu ? burgerMenu.querySelector('.burger-dropdown') : null;
+            
+            if (!dropdown) return;
+            
+            const isActive = burgerBtn.classList.contains('active');
+            
+            // Закрываем все другие меню
+            document.querySelectorAll('.burger-menu').forEach(function(menu) {
+                const otherBtn = menu.querySelector('.burger-btn');
+                const otherDropdown = menu.querySelector('.burger-dropdown');
+                if (otherBtn && otherDropdown && otherBtn !== burgerBtn) {
+                    otherBtn.classList.remove('active');
+                    otherDropdown.classList.remove('active');
+                }
+            });
+            
+            // Переключаем текущее меню
+            if (isActive) {
+                burgerBtn.classList.remove('active');
+                dropdown.classList.remove('active');
+            } else {
+                burgerBtn.classList.add('active');
+                dropdown.classList.add('active');
+            }
             return;
         }
         
-        // Переключение меню при клике на кнопку
-        burgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            burgerBtn.classList.toggle('active');
-            burgerDropdown.classList.toggle('active');
-        });
+        // Проверяем, кликнули ли на ссылку внутри меню
+        const burgerLink = target.closest('.burger-link');
+        if (burgerLink) {
+            const burgerMenu = burgerLink.closest('.burger-menu');
+            if (burgerMenu) {
+                const btn = burgerMenu.querySelector('.burger-btn');
+                const dropdown = burgerMenu.querySelector('.burger-dropdown');
+                if (btn && dropdown) {
+                    // Закрываем меню после небольшой задержки (чтобы переход успел произойти)
+                    setTimeout(function() {
+                        btn.classList.remove('active');
+                        dropdown.classList.remove('active');
+                    }, 100);
+                }
+            }
+            return;
+        }
         
-        // Закрытие меню при клике на ссылку внутри меню
-        const burgerLinks = burgerDropdown.querySelectorAll('.burger-link');
-        burgerLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                burgerBtn.classList.remove('active');
-                burgerDropdown.classList.remove('active');
-            });
-        });
-    });
-    
-    // Закрытие всех меню при клике вне их
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.burger-menu')) {
-            burgerMenus.forEach(function(burgerMenu) {
-                const burgerBtn = burgerMenu.querySelector('.burger-btn');
-                const burgerDropdown = burgerMenu.querySelector('.burger-dropdown');
-                if (burgerBtn && burgerDropdown) {
-                    burgerBtn.classList.remove('active');
-                    burgerDropdown.classList.remove('active');
+        // Если клик был вне бургер-меню, закрываем все меню
+        const clickedMenu = target.closest('.burger-menu');
+        if (!clickedMenu) {
+            document.querySelectorAll('.burger-menu').forEach(function(menu) {
+                const btn = menu.querySelector('.burger-btn');
+                const dropdown = menu.querySelector('.burger-dropdown');
+                if (btn && dropdown) {
+                    btn.classList.remove('active');
+                    dropdown.classList.remove('active');
                 }
             });
         }
-    });
+    };
+    
+    // Добавляем обработчик с capture фазой для более раннего перехвата
+    document.addEventListener('click', globalClickHandler, true);
+    document._burgerMenuGlobalHandler = globalClickHandler;
 }
+
+// Делаем функцию доступной глобально
+window.initBurgerMenu = initBurgerMenu;
 
 // Автоматическое скрытие сообщений
 function autoHideMessages() {
@@ -202,10 +298,205 @@ function logout() {
     window.location.href = '/login/';
 }
 
+// Утилиты для работы с HTML и cookies
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Улучшенная функция для API запросов с обработкой ошибок
+async function apiRequest(url, options = {}) {
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    };
+    
+    // Добавляем CSRF токен
+    const csrfToken = getCookie('csrftoken');
+    if (csrfToken) {
+        defaultOptions.headers['X-CSRFToken'] = csrfToken;
+    }
+    
+    // Объединяем опции
+    const finalOptions = {
+        ...defaultOptions,
+        ...options,
+        headers: {
+            ...defaultOptions.headers,
+            ...(options.headers || {})
+        }
+    };
+    
+    try {
+        const response = await fetch(url, finalOptions);
+        
+        // Проверяем, есть ли ответ
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = await response.text();
+        }
+        
+        if (!response.ok) {
+            throw new Error(data.error || data.detail || data.message || `HTTP ${response.status}`);
+        }
+        
+        return { status: response.status, data };
+    } catch (error) {
+        console.error('API Request Error:', error);
+        throw error;
+    }
+}
+
+// Toast Notification System - перенесено в toast.js
+// Toast Notification System - перенесено в toast.js
+// ToastManager будет определен в toast.js (загружается после main.js)
+
+// Confirmation Dialog
+function showConfirm(message, title = 'Подтверждение', confirmText = 'Да', cancelText = 'Отмена') {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.display = 'block';
+        
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>${escapeHtml(title)}</h3>
+                    <button class="close" type="button">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>${escapeHtml(message)}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancel-btn" type="button">${escapeHtml(cancelText)}</button>
+                    <button class="btn btn-primary confirm-btn" type="button">${escapeHtml(confirmText)}</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Обработчики для кнопок
+        const closeBtn = modal.querySelector('.close');
+        const cancelBtn = modal.querySelector('.cancel-btn');
+        const confirmBtn = modal.querySelector('.confirm-btn');
+        
+        const closeModal = (result) => {
+            modal.remove();
+            document.removeEventListener('keydown', escapeHandler);
+            resolve(result);
+        };
+        
+        // Закрытие по кнопке X
+        closeBtn.addEventListener('click', () => closeModal(false));
+        
+        // Кнопка отмены
+        cancelBtn.addEventListener('click', () => closeModal(false));
+        
+        // Кнопка подтверждения
+        confirmBtn.addEventListener('click', () => closeModal(true));
+        
+        // Закрытие по клику вне модального окна
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal(false);
+            }
+        });
+        
+        // Закрытие по Escape
+        const escapeHandler = function(e) {
+            if (e.key === 'Escape') {
+                closeModal(false);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+        
+        // Фокус на кнопке подтверждения
+        setTimeout(() => {
+            confirmBtn.focus();
+        }, 100);
+    });
+}
+
+// Улучшенная функция для показа сообщений об ошибках
+function showError(message, title = 'Ошибка') {
+    if (window.toastManager) {
+        window.toastManager.error(message, title);
+    } else {
+        alert(title + ': ' + message);
+    }
+}
+
+function showSuccess(message, title = 'Успешно') {
+    if (window.toastManager) {
+        window.toastManager.success(message, title);
+    } else {
+        alert(title + ': ' + message);
+    }
+}
+
+function showWarning(message, title = 'Внимание') {
+    if (window.toastManager) {
+        window.toastManager.warning(message, title);
+    } else {
+        alert(title + ': ' + message);
+    }
+}
+
+function showInfo(message, title = 'Информация') {
+    if (window.toastManager) {
+        window.toastManager.info(message, title);
+    } else {
+        alert(title + ': ' + message);
+    }
+}
+
 // Экспорт для использования в других скриптах
 window.SportBash = {
     API,
     saveToken,
     getToken,
-    logout
+    logout,
+    escapeHtml,
+    getCookie,
+    apiRequest,
+    // toast будет определен в toast.js
+    // toast: toastManager,
+    // showConfirm будет определен в toast.js
+    // showConfirm,
+    showError,
+    showSuccess,
+    showWarning,
+    showInfo
 };
+
+// Глобальные функции для обратной совместимости
+window.escapeHtml = escapeHtml;
+window.getCookie = getCookie;
+// showConfirm будет определен в toast.js (загружается после main.js)
+// window.showConfirm = showConfirm;
+window.showError = showError;
+window.showSuccess = showSuccess;
+window.showWarning = showWarning;
+window.showInfo = showInfo;

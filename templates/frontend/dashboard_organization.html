@@ -5,40 +5,53 @@
 {% block title %}Личный кабинет организации - СпортБаш{% endblock %}
 
 {% block content %}
-<div class="container">
-    {% if all_roles|length > 1 %}
-    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
-        <div class="card-body">
-            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                {% for role in all_roles %}
-                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
-                        onclick="switchRole('{{ role }}')" 
-                        data-role="{{ role }}">
-                    {{ role|role_name }}
-                </button>
-                {% endfor %}
-                {% if all_roles|length < 4 %}
-                <button class="role-switch-btn" onclick="window.location.href='{% url 'frontend-new-role-selection' %}'" 
-                        style="background: var(--primary-blue); color: white;">
-                    + Добавить роль
-                </button>
+<div class="container" style="max-width: 1400px;">
+    <!-- Общие данные пользователя -->
+    <div class="user-profile-card">
+        <div class="user-profile-header">
+            <h2>Общие данные</h2>
+            <div class="user-profile-actions">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать</a>
+            </div>
+        </div>
+        <div class="user-profile-content">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
+    
+    <!-- Переключатель ролей -->
+    {% if all_roles|length > 1 %}
+        {% include 'frontend/dashboard_parts/role_switcher.html' %}
     {% elif all_roles|length == 1 %}
-    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
+    <div class="card" style="margin-bottom: 2rem; background: var(--secondary-blue);">
         <div class="card-body">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <span>У вас одна роль. Хотите добавить ещё?</span>
                 {% if all_roles|length < 4 %}
-                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">Добавить роль</a>
+                <a href="{% url 'frontend-new-role-selection' %}" class="btn btn-primary">+ Добавить роль</a>
                 {% endif %}
             </div>
         </div>
     </div>
     {% endif %}
+    
+    <!-- Виджет уведомлений -->
+    {% include 'frontend/dashboard_parts/notifications_widget.html' %}
     
     <h1>🏢 Личный кабинет организации</h1>
     
@@ -97,69 +110,48 @@
     </div>
 </div>
 
-<script>
-function switchRole(role) {
-    fetch('/api/users/switch-role/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ role: role })
-    })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
-    })
-    .then(result => {
-        if (result.status === 200 && result.data.success) {
-            // Перезагружаем страницу для обновления интерфейса
-            window.location.href = '/dashboard/';
-        } else {
-            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при переключении роли');
-    });
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-</script>
-
 <style>
-.role-switch-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid var(--primary-blue);
-    border-radius: var(--border-radius);
-    background: white;
-    color: var(--primary-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+.user-profile-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-blue);
 }
 
-.role-switch-btn:hover {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.role-switch-btn.active {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--white);
+}
+
+.user-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.user-profile-content {
+    padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .user-profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>
 {% endblock %}

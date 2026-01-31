@@ -6,22 +6,41 @@
 
 {% block content %}
 <div class="container" style="max-width: 1400px;">
-    {% if all_roles|length > 1 %}
-    <div class="card" style="margin-bottom: 1.5rem; background: var(--secondary-blue);">
-        <div class="card-body">
-            <h3 style="margin-bottom: 1rem;">Мои роли</h3>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                {% for role in all_roles %}
-                <button class="role-switch-btn {% if role == active_role %}active{% endif %}" 
-                        onclick="switchRole('{{ role }}')" 
-                        data-role="{{ role }}">
-                    {{ role|role_name }}
-                </button>
-                {% endfor %}
+    <!-- Общие данные пользователя -->
+    <div class="user-profile-card">
+        <div class="user-profile-header">
+            <h2>Общие данные</h2>
+            <div class="user-profile-actions">
+                <a href="{% url 'frontend-user-basic-data-edit' %}" class="btn btn-secondary">✏️ Редактировать</a>
+            </div>
+        </div>
+        <div class="user-profile-content">
+            <div class="profile-info">
+                <div class="profile-item">
+                    <span class="profile-label">ФИО:</span>
+                    <span class="profile-value">{{ user.get_full_name|default:"Не указано" }}</span>
+                </div>
+                <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-value">{{ user.email }}</span>
+                </div>
+                {% if user.phone %}
+                <div class="profile-item">
+                    <span class="profile-label">Телефон:</span>
+                    <span class="profile-value">{{ user.phone }}</span>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
+    
+    <!-- Переключатель ролей -->
+    {% if all_roles|length > 1 %}
+        {% include 'frontend/dashboard_parts/role_switcher.html' %}
     {% endif %}
+    
+    <!-- Виджет уведомлений -->
+    {% include 'frontend/dashboard_parts/notifications_widget.html' %}
     
     <h1>⚙️ Кабинет главного администратора</h1>
     
@@ -45,6 +64,18 @@
                 </button>
                 <button class="btn btn-primary" onclick="showSection('moderation')" style="padding: 1rem;">
                     ✅ Модерация
+                </button>
+                <button class="btn btn-primary" onclick="showSection('events')" style="padding: 1rem;">
+                    🏆 Мероприятия
+                </button>
+                <button class="btn btn-primary" onclick="showSection('notifications')" style="padding: 1rem;">
+                    📢 Уведомления
+                </button>
+                <button class="btn btn-primary" onclick="showSection('news')" style="padding: 1rem;">
+                    📰 Новости
+                </button>
+                <button class="btn btn-primary" onclick="showSection('roles')" style="padding: 1rem;">
+                    🎭 Управление ролями
                 </button>
                 <button class="btn btn-primary" onclick="showSection('logs')" style="padding: 1rem;">
                     📋 Логи системы
@@ -123,6 +154,136 @@
             </div>
         </div>
         
+        <!-- Секция мероприятий -->
+        <div id="section-events" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Управление мероприятиями</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" class="form-control" id="eventSearch" 
+                               placeholder="Поиск по названию..." 
+                               style="max-width: 400px; display: inline-block; margin-right: 1rem;">
+                        <select class="form-control" id="eventStatusFilter" style="max-width: 200px; display: inline-block; margin-right: 1rem;">
+                            <option value="">Все мероприятия</option>
+                            <option value="upcoming">Предстоящие</option>
+                            <option value="past">Прошедшие</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="loadEvents()">Поиск</button>
+                    </div>
+                    <div id="eventsList">
+                        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция уведомлений -->
+        <div id="section-notifications" class="content-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Создание уведомлений</h2>
+                </div>
+                <div class="card-body">
+                    <form id="notificationForm">
+                        <div class="form-group">
+                            <label class="form-label" for="notificationTitle">Заголовок *</label>
+                            <input type="text" class="form-control" id="notificationTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="notificationBody">Текст уведомления *</label>
+                            <textarea class="form-control" id="notificationBody" rows="5" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Получатели *</label>
+                            <div style="margin-bottom: 1rem;">
+                                <label>
+                                    <input type="radio" name="notificationTarget" value="all" checked>
+                                    Всем пользователям
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label>
+                                    <input type="radio" name="notificationTarget" value="roles">
+                                    По ролям:
+                                </label>
+                                <div id="rolesCheckboxes" style="margin-left: 2rem; margin-top: 0.5rem; display: none;">
+                                    <label><input type="checkbox" name="targetRole" value="athlete"> Спортсмены</label><br>
+                                    <label><input type="checkbox" name="targetRole" value="coach"> Тренеры</label><br>
+                                    <label><input type="checkbox" name="targetRole" value="parent"> Родители</label><br>
+                                    <label><input type="checkbox" name="targetRole" value="director"> Директора</label><br>
+                                    <label><input type="checkbox" name="targetRole" value="organization"> Организации</label><br>
+                                    <label><input type="checkbox" name="targetRole" value="committee_staff"> Сотрудники спорткомитета</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label>
+                                    <input type="radio" name="notificationTarget" value="event">
+                                    Участникам мероприятия:
+                                </label>
+                                <input type="number" class="form-control" id="notificationEventId" 
+                                       placeholder="ID мероприятия" 
+                                       style="max-width: 200px; margin-left: 2rem; margin-top: 0.5rem; display: none;">
+                            </div>
+                        </div>
+                        <div id="notificationMessages"></div>
+                        <button type="submit" class="btn btn-primary">Отправить уведомление</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция новостей -->
+        <div id="section-news" class="content-section" style="display: none;">
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Управление новостями</h2>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary" onclick="showCreateNewsForm()">➕ Создать новость</button>
+                </div>
+            </div>
+            <div id="newsListContainer">
+                <div class="loading" style="margin: 2rem auto; display: block;"></div>
+            </div>
+        </div>
+        
+        <!-- Секция управления ролями -->
+        <div id="section-roles" class="content-section" style="display: none;">
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-header">
+                    <h2 class="card-title">Назначение ролей</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" class="form-control" id="roleUserSearch" 
+                               placeholder="Поиск пользователя по email..." 
+                               style="max-width: 400px; display: inline-block; margin-right: 1rem;">
+                        <button class="btn btn-primary" onclick="searchUserForRole()">Найти</button>
+                    </div>
+                    <div id="roleAssignmentContainer">
+                        <p style="color: var(--text-light);">Найдите пользователя для назначения роли</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Коды регистрации спорткомитета</h2>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-primary" onclick="showGenerateCodeForm()">➕ Сгенерировать коды</button>
+                        <button class="btn btn-secondary" onclick="loadCommitteeCodes()" style="margin-left: 0.5rem;">Обновить список</button>
+                    </div>
+                    <div id="committeeCodesList">
+                        <div class="loading" style="margin: 2rem auto; display: block;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Секция логов -->
         <div id="section-logs" class="content-section" style="display: none;">
             <div class="card">
@@ -149,49 +310,104 @@ let currentLogsType = null;
 
 // Загрузка статистики
 function loadStats() {
-    fetch('/api/admin-rb/stats/')
-        .then(response => response.json())
-        .then(data => {
-            renderStats(data);
-        })
-        .catch(error => {
-            console.error('Ошибка загрузки статистики:', error);
-            document.getElementById('statsContainer').innerHTML = 
-                '<div class="alert alert-error">Ошибка загрузки статистики</div>';
-        });
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch('/api/admin-rb/stats/', {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                const data = await response.json();
+                if (response.ok) {
+                    renderStats(data);
+                } else {
+                    throw new Error(data.error || data.detail || 'Ошибка загрузки статистики');
+                }
+            } catch (e) {
+                console.error('Ошибка парсинга JSON:', e);
+                throw new Error('Ошибка парсинга ответа сервера');
+            }
+        } else {
+            const text = await response.text();
+            console.error('Неожиданный формат ответа:', text);
+            throw new Error('Сервер вернул неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки статистики:', error);
+        document.getElementById('statsContainer').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки статистики: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
 }
 
 function renderStats(stats) {
     const container = document.getElementById('statsContainer');
     
+    // Безопасная обработка данных
+    const usersTotal = stats.users?.total || 0;
+    const usersThisMonth = stats.users?.this_month || 0;
+    const usersLast30Days = stats.users?.last_30_days || 0;
+    const usersByRole = stats.users?.by_role || [];
+    
+    const orgsTotal = stats.organizations?.total || 0;
+    const orgsPending = stats.organizations?.pending || 0;
+    const orgsApproved = stats.organizations?.approved || 0;
+    const orgsRejected = stats.organizations?.rejected || 0;
+    const orgsLast30Days = stats.organizations?.last_30_days || 0;
+    
+    const eventsTotal = stats.events?.total || 0;
+    const eventsUpcoming = stats.events?.upcoming || 0;
+    const eventsLast30Days = stats.events?.last_30_days || 0;
+    
+    const attendanceRate = stats.attendance?.rate || 0;
+    const attendanceAttended = stats.attendance?.attended || 0;
+    const attendanceTotal = stats.attendance?.total_records || 0;
+    
     let html = `
         <div class="grid grid-4" style="gap: 1rem; margin-bottom: 1rem;">
             <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                 <div class="card-body">
-                    <h3 style="margin: 0; font-size: 2rem;">${stats.users.total}</h3>
+                    <h3 style="margin: 0; font-size: 2rem;">${usersTotal}</h3>
                     <p style="margin: 0.5rem 0 0 0;">Всего пользователей</p>
-                    <small>+${stats.users.this_month} за месяц</small>
+                    <small>+${usersThisMonth} за месяц</small>
                 </div>
             </div>
             <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
                 <div class="card-body">
-                    <h3 style="margin: 0; font-size: 2rem;">${stats.organizations.total}</h3>
+                    <h3 style="margin: 0; font-size: 2rem;">${orgsTotal}</h3>
                     <p style="margin: 0.5rem 0 0 0;">Организаций</p>
-                    <small>${stats.organizations.pending} на модерации</small>
+                    <small>${orgsPending} на модерации</small>
                 </div>
             </div>
             <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
                 <div class="card-body">
-                    <h3 style="margin: 0; font-size: 2rem;">${stats.events.total}</h3>
+                    <h3 style="margin: 0; font-size: 2rem;">${eventsTotal}</h3>
                     <p style="margin: 0.5rem 0 0 0;">Мероприятий</p>
-                    <small>${stats.events.upcoming} предстоящих</small>
+                    <small>${eventsUpcoming} предстоящих</small>
                 </div>
             </div>
             <div class="card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">
                 <div class="card-body">
-                    <h3 style="margin: 0; font-size: 2rem;">${stats.attendance.rate}%</h3>
+                    <h3 style="margin: 0; font-size: 2rem;">${attendanceRate.toFixed(1)}%</h3>
                     <p style="margin: 0.5rem 0 0 0;">Посещаемость</p>
-                    <small>${stats.attendance.attended} из ${stats.attendance.total_records}</small>
+                    <small>${attendanceAttended} из ${attendanceTotal}</small>
                 </div>
             </div>
         </div>
@@ -202,13 +418,15 @@ function renderStats(stats) {
                     <h3>Пользователи по ролям</h3>
                 </div>
                 <div class="card-body">
-                    <ul style="list-style: none; padding: 0;">
-                        ${stats.users.by_role.map(r => `
-                            <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                                <strong>${getRoleName(r.role)}:</strong> ${r.count}
-                            </li>
-                        `).join('')}
-                    </ul>
+                    ${usersByRole.length > 0 ? `
+                        <ul style="list-style: none; padding: 0;">
+                            ${usersByRole.map(r => `
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                                    <strong>${getRoleName(r.role)}:</strong> ${r.count}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : '<p style="color: var(--text-light);">Нет данных</p>'}
                 </div>
             </div>
             <div class="card">
@@ -218,13 +436,13 @@ function renderStats(stats) {
                 <div class="card-body">
                     <ul style="list-style: none; padding: 0;">
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Одобрены:</strong> ${stats.organizations.approved}
+                            <strong>Одобрены:</strong> ${orgsApproved}
                         </li>
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Ожидают:</strong> ${stats.organizations.pending}
+                            <strong>Ожидают:</strong> ${orgsPending}
                         </li>
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Отклонены:</strong> ${stats.organizations.rejected}
+                            <strong>Отклонены:</strong> ${orgsRejected}
                         </li>
                     </ul>
                 </div>
@@ -236,13 +454,13 @@ function renderStats(stats) {
                 <div class="card-body">
                     <ul style="list-style: none; padding: 0;">
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Новых пользователей:</strong> ${stats.users.last_30_days}
+                            <strong>Новых пользователей:</strong> ${usersLast30Days}
                         </li>
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Новых организаций:</strong> ${stats.organizations.last_30_days}
+                            <strong>Новых организаций:</strong> ${orgsLast30Days}
                         </li>
                         <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                            <strong>Новых мероприятий:</strong> ${stats.events.last_30_days}
+                            <strong>Новых мероприятий:</strong> ${eventsLast30Days}
                         </li>
                     </ul>
                 </div>
@@ -261,7 +479,8 @@ function getRoleName(role) {
         'director': 'Директор',
         'organization': 'Организация',
         'admin_rb': 'Админ РБ',
-        'moderator': 'Модератор'
+        'moderator': 'Модератор',
+        'committee_staff': 'Сотрудник спорткомитета'
     };
     return roles[role] || role;
 }
@@ -286,12 +505,37 @@ function showSection(sectionName) {
             loadOrganizations();
         } else if (sectionName === 'moderation') {
             loadPendingOrganizations();
+        } else if (sectionName === 'events') {
+            loadEvents();
+        } else if (sectionName === 'notifications') {
+            // Инициализация формы уведомлений
+            initNotificationForm();
+        } else if (sectionName === 'news') {
+            loadNewsArticles();
+        } else if (sectionName === 'roles') {
+            // Загружаем коды регистрации при открытии секции
+            loadCommitteeCodes();
         }
     }
 }
 
 // Загрузка пользователей
 function loadUsers(page = 1) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     const search = document.getElementById('userSearch').value;
     const roleFilter = document.getElementById('userRoleFilter').value;
     
@@ -301,16 +545,29 @@ function loadUsers(page = 1) {
     
     document.getElementById('usersList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
     
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            renderUsers(data);
-        })
-        .catch(error => {
-            console.error('Ошибка загрузки пользователей:', error);
-            document.getElementById('usersList').innerHTML = 
-                '<div class="alert alert-error">Ошибка загрузки пользователей</div>';
-        });
+    fetch(url, {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderUsers(data);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки пользователей');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки пользователей:', error);
+        document.getElementById('usersList').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки пользователей: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
 }
 
 function renderUsers(data) {
@@ -366,6 +623,21 @@ function renderUsers(data) {
 }
 
 function toggleUserStatus(userId, currentStatus) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     if (!confirm(`Вы уверены, что хотите ${currentStatus ? 'деактивировать' : 'активировать'} этого пользователя?`)) {
         return;
     }
@@ -374,28 +646,49 @@ function toggleUserStatus(userId, currentStatus) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'X-CSRFToken': getCookieFunc('csrftoken')
         }
     })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
     })
     .then(result => {
         if (result.status === 200) {
-            alert(result.data.message);
+            alert(result.data.message || 'Статус изменён');
             loadUsers();
         } else {
-            alert(result.data.error || 'Ошибка изменения статуса');
+            alert(result.data.error || result.data.detail || 'Ошибка изменения статуса');
         }
     })
     .catch(error => {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка');
+        alert('Произошла ошибка: ' + (error.message || 'Неизвестная ошибка'));
     });
 }
 
 // Загрузка организаций
 function loadOrganizations(page = 1) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     const statusFilter = document.getElementById('orgStatusFilter').value;
     const search = document.getElementById('orgSearch').value;
     
@@ -405,16 +698,29 @@ function loadOrganizations(page = 1) {
     
     document.getElementById('organizationsList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
     
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            renderOrganizations(data);
-        })
-        .catch(error => {
-            console.error('Ошибка загрузки организаций:', error);
-            document.getElementById('organizationsList').innerHTML = 
-                '<div class="alert alert-error">Ошибка загрузки организаций</div>';
-        });
+    fetch(url, {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderOrganizations(data);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки организаций');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки организаций:', error);
+        document.getElementById('organizationsList').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки организаций: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
 }
 
 function renderOrganizations(data) {
@@ -470,18 +776,46 @@ function renderOrganizations(data) {
 
 // Загрузка организаций на модерации
 function loadPendingOrganizations() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     document.getElementById('pendingOrganizations').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
     
-    fetch('/api/admin-rb/organizations/pending/')
-        .then(response => response.json())
-        .then(data => {
-            renderPendingOrganizations(data);
-        })
-        .catch(error => {
-            console.error('Ошибка загрузки организаций:', error);
-            document.getElementById('pendingOrganizations').innerHTML = 
-                '<div class="alert alert-error">Ошибка загрузки организаций</div>';
-        });
+    fetch('/api/admin-rb/organizations/pending/', {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderPendingOrganizations(data);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки организаций');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки организаций:', error);
+        document.getElementById('pendingOrganizations').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки организаций: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
 }
 
 function renderPendingOrganizations(orgs) {
@@ -518,34 +852,70 @@ function renderPendingOrganizations(orgs) {
 }
 
 function approveOrganization(orgId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     if (!confirm('Одобрить эту организацию?')) return;
     
     fetch(`/api/organizations/${orgId}/moderate/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'X-CSRFToken': getCookieFunc('csrftoken')
         },
         body: JSON.stringify({ action: 'approve' })
     })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
     })
     .then(result => {
         if (result.status === 200) {
             alert('Организация одобрена');
             loadPendingOrganizations();
         } else {
-            alert(result.data.error || 'Ошибка одобрения организации');
+            alert(result.data.error || result.data.detail || 'Ошибка одобрения организации');
         }
     })
     .catch(error => {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка');
+        alert('Произошла ошибка: ' + (error.message || 'Неизвестная ошибка'));
     });
 }
 
 function rejectOrganization(orgId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     const reason = prompt('Укажите причину отклонения:');
     if (!reason) return;
     
@@ -553,42 +923,76 @@ function rejectOrganization(orgId) {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'X-CSRFToken': getCookieFunc('csrftoken')
         },
         body: JSON.stringify({ action: 'reject', reason: reason })
     })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
     })
     .then(result => {
         if (result.status === 200) {
             alert('Организация отклонена');
             loadPendingOrganizations();
         } else {
-            alert(result.data.error || 'Ошибка отклонения организации');
+            alert(result.data.error || result.data.detail || 'Ошибка отклонения организации');
         }
     })
     .catch(error => {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка');
+        alert('Произошла ошибка: ' + (error.message || 'Неизвестная ошибка'));
     });
 }
 
 // Загрузка логов
 function loadLogs(type) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
     currentLogsType = type;
     document.getElementById('logsContainer').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
     
-    fetch('/api/admin-rb/logs/')
-        .then(response => response.json())
-        .then(data => {
-            renderLogs(data, type);
-        })
-        .catch(error => {
-            console.error('Ошибка загрузки логов:', error);
-            document.getElementById('logsContainer').innerHTML = 
-                '<div class="alert alert-error">Ошибка загрузки логов</div>';
-        });
+    fetch('/api/admin-rb/logs/', {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderLogs(data, type);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки логов');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки логов:', error);
+        document.getElementById('logsContainer').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки логов: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
 }
 
 function renderLogs(data, type) {
@@ -642,51 +1046,1465 @@ function renderLogs(data, type) {
     }
 }
 
-function switchRole(role) {
-    fetch('/api/users/switch-role/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ role: role })
-    })
-    .then(response => {
-        return response.json().then(data => ({ status: response.status, data }));
-    })
-    .then(result => {
-        if (result.status === 200 && result.data.success) {
-            window.location.href = '/dashboard/';
-        } else {
-            alert('Ошибка переключения роли: ' + (result.data.error || 'Неизвестная ошибка'));
-        }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при переключении роли');
-    });
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Загрузка мероприятий
+function loadEvents() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const search = document.getElementById('eventSearch').value;
+    const statusFilter = document.getElementById('eventStatusFilter').value;
+    
+    let url = '/api/events/';
+    const params = [];
+    if (search) params.push(`search=${encodeURIComponent(search)}`);
+    if (statusFilter === 'upcoming') params.push('upcoming=true');
+    if (statusFilter === 'past') params.push('past=true');
+    if (params.length > 0) url += '?' + params.join('&');
+    
+    document.getElementById('eventsList').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(url, {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderEvents(Array.isArray(data) ? data : (data.results || []));
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки мероприятий');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки мероприятий:', error);
+        document.getElementById('eventsList').innerHTML = 
+            '<div class="alert alert-error">Ошибка загрузки мероприятий: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+function renderEvents(events) {
+    const container = document.getElementById('eventsList');
+    
+    if (events.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Мероприятия не найдены</p>';
+        return;
+    }
+    
+    let html = `
+        <div style="margin-bottom: 1rem;">
+            <p>Найдено: ${events.length} мероприятий</p>
+        </div>
+        <div class="grid grid-2" style="gap: 1rem;">
+            ${events.map(event => `
+                <div class="card">
+                    <div class="card-body">
+                        <h3 style="margin-bottom: 0.5rem;">${escapeHtml(event.title || 'Без названия')}</h3>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                            ${event.start_date ? 'Дата: ' + new Date(event.start_date).toLocaleDateString('ru-RU') : ''}
+                            ${event.location ? '<br>Место: ' + escapeHtml(event.location) : ''}
+                        </p>
+                        <div style="margin-top: 1rem;">
+                            <a href="/events/${event.id}/" class="btn btn-primary btn-sm">Просмотр</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Поиск пользователя для назначения роли
+function searchUserForRole() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const search = document.getElementById('roleUserSearch').value.trim();
+    if (!search) {
+        alert('Введите email пользователя');
+        return;
+    }
+    
+    document.getElementById('roleAssignmentContainer').innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch(`/api/admin-rb/users/?search=${encodeURIComponent(search)}&page_size=5`, {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderRoleAssignment(data.results || []);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка поиска пользователя');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка поиска пользователя:', error);
+        document.getElementById('roleAssignmentContainer').innerHTML = 
+            '<div class="alert alert-error">Ошибка поиска: ' + escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+function renderRoleAssignment(users) {
+    const container = document.getElementById('roleAssignmentContainer');
+    
+    if (users.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Пользователи не найдены</p>';
+        return;
+    }
+    
+    let html = `
+        <div class="grid grid-1" style="gap: 1rem;">
+            ${users.map(user => `
+                <div class="card">
+                    <div class="card-body">
+                        <h4 style="margin-bottom: 0.5rem;">${escapeHtml(user.email)}</h4>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                            ${user.first_name || ''} ${user.last_name || ''}
+                            <br>Текущие роли: ${user.roles.map(r => getRoleName(r)).join(', ') || 'Нет ролей'}
+                        </p>
+                        <div style="margin-top: 1rem;">
+                            <select class="form-control" id="roleSelect-${user.id}" style="max-width: 200px; display: inline-block; margin-right: 0.5rem;">
+                                <option value="">Выберите роль</option>
+                                <option value="moderator">Модератор</option>
+                                <option value="admin_rb">Админ РБ</option>
+                                <option value="committee_staff">Сотрудник спорткомитета</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="assignRoleToUser(${user.id})">Назначить роль</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function assignRoleToUser(userId, roleName = null) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const roleSelect = document.getElementById(`roleSelect-${userId}`);
+    const role = roleSelect ? roleSelect.value : (roleName || '');
+    
+    if (!role) {
+        alert('Выберите роль');
+        return;
+    }
+    
+    // Если роль committee_staff, показываем форму с дополнительными полями
+    if (role === 'committee_staff') {
+        console.log('Выбрана роль committee_staff, userId:', userId);
+        try {
+            showCommitteeStaffRoleForm(userId);
+        } catch (error) {
+            console.error('Ошибка при вызове showCommitteeStaffRoleForm:', error);
+            alert('Ошибка: ' + error.message);
+        }
+        return;
+    }
+    
+    if (!confirm(`Назначить роль "${getRoleName(role)}" пользователю?`)) {
+        return;
+    }
+    
+    const requestData = { user_id: userId, role: role };
+    
+    fetch('/api/admin-rb/roles/assign/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 200 || result.status === 201) {
+            alert(result.data.message || 'Роль успешно назначена');
+            searchUserForRole(); // Обновляем список
+        } else {
+            alert(result.data.error || result.data.detail || 'Ошибка назначения роли');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка: ' + (error.message || 'Неизвестная ошибка'));
+    });
+}
+
+// Инициализация формы уведомлений
+function initNotificationForm() {
+    // Показываем/скрываем поля в зависимости от выбранного типа получателей
+    document.querySelectorAll('input[name="notificationTarget"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const rolesCheckboxes = document.getElementById('rolesCheckboxes');
+            const eventInput = document.getElementById('notificationEventId');
+            
+            if (this.value === 'roles') {
+                rolesCheckboxes.style.display = 'block';
+                eventInput.style.display = 'none';
+            } else if (this.value === 'event') {
+                rolesCheckboxes.style.display = 'none';
+                eventInput.style.display = 'inline-block';
+            } else {
+                rolesCheckboxes.style.display = 'none';
+                eventInput.style.display = 'none';
+            }
+        });
+    });
+    
+    // Обработка отправки формы
+    const form = document.getElementById('notificationForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            sendNotification();
+        });
+    }
+}
+
+// Отправка уведомления
+function sendNotification() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const title = document.getElementById('notificationTitle').value.trim();
+    const body = document.getElementById('notificationBody').value.trim();
+    const targetType = document.querySelector('input[name="notificationTarget"]:checked')?.value;
+    const messagesDiv = document.getElementById('notificationMessages');
+    
+    if (!title || !body) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Заполните все обязательные поля</div>';
+        return;
+    }
+    
+    if (!targetType) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Выберите получателей</div>';
+        return;
+    }
+    
+    const data = {
+        title: title,
+        body: body,
+        notification_type: 'mass_notification'
+    };
+    
+    if (targetType === 'all') {
+        data.target_all = true;
+    } else if (targetType === 'roles') {
+        const selectedRoles = Array.from(document.querySelectorAll('input[name="targetRole"]:checked')).map(cb => cb.value);
+        if (selectedRoles.length === 0) {
+            messagesDiv.innerHTML = '<div class="alert alert-error">Выберите хотя бы одну роль</div>';
+            return;
+        }
+        data.target_roles = selectedRoles;
+    } else if (targetType === 'event') {
+        const eventId = parseInt(document.getElementById('notificationEventId').value);
+        if (!eventId || isNaN(eventId)) {
+            messagesDiv.innerHTML = '<div class="alert alert-error">Введите ID мероприятия</div>';
+            return;
+        }
+        data.target_event_id = eventId;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Отправка уведомления...</div>';
+    
+    fetch('/api/admin-rb/notifications/create/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const result = await response.json();
+            return { status: response.status, data: result };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">' + 
+                (result.data.message || `Уведомление отправлено ${result.data.recipients_count || 0} пользователям`) + 
+                '</div>';
+            document.getElementById('notificationForm').reset();
+            const rolesCheckboxes = document.getElementById('rolesCheckboxes');
+            const eventInput = document.getElementById('notificationEventId');
+            if (rolesCheckboxes) rolesCheckboxes.style.display = 'none';
+            if (eventInput) eventInput.style.display = 'none';
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + 
+                (result.data.error || result.data.detail || 'Ошибка отправки уведомления') + 
+                '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+// Загрузка новостных статей
+function loadNewsArticles() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const container = document.getElementById('newsListContainer');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    fetch('/api/admin-rb/news/', {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (response.ok) {
+                renderNewsArticles(data);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки новостей');
+            }
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки новостей:', error);
+        container.innerHTML = '<div class="alert alert-error">Ошибка загрузки новостей: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+function renderNewsArticles(articles) {
+    const container = document.getElementById('newsListContainer');
+    if (!container) return;
+    
+    if (articles.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Новостей пока нет</p>';
+        return;
+    }
+    
+    let html = '<div class="grid grid-1" style="gap: 1rem;">';
+    articles.forEach(article => {
+        const date = article.created_at ? new Date(article.created_at).toLocaleDateString('ru-RU') : '';
+        html += `
+            <div class="card">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                        <h3 style="margin: 0;">${escapeHtml(article.title || 'Без названия')}</h3>
+                        <span class="badge ${article.is_published ? 'badge-success' : 'badge-warning'}">
+                            ${article.is_published ? 'Опубликовано' : 'Черновик'}
+                        </span>
+                    </div>
+                    <p style="color: var(--text-light); margin-bottom: 0.5rem;">
+                        Автор: ${escapeHtml(article.author_name || article.author_email || 'Неизвестно')} | 
+                        Дата: ${date}
+                    </p>
+                    ${article.excerpt ? `<p style="color: var(--text-light); margin-bottom: 0.5rem;">${escapeHtml(article.excerpt)}</p>` : ''}
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editNewsArticle(${article.id})">Редактировать</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteNewsArticle(${article.id})" style="margin-left: 0.5rem;">Удалить</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function showCreateNewsForm() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'createNewsModal';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Создать новость</h3>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createNewsForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label" for="newsTitle">Заголовок *</label>
+                        <input type="text" class="form-control" id="newsTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newsExcerpt">Краткое описание</label>
+                        <textarea class="form-control" id="newsExcerpt" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newsContent">Содержание *</label>
+                        <textarea class="form-control" id="newsContent" rows="10" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newsImage">Изображение</label>
+                        <input type="file" class="form-control" id="newsImage" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="newsPublished">
+                            Опубликовать сразу
+                        </label>
+                    </div>
+                    <div id="newsFormMessages"></div>
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    
+    document.getElementById('createNewsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        createNewsArticle();
+    });
+}
+
+function createNewsArticle() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const formData = new FormData();
+    formData.append('title', document.getElementById('newsTitle').value);
+    formData.append('content', document.getElementById('newsContent').value);
+    formData.append('excerpt', document.getElementById('newsExcerpt').value);
+    formData.append('is_published', document.getElementById('newsPublished').checked);
+    
+    const imageFile = document.getElementById('newsImage').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+    
+    const messagesDiv = document.getElementById('newsFormMessages');
+    messagesDiv.innerHTML = '<div class="alert alert-info">Создание новости...</div>';
+    
+    fetch('/api/admin-rb/news/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: formData
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 201) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Новость успешно создана!</div>';
+            setTimeout(() => {
+                const modal = document.getElementById('createNewsModal');
+                if (modal) modal.remove();
+                loadNewsArticles();
+            }, 1500);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + 
+                (result.data.error || result.data.detail || 'Ошибка создания новости') + 
+                '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+function editNewsArticle(articleId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`/api/admin-rb/news/${articleId}/`, {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const data = await response.json();
+        if (response.ok) {
+            showEditNewsForm(data);
+        } else {
+            alert('Ошибка загрузки статьи: ' + (data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при загрузке статьи');
+    });
+}
+
+function showEditNewsForm(article) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'editNewsModal';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Редактировать новость</h3>
+                <span class="close" onclick="this.closest('.modal').remove()">×</span>
+            </div>
+            <div class="modal-body">
+                <form id="editNewsForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label" for="editNewsTitle">Заголовок *</label>
+                        <input type="text" class="form-control" id="editNewsTitle" value="${escapeHtml(article.title || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editNewsExcerpt">Краткое описание</label>
+                        <textarea class="form-control" id="editNewsExcerpt" rows="2">${escapeHtml(article.excerpt || '')}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editNewsContent">Содержание *</label>
+                        <textarea class="form-control" id="editNewsContent" rows="10" required>${escapeHtml(article.content || '')}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editNewsImage">Изображение</label>
+                        <input type="file" class="form-control" id="editNewsImage" accept="image/*">
+                        ${article.image ? `<p style="color: var(--text-light); font-size: 0.9rem;">Текущее изображение: <a href="${article.image}" target="_blank">Просмотр</a></p>` : ''}
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="editNewsPublished" ${article.is_published ? 'checked' : ''}>
+                            Опубликовано
+                        </label>
+                    </div>
+                    <div id="editNewsFormMessages"></div>
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    
+    document.getElementById('editNewsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateNewsArticle(article.id);
+    });
+}
+
+function updateNewsArticle(articleId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const formData = new FormData();
+    formData.append('title', document.getElementById('editNewsTitle').value);
+    formData.append('content', document.getElementById('editNewsContent').value);
+    formData.append('excerpt', document.getElementById('editNewsExcerpt').value);
+    formData.append('is_published', document.getElementById('editNewsPublished').checked);
+    
+    const imageFile = document.getElementById('editNewsImage').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+    
+    const messagesDiv = document.getElementById('editNewsFormMessages');
+    messagesDiv.innerHTML = '<div class="alert alert-info">Сохранение...</div>';
+    
+    fetch(`/api/admin-rb/news/${articleId}/`, {
+        method: 'PATCH',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: formData
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 200) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Новость успешно обновлена!</div>';
+            setTimeout(() => {
+                const modal = document.getElementById('editNewsModal');
+                if (modal) modal.remove();
+                loadNewsArticles();
+            }, 1500);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + 
+                (result.data.error || result.data.detail || 'Ошибка обновления новости') + 
+                '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+function deleteNewsArticle(articleId) {
+    if (!confirm('Вы уверены, что хотите удалить эту новость?')) {
+        return;
+    }
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`/api/admin-rb/news/${articleId}/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            return { status: response.status, data: {} };
+        }
+    })
+    .then(result => {
+        if (result.status === 200) {
+            alert('Новость удалена');
+            loadNewsArticles();
+        } else {
+            alert('Ошибка удаления: ' + (result.data.error || 'Неизвестная ошибка'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при удалении новости');
+    });
+}
+
+// Показать форму для назначения роли committee_staff
+function showCommitteeStaffRoleForm(userId) {
+    console.log('showCommitteeStaffRoleForm вызвана, userId:', userId);
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'committeeStaffRoleModal';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Назначить роль "Сотрудник спорткомитета"</h3>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="committeeStaffRoleForm">
+                    <div class="form-group">
+                        <label class="form-label">Способ заполнения</label>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem;">
+                                <input type="radio" name="fillMethod" value="code" checked>
+                                Использовать код регистрации
+                            </label>
+                            <label style="display: block;">
+                                <input type="radio" name="fillMethod" value="manual">
+                                Заполнить вручную
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="codeInputSection">
+                        <div class="form-group">
+                            <label class="form-label" for="committeeCode">Код регистрации *</label>
+                            <input type="text" class="form-control" id="committeeCode" 
+                                   placeholder="Введите код регистрации" 
+                                   style="text-transform: uppercase;"
+                                   maxlength="20">
+                            <small style="color: var(--text-light); display: block; margin-top: 0.25rem;">Код будет автоматически использован, данные заполнятся из него</small>
+                        </div>
+                    </div>
+                    
+                    <div id="manualInputSection" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label" for="committeeCity">Город *</label>
+                            <input type="text" class="form-control" id="committeeCity" placeholder="Например: Уфа">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="committeeDepartment">Отдел/подразделение</label>
+                            <input type="text" class="form-control" id="committeeDepartment" placeholder="Необязательно">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="committeePosition">Должность</label>
+                            <input type="text" class="form-control" id="committeePosition" placeholder="Необязательно">
+                        </div>
+                    </div>
+                    
+                    <div id="committeeRoleMessages"></div>
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Назначить роль</button>
+                        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    
+    const form = document.getElementById('committeeStaffRoleForm');
+    if (!form) {
+        console.error('Форма committeeStaffRoleForm не найдена');
+        return;
+    }
+    
+    // Переключение между способами заполнения
+    document.querySelectorAll('input[name="fillMethod"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const codeSection = document.getElementById('codeInputSection');
+            const manualSection = document.getElementById('manualInputSection');
+            if (this.value === 'code') {
+                codeSection.style.display = 'block';
+                manualSection.style.display = 'none';
+                document.getElementById('committeeCode').required = true;
+                document.getElementById('committeeCity').required = false;
+            } else {
+                codeSection.style.display = 'none';
+                manualSection.style.display = 'block';
+                document.getElementById('committeeCode').required = false;
+                document.getElementById('committeeCity').required = true;
+            }
+        });
+    });
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log('Отправка формы назначения роли committee_staff');
+        assignCommitteeStaffRole(userId);
+    });
+    
+    console.log('Модальное окно создано и отображено');
+}
+
+// Назначить роль committee_staff
+function assignCommitteeStaffRole(userId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const fillMethod = document.querySelector('input[name="fillMethod"]:checked')?.value;
+    const messagesDiv = document.getElementById('committeeRoleMessages');
+    
+    const requestData = {
+        user_id: userId,
+        role: 'committee_staff'
+    };
+    
+    if (fillMethod === 'code') {
+        const code = document.getElementById('committeeCode').value.trim().toUpperCase();
+        if (!code) {
+            messagesDiv.innerHTML = '<div class="alert alert-error">Введите код регистрации</div>';
+            return;
+        }
+        requestData.registration_code = code;
+    } else {
+        const city = document.getElementById('committeeCity').value.trim();
+        const department = document.getElementById('committeeDepartment').value.trim();
+        const position = document.getElementById('committeePosition').value.trim();
+        
+        if (!city) {
+            messagesDiv.innerHTML = '<div class="alert alert-error">Укажите город</div>';
+            return;
+        }
+        
+        requestData.city_name = city;
+        requestData.department = department;
+        requestData.position = position;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Назначение роли...</div>';
+    
+    fetch('/api/admin-rb/roles/assign/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 200 || result.status === 201) {
+            const fillMethod = document.querySelector('input[name="fillMethod"]:checked')?.value;
+            messagesDiv.innerHTML = '<div class="alert alert-success">Роль успешно назначена!' + 
+                (fillMethod === 'code' ? ' Данные заполнены из кода регистрации.' : ' Код регистрации создан автоматически.') + 
+                '</div>';
+            setTimeout(() => {
+                const modal = document.getElementById('committeeStaffRoleModal');
+                if (modal) modal.remove();
+                searchUserForRole();
+            }, 2000);
+        } else {
+            let errorMsg = 'Ошибка назначения роли';
+            if (result.data) {
+                if (typeof result.data === 'string') {
+                    errorMsg = result.data;
+                } else if (result.data.error) {
+                    errorMsg = result.data.error;
+                } else if (result.data.detail) {
+                    errorMsg = result.data.detail;
+                } else if (typeof result.data === 'object') {
+                    // Собираем все ошибки валидации
+                    const errors = [];
+                    for (const key in result.data) {
+                        if (Array.isArray(result.data[key])) {
+                            errors.push(`${key}: ${result.data[key].join(', ')}`);
+                        } else {
+                            errors.push(`${key}: ${result.data[key]}`);
+                        }
+                    }
+                    errorMsg = errors.join('<br>');
+                }
+            }
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + escapeHtml(errorMsg) + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+// Показать форму генерации кодов
+function showGenerateCodeForm() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'generateCodeModal';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Сгенерировать коды регистрации</h3>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="generateCodeForm">
+                    <div class="form-group">
+                        <label class="form-label" for="codeCity">Город *</label>
+                        <input type="text" class="form-control" id="codeCity" required placeholder="Например: Уфа">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="codeCount">Количество кодов *</label>
+                        <input type="number" class="form-control" id="codeCount" min="1" max="100" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="codeDepartment">Отдел/подразделение</label>
+                        <input type="text" class="form-control" id="codeDepartment" placeholder="Необязательно">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="codePosition">Должность</label>
+                        <input type="text" class="form-control" id="codePosition" placeholder="Необязательно">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="codeExpiresDays">Срок действия (дней)</label>
+                        <input type="number" class="form-control" id="codeExpiresDays" min="1" placeholder="Оставить пустым для бессрочного">
+                    </div>
+                    <div id="generateCodeMessages"></div>
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Сгенерировать</button>
+                        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Отмена</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    
+    document.getElementById('generateCodeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateCodes();
+    });
+}
+
+// Генерация кодов
+function generateCodes() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const city = document.getElementById('codeCity').value.trim();
+    const count = parseInt(document.getElementById('codeCount').value);
+    const department = document.getElementById('codeDepartment').value.trim();
+    const position = document.getElementById('codePosition').value.trim();
+    const expiresDays = document.getElementById('codeExpiresDays').value ? parseInt(document.getElementById('codeExpiresDays').value) : null;
+    const messagesDiv = document.getElementById('generateCodeMessages');
+    
+    if (!city || !count || count < 1) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Заполните все обязательные поля</div>';
+        return;
+    }
+    
+    messagesDiv.innerHTML = '<div class="alert alert-info">Генерация кодов...</div>';
+    
+    const requestData = {
+        city_name: city,
+        count: count,
+        department: department,
+        position: position
+    };
+    
+    if (expiresDays) {
+        requestData.expires_days = expiresDays;
+    }
+    
+    fetch('/api/admin-rb/committee-codes/generate/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            return { status: response.status, data };
+        } else {
+            throw new Error('Неожиданный формат ответа');
+        }
+    })
+    .then(result => {
+        if (result.status === 201) {
+            let codesHtml = '<div class="alert alert-success"><strong>Коды успешно созданы:</strong><br><br>';
+            result.data.codes.forEach(code => {
+                codesHtml += `<code style="background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; margin-right: 0.5rem;">${escapeHtml(code.code)}</code>`;
+            });
+            codesHtml += '</div>';
+            messagesDiv.innerHTML = codesHtml;
+            setTimeout(() => {
+                document.getElementById('generateCodeModal').remove();
+                loadCommitteeCodes();
+            }, 3000);
+        } else {
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + 
+                (result.data.error || result.data.detail || 'Ошибка генерации кодов') + 
+                '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка: ' + 
+            escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+    });
+}
+
+// Загрузка списка кодов
+function loadCommitteeCodes() {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    const container = document.getElementById('committeeCodesList');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading" style="margin: 2rem auto; display: block;"></div>';
+    
+    console.log('Загрузка кодов регистрации...');
+    fetch('/api/admin-rb/committee-codes/?status=all', {
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        console.log('Ответ от сервера:', response.status, response.statusText);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            console.log('Данные кодов:', data);
+            if (response.ok) {
+                renderCommitteeCodes(data.results || []);
+            } else {
+                throw new Error(data.error || data.detail || 'Ошибка загрузки кодов');
+            }
+        } else {
+            const text = await response.text();
+            console.error('Неожиданный формат ответа:', text);
+            throw new Error('Неожиданный формат ответа: ' + text.substring(0, 100));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки кодов:', error);
+        if (container) {
+            container.innerHTML = '<div class="alert alert-error">Ошибка загрузки кодов: ' + 
+                escapeHtml(error.message || 'Неизвестная ошибка') + '</div>';
+        }
+    });
+}
+
+function renderCommitteeCodes(codes) {
+    const container = document.getElementById('committeeCodesList');
+    if (!container) return;
+    
+    if (codes.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-light);">Кодов пока нет</p>';
+        return;
+    }
+    
+    // Разделяем коды по статусам
+    const unusedCodes = codes.filter(c => !c.is_used && c.is_active);
+    const usedCodes = codes.filter(c => c.is_used);
+    const archivedCodes = codes.filter(c => !c.is_active);
+    
+    let html = '';
+    
+    // Неиспользованные коды (выделяем ярко)
+    if (unusedCodes.length > 0) {
+        html += '<div style="margin-bottom: 2rem;">';
+        html += '<h4 style="color: var(--primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">';
+        html += '<span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">Неиспользованные</span>';
+        html += `<span style="color: var(--text-light); font-size: 0.9rem; font-weight: normal;">(${unusedCodes.length})</span>`;
+        html += '</h4>';
+        html += '<div class="grid grid-1" style="gap: 1rem;">';
+        unusedCodes.forEach(code => {
+            html += renderCodeCard(code, true);
+        });
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    // Использованные коды
+    if (usedCodes.length > 0) {
+        html += '<div style="margin-bottom: 2rem;">';
+        html += '<h4 style="color: var(--text-dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">';
+        html += '<span style="background: #f59e0b; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">Использованные</span>';
+        html += `<span style="color: var(--text-light); font-size: 0.9rem; font-weight: normal;">(${usedCodes.length})</span>`;
+        html += '</h4>';
+        html += '<div class="grid grid-1" style="gap: 1rem;">';
+        usedCodes.forEach(code => {
+            html += renderCodeCard(code, false);
+        });
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    // Архивированные коды
+    if (archivedCodes.length > 0) {
+        html += '<div style="margin-bottom: 2rem;">';
+        html += '<h4 style="color: var(--text-dark); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">';
+        html += '<span style="background: #6b7280; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">Архив</span>';
+        html += `<span style="color: var(--text-light); font-size: 0.9rem; font-weight: normal;">(${archivedCodes.length})</span>`;
+        html += '</h4>';
+        html += '<div class="grid grid-1" style="gap: 1rem;">';
+        archivedCodes.forEach(code => {
+            html += renderCodeCard(code, false);
+        });
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    container.innerHTML = html;
+}
+
+function renderCodeCard(code, isUnused) {
+    const date = code.created_at ? new Date(code.created_at).toLocaleDateString('ru-RU') : '';
+    const usedDate = code.used_at ? new Date(code.used_at).toLocaleDateString('ru-RU') : '';
+    
+    // Определяем стиль карточки в зависимости от статуса
+    let cardStyle = 'border: 2px solid var(--gray);';
+    if (isUnused) {
+        cardStyle = 'border: 2px solid #10b981; background: #f0fdf4;';
+    } else if (code.is_used) {
+        cardStyle = 'border: 2px solid #f59e0b; background: #fffbeb; opacity: 0.8;';
+    } else if (!code.is_active) {
+        cardStyle = 'border: 2px solid #6b7280; background: #f9fafb; opacity: 0.7;';
+    }
+    
+    let badgeClass = 'badge-success';
+    let badgeText = 'Активен';
+    if (code.is_used) {
+        badgeClass = 'badge-warning';
+        badgeText = 'Использован';
+    } else if (!code.is_active) {
+        badgeClass = 'badge-secondary';
+        badgeText = 'В архиве';
+    }
+    
+    let actionsHtml = '';
+    if (!code.is_used && code.is_active) {
+        // Для неиспользованных активных кодов - кнопки удаления и архивирования
+        actionsHtml = `
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-sm btn-secondary" onclick="archiveCode(${code.id})" style="font-size: 0.85rem;">
+                    📦 В архив
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteCode(${code.id})" style="font-size: 0.85rem;">
+                    🗑️ Удалить
+                </button>
+            </div>
+        `;
+    } else if (!code.is_active) {
+        // Для архивированных - кнопка восстановления
+        actionsHtml = `
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-sm btn-primary" onclick="restoreCode(${code.id})" style="font-size: 0.85rem;">
+                    ↻ Восстановить
+                </button>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="card" style="${cardStyle}">
+            <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0;">
+                            Код: <code style="background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 1.1rem; font-weight: bold;">${escapeHtml(code.code)}</code>
+                        </h4>
+                        <p style="color: var(--text-light); margin: 0.25rem 0;">
+                            Город: <strong>${escapeHtml(code.city_name)}</strong>
+                            ${code.department ? ' | Отдел: ' + escapeHtml(code.department) : ''}
+                            ${code.position ? ' | Должность: ' + escapeHtml(code.position) : ''}
+                        </p>
+                    </div>
+                    <span class="badge ${badgeClass}" style="margin-left: 1rem;">
+                        ${badgeText}
+                    </span>
+                </div>
+                ${code.used_by_email ? `<p style="color: var(--text-light); font-size: 0.9rem; margin: 0.25rem 0;">Использован: <strong>${escapeHtml(code.used_by_email)}</strong>${usedDate ? ' (' + usedDate + ')' : ''}</p>` : ''}
+                <p style="color: var(--text-light); font-size: 0.9rem; margin: 0.25rem 0;">
+                    Создан: ${date} | Выдан: ${escapeHtml(code.issued_by || 'Неизвестно')}
+                </p>
+                ${actionsHtml}
+            </div>
+        </div>
+    `;
+}
+
+// Удаление кода
+function deleteCode(codeId) {
+    if (!confirm('Вы уверены, что хотите удалить этот код? Это действие нельзя отменить.')) {
+        return;
+    }
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`/api/admin-rb/committee-codes/${codeId}/delete/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const data = await response.json();
+        return { status: response.status, data };
+    })
+    .then(result => {
+        if (result.status === 200) {
+            loadCommitteeCodes();
+        } else {
+            alert('Ошибка: ' + (result.data.error || 'Не удалось удалить код'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при удалении кода');
+    });
+}
+
+// Архивирование кода
+function archiveCode(codeId) {
+    if (!confirm('Переместить код в архив? Его можно будет восстановить позже.')) {
+        return;
+    }
+    
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`/api/admin-rb/committee-codes/${codeId}/archive/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const data = await response.json();
+        return { status: response.status, data };
+    })
+    .then(result => {
+        if (result.status === 200) {
+            loadCommitteeCodes();
+        } else {
+            alert('Ошибка: ' + (result.data.error || 'Не удалось архивировать код'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при архивировании кода');
+    });
+}
+
+// Восстановление кода из архива
+function restoreCode(codeId) {
+    const getCookieFunc = window.getCookie || window.SportBash?.getCookie || function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+    
+    fetch(`/api/admin-rb/committee-codes/${codeId}/restore/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookieFunc('csrftoken')
+        }
+    })
+    .then(async response => {
+        const data = await response.json();
+        return { status: response.status, data };
+    })
+    .then(result => {
+        if (result.status === 200) {
+            loadCommitteeCodes();
+        } else {
+            alert('Ошибка: ' + (result.data.error || 'Не удалось восстановить код'));
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при восстановлении кода');
+    });
 }
 
 // Загружаем статистику при загрузке страницы
@@ -696,25 +2514,47 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-.role-switch-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid var(--primary-blue);
-    border-radius: var(--border-radius);
-    background: white;
-    color: var(--primary-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+.user-profile-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-blue);
 }
 
-.role-switch-btn:hover {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.role-switch-btn.active {
-    background: var(--primary-blue);
-    color: white;
+.user-profile-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--white);
+}
+
+.user-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.user-profile-content {
+    padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .user-profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 .table {
@@ -755,9 +2595,123 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white;
 }
 
+.badge-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.badge-danger {
+    background-color: #ef4444;
+    color: white;
+}
+
 .btn-sm {
     padding: 0.25rem 0.5rem;
     font-size: 0.85rem;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* Стили для модальных окон */
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 10000 !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: var(--white);
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--white);
+}
+
+.modal .close {
+    color: var(--white);
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.modal .close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+        margin: 2.5vh auto;
+    }
 }
 </style>
 {% endblock %}

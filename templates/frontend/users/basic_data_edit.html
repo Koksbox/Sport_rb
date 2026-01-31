@@ -238,6 +238,11 @@ document.getElementById('basicDataForm').addEventListener('submit', function(e) 
         return;
     }
     
+    // Удаляем пустое поле photo, если файл не выбран
+    if (!formData.get('photo') || formData.get('photo').size === 0) {
+        formData.delete('photo');
+    }
+    
     fetch('/api/users/basic-data/', {
         method: 'PATCH',
         headers: {

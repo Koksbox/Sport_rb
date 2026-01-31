@@ -17,7 +17,15 @@ def approve_organization(organization, moderator_user):
 
     # Назначаем роль director
     user = organization.created_by
-    UserRole.objects.get_or_create(user=user, role='director')
+    role, created = UserRole.objects.get_or_create(
+        user=user, 
+        role='director',
+        defaults={'is_active': True}
+    )
+    # Если роль уже существовала, активируем её
+    if not created and not role.is_active:
+        role.is_active = True
+        role.save(update_fields=['is_active'])
 
     # Создаём запись Director
     Director.objects.get_or_create(user=user, defaults={'organization': organization})

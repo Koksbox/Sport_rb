@@ -1,0 +1,140 @@
+{% load static %}
+
+<!-- Профиль спортсмена -->
+{% if user.athlete_profile %}
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Профиль спортсмена</h3>
+    </div>
+    <div class="role-section-content">
+        <div class="profile-info">
+            {% if user.athlete_profile.city %}
+            <div class="profile-item">
+                <span class="profile-label">Город:</span>
+                <span class="profile-value">{{ user.athlete_profile.city.name }}</span>
+            </div>
+            {% endif %}
+            {% if user.athlete_profile.main_sport %}
+            <div class="profile-item">
+                <span class="profile-label">Основной вид спорта:</span>
+                <span class="profile-value">{{ user.athlete_profile.main_sport.name }}</span>
+            </div>
+            {% endif %}
+            {% if user.athlete_profile.health_group %}
+            <div class="profile-item">
+                <span class="profile-label">Группа здоровья:</span>
+                <span class="profile-value">{{ user.athlete_profile.health_group }}</span>
+            </div>
+            {% endif %}
+        </div>
+        <div style="margin-top: 1rem;">
+            <a href="{% url 'frontend-athlete-profile-edit' %}" class="btn btn-primary" style="width: 100%;">Редактировать профиль</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Мои секции -->
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Мои секции</h3>
+    </div>
+    <div class="role-section-content">
+        <div id="athleteOrganizations-{{ role_index }}">
+            <div class="loading" style="margin: 1rem auto; display: block;"></div>
+        </div>
+        <div style="margin-top: 1rem;">
+            <a href="{% url 'frontend-organizations' %}" class="btn btn-primary" style="width: 100%;">
+                🏢 Найти секцию
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Прогресс -->
+<div class="role-section">
+    <div class="role-section-header">
+        <h3>Мой прогресс</h3>
+    </div>
+    <div class="role-section-content">
+        <div id="athleteProgress-{{ role_index }}">
+            <div class="loading" style="margin: 1rem auto; display: block;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const roleIndex = {{ role_index|default:0 }};
+    
+    // Загрузка организаций спортсмена
+    fetch('/api/athletes/organizations/')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('athleteOrganizations-' + roleIndex);
+        if (data && data.length > 0) {
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            data.forEach(org => {
+                html += `
+                    <div style="padding: 0.75rem; background: var(--light-gray); border-radius: 8px;">
+                        <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">${escapeHtml(org.name || '')}</h4>
+                        <p style="color: var(--text-light); font-size: 0.875rem;">${escapeHtml(org.sport_name || '')}</p>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; font-size: 0.9rem;">Вы не записаны в секции</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки организаций:', error);
+        const container = document.getElementById('athleteOrganizations-' + roleIndex);
+        if (container) {
+            container.innerHTML = '<p style="color: var(--error); text-align: center; font-size: 0.9rem;">Ошибка загрузки</p>';
+        }
+    });
+
+    // Загрузка прогресса
+    fetch('/api/athletes/progress/')
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('athleteProgress-' + roleIndex);
+        const eventsCount = data.events ? data.events.length : 0;
+        const achievementsCount = data.achievements ? data.achievements.length : 0;
+        const attendanceCount = data.attendance ? data.attendance.filter(a => a.status === 'present').length : 0;
+        
+        container.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                <div style="text-align: center; padding: 0.75rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">${eventsCount}</div>
+                    <div style="color: var(--text-light); font-size: 0.8rem;">Мероприятий</div>
+                </div>
+                <div style="text-align: center; padding: 0.75rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">${achievementsCount}</div>
+                    <div style="color: var(--text-light); font-size: 0.8rem;">Достижений</div>
+                </div>
+                <div style="text-align: center; padding: 0.75rem; background: var(--secondary-blue); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">${attendanceCount}</div>
+                    <div style="color: var(--text-light); font-size: 0.8rem;">Посещений</div>
+                </div>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки прогресса:', error);
+        const container = document.getElementById('athleteProgress-' + roleIndex);
+        if (container) {
+            container.innerHTML = '<p style="color: var(--text-light); text-align: center; font-size: 0.9rem;">Данные недоступны</p>';
+        }
+    });
+})();
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>

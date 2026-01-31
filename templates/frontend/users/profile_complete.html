@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заполнение профиля - СпортБаш{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1>Заполнение профиля</h1>
+        <p style="color: var(--text-light); margin-top: 1rem;">
+            Для соответствия требованиям ФЗ-152 необходимо указать дополнительные данные
+        </p>
+    </div>
+    
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-body">
+            <form id="profileCompleteForm">
+                {% csrf_token %}
+                
+                <!-- Сообщения об ошибках -->
+                <div id="messages" style="margin-bottom: 1.5rem;"></div>
+                
+                <!-- Телефон -->
+                <div class="form-group">
+                    <label class="form-label" for="phone">Телефон *</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" 
+                           placeholder="+7 (999) 123-45-67" 
+                           required
+                           pattern="[\d\s\+\-\(\)]+"
+                           value="{{ user.phone|default:'' }}">
+                    <small style="color: var(--text-light);">Введите номер телефона в формате +7 (999) 123-45-67</small>
+                </div>
+                
+                <!-- Город -->
+                <div class="form-group" style="position: relative;">
+                    <label class="form-label" for="city">Город *</label>
+                    <input type="text" class="form-control" id="city" name="city" 
+                           placeholder="Начните вводить название города, села или деревни" 
+                           required
+                           autocomplete="off"
+                           value="{{ user.city|default:'' }}">
+                    <div id="citySuggestions" class="city-suggestions" style="display: none;"></div>
+                    <small style="color: var(--text-light);">Выберите город из списка</small>
+                </div>
+                
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">
+                        Продолжить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div style="text-align: center; color: var(--text-light); font-size: 0.9rem;">
+        <p>Эти данные необходимы для соответствия требованиям Федерального закона № 152-ФЗ «О персональных данных»</p>
+    </div>
+</div>
+
+<script>
+// Маска для телефона
+const phoneInput = document.getElementById('phone');
+phoneInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.startsWith('8')) {
+        value = '7' + value.substring(1);
+    }
+    if (value.startsWith('7')) {
+        value = '+' + value;
+    }
+    if (value.length > 0 && !value.startsWith('+')) {
+        value = '+7' + value;
+    }
+    
+    // Форматируем: +7 (999) 123-45-67
+    if (value.length > 2) {
+        const match = value.match(/^(\+7)(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+        if (match) {
+            let formatted = match[1];
+            if (match[2]) {
+                formatted += ' (' + match[2];
+                if (match[3] || match[4] || match[5]) {
+                    formatted += ')';
+                }
+            }
+            if (match[3]) {
+                formatted += ' ' + match[3];
+            }
+            if (match[4]) {
+                formatted += '-' + match[4];
+            }
+            if (match[5]) {
+                formatted += '-' + match[5];
+            }
+            e.target.value = formatted;
+        } else {
+            e.target.value = value;
+        }
+    } else {
+        e.target.value = value;
+    }
+});
+
+// Автокомплит для города
+let citySearchTimeout;
+const cityInput = document.getElementById('city');
+const citySuggestions = document.getElementById('citySuggestions');
+
+cityInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    clearTimeout(citySearchTimeout);
+    
+    if (query.length < 2) {
+        citySuggestions.style.display = 'none';
+        return;
+    }
+    
+    citySearchTimeout = setTimeout(() => {
+        fetch(`/api/geography/cities/search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(results => {
+                if (results.length === 0) {
+                    citySuggestions.style.display = 'none';
+                    return;
+                }
+                
+                citySuggestions.innerHTML = '';
+                results.forEach(city => {
+                    const item = document.createElement('div');
+                    item.className = 'city-suggestion-item';
+                    item.textContent = city.display_name;
+                    item.onclick = function() {
+                        cityInput.value = city.display_name;
+                        citySuggestions.style.display = 'none';
+                    };
+                    citySuggestions.appendChild(item);
+                });
+                citySuggestions.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска городов:', error);
+            });
+    }, 300);
+});
+
+// Скрываем подсказки при клике вне поля
+document.addEventListener('click', function(e) {
+    if (!cityInput.contains(e.target) && !citySuggestions.contains(e.target)) {
+        citySuggestions.style.display = 'none';
+    }
+});
+
+// Обработка отправки формы
+document.getElementById('profileCompleteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const messagesDiv = document.getElementById('messages');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    messagesDiv.innerHTML = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Сохранение...';
+    
+    const formData = new FormData(this);
+    
+    // Валидация
+    const phone = formData.get('phone').trim();
+    const city = formData.get('city').trim();
+    
+    if (!phone) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Поле "Телефон" обязательно для заполнения</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Продолжить';
+        return;
+    }
+    
+    if (!city) {
+        messagesDiv.innerHTML = '<div class="alert alert-error">Поле "Город" обязательно для заполнения</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Продолжить';
+        return;
+    }
+    
+    fetch('/api/users/complete-profile/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            phone: phone,
+            city: city
+        })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(result => {
+        if (result.status === 200) {
+            messagesDiv.innerHTML = '<div class="alert alert-success">Данные успешно сохранены!</div>';
+            setTimeout(() => {
+                if (result.data.redirect_to) {
+                    window.location.href = result.data.redirect_to;
+                } else {
+                    window.location.href = '/dashboard/';
+                }
+            }, 1000);
+        } else {
+            let errors = '';
+            if (result.data.error) {
+                errors = result.data.error;
+            } else if (typeof result.data === 'object') {
+                for (let key in result.data) {
+                    const fieldNames = {
+                        'phone': 'Телефон',
+                        'city': 'Город'
+                    };
+                    const fieldName = fieldNames[key] || key;
+                    
+                    if (Array.isArray(result.data[key])) {
+                        result.data[key].forEach(msg => {
+                            errors += `${fieldName}: ${msg}<br>`;
+                        });
+                    } else {
+                        errors += `${fieldName}: ${result.data[key]}<br>`;
+                    }
+                }
+            } else {
+                errors = 'Произошла ошибка при сохранении';
+            }
+            messagesDiv.innerHTML = '<div class="alert alert-error">' + errors + '</div>';
+            messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        messagesDiv.innerHTML = '<div class="alert alert-error">Произошла ошибка при отправке формы</div>';
+        messagesDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Продолжить';
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.city-suggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.city-suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.city-suggestion-item:hover {
+    background-color: var(--secondary-blue);
+}
+
+.city-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+</style>
+{% endblock %}

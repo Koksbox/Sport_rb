@@ -4,3 +4,4 @@ from .event import Event
 from .participation import EventParticipation
 from .registration import EventRegistration
 from .result import EventResult
+from .invitation import EventInvitation

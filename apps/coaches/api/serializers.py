@@ -19,13 +19,22 @@ class AthleteForCoachSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(source='user.birth_date', read_only=True)
     main_sport = serializers.CharField(source='main_sport.name', read_only=True)
     medical_info = serializers.SerializerMethodField()
+    role_id = serializers.SerializerMethodField()
 
     class Meta:
         model = AthleteProfile
         fields = [
             'id', 'full_name', 'birth_date', 'main_sport',
-            'health_group', 'goals', 'medical_info'
+            'health_group', 'goals', 'medical_info', 'role_id'
         ]
+    
+    def get_role_id(self, obj):
+        """Получить ID роли спортсмена"""
+        try:
+            role = obj.user.roles.filter(role='athlete', is_active=True).first()
+            return role.unique_id if role and role.unique_id else None
+        except:
+            return None
 
     def get_medical_info(self, obj):
         # Медицинские данные видны ТОЛЬКО если спортсмен в группе тренера

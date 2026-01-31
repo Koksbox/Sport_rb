@@ -8,6 +8,8 @@ ACHIEVEMENT_TYPE_CHOICES = [
     ('competition', 'Соревнование'),
     ('gto', 'ГТО'),
     ('certificate', 'Сертификат'),
+    ('medal', 'Медаль'),
+    ('diploma', 'Грамота'),
 ]
 
 class Achievement(TimeStampedModel):
@@ -17,8 +19,11 @@ class Achievement(TimeStampedModel):
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField()
     description = models.TextField(blank=True)
-    proof_file = models.CharField(max_length=500, blank=True)
+    photo = models.ImageField(upload_to='achievements/photos/', null=True, blank=True, help_text='Фото грамоты, медали и т.д. (обязательно)')
 
     class Meta:
         db_table = 'achievements_achievement'
         ordering = ['-date']
+    
+    def __str__(self):
+        return f"{self.title} - {self.athlete.user.get_full_name()}"
