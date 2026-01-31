@@ -13,7 +13,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv(
     'ALLOWED_HOSTS',
-    'localhost,127.0.0.1,152.114.192.9,logicroom.ru,www.logicroom.ru').split(',')
+    'localhost,127.0.0.1, 91.218.244.219').split(',')
 
 
 # Приложения
