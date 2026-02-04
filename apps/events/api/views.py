@@ -18,7 +18,7 @@ from apps.events.models import Event, EventRegistration, EventResult
 def list_events(request):
     """Список опубликованных мероприятий с пагинацией"""
     try:
-        events = Event.objects.filter(status='published').select_related('city', 'organizer_org', 'organizer_user').prefetch_related('age_groups', 'categories')
+        events = Event.objects.filter(status='published').select_related('city', 'organizer_org', 'organizer_user').prefetch_related('age_groups')
         
         # Фильтры
         city = request.query_params.get('city')
@@ -33,8 +33,13 @@ def list_events(request):
         if city:
             events = events.filter(city__name__icontains=city)
         
+        # Фильтр по виду спорта через описание или название мероприятия
+        # (Event не имеет прямой связи с Sport)
         if sport:
-            events = events.filter(sport__name__icontains=sport)
+            events = events.filter(
+                Q(title__icontains=sport) |
+                Q(description__icontains=sport)
+            )
         
         if event_type:
             events = events.filter(event_type=event_type)
@@ -76,8 +81,16 @@ def list_events(request):
         start = (page - 1) * page_size
         end = start + page_size
         
-        paginated_events = events[start:end]
-        serializer = EventSerializer(paginated_events, many=True)
+        paginated_events = list(events[start:end])
+        # Предзагружаем категории для всех событий
+        event_types = {event.event_type for event in paginated_events if event.event_type}
+        categories_map = {}
+        if event_types:
+            from apps.events.models import EventCategory
+            categories = EventCategory.objects.filter(name__in=event_types)
+            categories_map = {cat.name: cat for cat in categories}
+        
+        serializer = EventSerializer(paginated_events, many=True, context={'categories_map': categories_map})
         
         return Response({
             'results': serializer.data,

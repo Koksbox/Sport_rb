@@ -313,11 +313,11 @@ function renderOrganizationDetail(org) {
     container.innerHTML = html;
     
     // Загружаем карту, если есть координаты
-    const lat = org.latitude ? parseFloat(org.latitude) : null;
-    const lng = org.longitude ? parseFloat(org.longitude) : null;
+    const orgLat = org.latitude ? parseFloat(org.latitude) : null;
+    const orgLng = org.longitude ? parseFloat(org.longitude) : null;
     
-    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
-        loadMap(lat, lng, org.name);
+    if (orgLat && orgLng && !isNaN(orgLat) && !isNaN(orgLng)) {
+        loadMap(orgLat, orgLng, org.name);
     }
 }
 

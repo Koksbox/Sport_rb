@@ -5981,3 +5981,486 @@ INFO 2026-01-31 13:12:42,273 log 21472 25160 "GET /api/admin-rb/logs/ HTTP/1.1" 
 INFO 2026-01-31 13:12:53,304 log 21472 25160 "GET /api/admin-rb/logs/ HTTP/1.1" 200 27359
 INFO 2026-01-31 13:13:05,489 log 21472 8816 "GET /api/notifications/ HTTP/1.1" 200 2
 INFO 2026-01-31 13:13:05,499 log 21472 25160 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:36:19,665 autoreload 9696 5632 Watching for file changes with StatReloader
+INFO 2026-02-03 11:36:28,406 log 9696 10440 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:36:29,042 log 9696 8312 "GET /static/js/form-validation.js HTTP/1.1" 200 7761
+INFO 2026-02-03 11:36:29,097 log 9696 8312 "GET /static/js/lazy-loading.js HTTP/1.1" 200 2905
+INFO 2026-02-03 11:36:29,100 log 9696 9208 "GET /static/js/main.js HTTP/1.1" 200 18354
+INFO 2026-02-03 11:36:29,103 log 9696 8312 "GET /static/js/favorites.js HTTP/1.1" 200 3129
+INFO 2026-02-03 11:36:29,106 log 9696 9208 "GET /static/js/dark-theme.js HTTP/1.1" 200 11163
+INFO 2026-02-03 11:36:29,113 log 9696 8312 "GET /static/js/accessibility.js HTTP/1.1" 200 6997
+INFO 2026-02-03 11:36:29,114 log 9696 9208 "GET /static/js/performance.js HTTP/1.1" 200 5076
+INFO 2026-02-03 11:36:29,117 log 9696 8312 "GET /static/js/analytics.js HTTP/1.1" 200 5495
+INFO 2026-02-03 11:36:29,141 log 9696 11224 "GET /static/js/toast.js HTTP/1.1" 200 7293
+INFO 2026-02-03 11:36:29,191 log 9696 10440 "GET /static/css/main.css HTTP/1.1" 200 68573
+INFO 2026-02-03 11:36:29,211 log 9696 5520 "GET /static/js/cache-manager.js HTTP/1.1" 200 4814
+INFO 2026-02-03 11:36:29,290 log 9696 13688 "GET /static/js/pagination.js HTTP/1.1" 200 4977
+WARNING 2026-02-03 11:36:29,441 log 9696 13688 Not Found: /favicon.ico
+INFO 2026-02-03 11:36:29,442 log 9696 5520 "GET /static/sw.js HTTP/1.1" 200 4030
+WARNING 2026-02-03 11:36:29,449 log 9696 13688 "GET /favicon.ico HTTP/1.1" 404 15401
+INFO 2026-02-03 11:36:29,477 log 9696 5520 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:36:29,491 log 9696 5520 "GET /offline/ HTTP/1.1" 200 10208
+INFO 2026-02-03 11:36:32,552 log 9696 5520 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-03 11:36:33,981 log 9696 5520 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:36:39,598 log 9696 5520 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-03 11:39:16,096 log 9696 5520 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:39:16,115 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-03 11:39:16,135 log 9696 5520 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,135 log 9696 13688 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,135 log 9696 10440 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,136 log 9696 11224 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,136 log 9696 8312 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,136 log 9696 9208 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,138 log 9696 5520 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,140 log 9696 13688 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,143 log 9696 10440 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,144 log 9696 11224 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,146 log 9696 8312 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,147 log 9696 9208 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:16,242 log 9696 9208 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:39:16,302 log 9696 8312 "GET /api/admin-rb/stats/ HTTP/1.1" 200 362
+INFO 2026-02-03 11:39:22,822 log 9696 8312 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:39:22,827 log 9696 8312 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:39:25,190 log 9696 8312 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-03 11:39:28,222 log 9696 8312 "GET /register/ HTTP/1.1" 200 25480
+WARNING 2026-02-03 11:39:49,497 log 9696 8312 Forbidden: /api/geography/cities/search/
+WARNING 2026-02-03 11:39:49,499 log 9696 8312 "GET /api/geography/cities/search/?q=%D0%A3%D1%84%D0%B0 HTTP/1.1" 403 82
+INFO 2026-02-03 11:39:57,535 log 9696 8312 "POST /api/auth/register/ HTTP/1.1" 201 178
+INFO 2026-02-03 11:39:59,802 log 9696 8312 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:39:59,811 log 9696 8312 "GET /dashboard/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:39:59,821 log 9696 8312 "GET /role-selection/new/ HTTP/1.1" 200 30883
+INFO 2026-02-03 11:39:59,840 log 9696 8312 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,841 log 9696 9208 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,842 log 9696 10440 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,842 log 9696 5520 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,842 log 9696 11224 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,842 log 9696 13688 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,843 log 9696 8312 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,846 log 9696 9208 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,847 log 9696 5520 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,847 log 9696 10440 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,849 log 9696 11224 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,851 log 9696 13688 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:39:59,906 log 9696 13688 "GET /api/sports/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:41:54,341 log 9696 13688 "GET /committee/register/ HTTP/1.1" 200 15138
+INFO 2026-02-03 11:41:54,365 log 9696 11224 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,366 log 9696 13688 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,366 log 9696 10440 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,367 log 9696 5520 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,367 log 9696 8312 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,367 log 9696 9208 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,369 log 9696 11224 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,369 log 9696 13688 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,370 log 9696 10440 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,371 log 9696 5520 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,373 log 9696 8312 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:41:54,373 log 9696 9208 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:42:29,902 log 9696 9208 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:43:23,761 log 9696 9208 "GET /role-selection/new/ HTTP/1.1" 200 30883
+INFO 2026-02-03 11:43:23,778 log 9696 8312 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,778 log 9696 10440 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,778 log 9696 9208 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,779 log 9696 13688 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,779 log 9696 11224 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,779 log 9696 5520 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,780 log 9696 8312 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,785 log 9696 9208 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,786 log 9696 10440 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,787 log 9696 13688 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,788 log 9696 11224 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,789 log 9696 5520 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:43:23,875 log 9696 5520 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:43:23,918 log 9696 5520 "GET /role-selection/new/ HTTP/1.1" 200 30883
+INFO 2026-02-03 11:43:23,994 log 9696 5520 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:43:24,082 log 9696 5520 "GET /role-selection/new/ HTTP/1.1" 200 30883
+INFO 2026-02-03 11:43:24,154 log 9696 5520 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:43:42,463 log 9696 11224 "POST /api/analytics/track/ HTTP/1.1" 201 15
+ERROR 2026-02-03 11:43:42,486 log 9696 5520 Internal Server Error: /api/users/select-role/
+ERROR 2026-02-03 11:43:42,486 log 9696 5520 "POST /api/users/select-role/ HTTP/1.1" 500 140
+INFO 2026-02-03 11:43:54,163 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:43:57,128 log 9696 5520 "POST /api/users/select-role/ HTTP/1.1" 201 156
+INFO 2026-02-03 11:43:57,141 log 9696 11224 "POST /api/analytics/track/ HTTP/1.1" 201 15
+INFO 2026-02-03 11:43:58,159 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:43:58,207 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:43:58,362 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:43:58,365 log 9696 5520 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:06,949 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:44:06,967 log 9696 11224 "GET /users/basic-data/edit/ HTTP/1.1" 200 25871
+INFO 2026-02-03 11:44:07,042 log 9696 11224 "GET /api/users/basic-data/ HTTP/1.1" 200 292
+INFO 2026-02-03 11:44:13,761 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:44:13,781 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:44:13,977 log 9696 5520 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:13,977 log 9696 11224 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:15,754 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:44:15,762 log 9696 11224 "GET /coaches/profile/edit/ HTTP/1.1" 200 22851
+INFO 2026-02-03 11:44:15,840 log 9696 11224 "GET /api/coaches/profile/ HTTP/1.1" 200 463
+INFO 2026-02-03 11:44:15,863 log 9696 11224 "GET /api/geography/cities/ HTTP/1.1" 200 1888
+INFO 2026-02-03 11:44:15,863 log 9696 5520 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:44:23,569 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:44:23,587 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:44:23,615 log 9696 11224 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,615 log 9696 5520 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,616 log 9696 13688 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,617 log 9696 9208 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,617 log 9696 10440 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,617 log 9696 8312 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,619 log 9696 11224 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,623 log 9696 5520 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,625 log 9696 13688 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,625 log 9696 9208 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,627 log 9696 10440 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,629 log 9696 8312 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:44:23,679 log 9696 8312 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:23,700 log 9696 10440 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:53,704 log 9696 8312 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:44:53,713 log 9696 10440 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:45:08,658 log 9696 10440 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:45:08,668 log 9696 8312 "GET /events/ HTTP/1.1" 200 24830
+ERROR 2026-02-03 11:45:08,782 log 9696 8312 Internal Server Error: /api/events/
+ERROR 2026-02-03 11:45:08,782 log 9696 8312 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-03 11:46:07,544 log 9696 8312 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:46:07,561 log 9696 10440 "GET /events/my/ HTTP/1.1" 200 14945
+INFO 2026-02-03 11:46:07,580 log 9696 10440 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,584 log 9696 9208 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,585 log 9696 13688 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,585 log 9696 8312 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,585 log 9696 10440 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,585 log 9696 11224 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,586 log 9696 5520 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,592 log 9696 9208 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,592 log 9696 13688 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,592 log 9696 10440 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,593 log 9696 8312 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,593 log 9696 11224 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:46:07,641 log 9696 11224 "GET /api/events/my/ HTTP/1.1" 200 13
+INFO 2026-02-03 11:46:10,410 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:46:10,417 log 9696 10440 "GET /events/ HTTP/1.1" 200 24830
+ERROR 2026-02-03 11:46:10,499 log 9696 10440 Internal Server Error: /api/events/
+ERROR 2026-02-03 11:46:10,499 log 9696 10440 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-03 11:46:11,810 log 9696 10440 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:46:11,826 log 9696 11224 "GET /events/invitations/ HTTP/1.1" 200 15460
+INFO 2026-02-03 11:46:11,903 log 9696 11224 "GET /api/events/invitations/my/ HTTP/1.1" 200 18
+INFO 2026-02-03 11:49:04,545 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:49:04,557 log 9696 10440 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:49:04,579 log 9696 5520 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,579 log 9696 10440 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,580 log 9696 9208 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,580 log 9696 8312 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,580 log 9696 13688 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,581 log 9696 11224 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,583 log 9696 5520 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,585 log 9696 10440 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,587 log 9696 8312 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,589 log 9696 13688 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,589 log 9696 9208 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,590 log 9696 11224 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:49:04,644 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:49:04,648 log 9696 9208 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:49:07,744 log 9696 9208 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:49:07,757 log 9696 9208 "GET /role-selection/new/ HTTP/1.1" 200 31094
+INFO 2026-02-03 11:49:07,856 log 9696 9208 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:49:14,110 log 9696 9208 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:49:14,131 log 9696 11224 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:49:14,219 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:49:14,225 log 9696 9208 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:49:44,219 log 9696 9208 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:50:09,519 log 9696 9208 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:50:09,523 log 9696 9208 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:50:10,725 log 9696 9208 "GET /register/ HTTP/1.1" 200 25480
+INFO 2026-02-03 11:50:12,125 log 9696 9208 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-03 11:50:15,581 log 9696 9208 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:50:15,597 log 9696 9208 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-03 11:50:15,692 log 9696 9208 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:50:15,705 log 9696 11224 "GET /api/admin-rb/stats/ HTTP/1.1" 200 449
+INFO 2026-02-03 11:50:28,277 log 9696 11224 "GET /api/admin-rb/committee-codes/?status=all HTTP/1.1" 200 48
+INFO 2026-02-03 11:50:45,704 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:50:45,715 log 9696 9208 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:50:52,690 log 9696 9208 "GET /api/admin-rb/logs/ HTTP/1.1" 200 39493
+INFO 2026-02-03 11:50:54,494 log 9696 9208 "GET /api/admin-rb/logs/ HTTP/1.1" 200 39492
+ERROR 2026-02-03 11:50:58,289 log 9696 9208 Internal Server Error: /api/events/
+ERROR 2026-02-03 11:50:58,290 log 9696 9208 "GET /api/events/ HTTP/1.1" 500 183
+INFO 2026-02-03 11:51:01,056 log 9696 9208 "GET /api/admin-rb/users/?page=1&page_size=20 HTTP/1.1" 200 1606
+ERROR 2026-02-03 11:51:15,315 log 9696 9208 Internal Server Error: /api/events/
+ERROR 2026-02-03 11:51:15,315 log 9696 9208 "GET /api/events/ HTTP/1.1" 500 183
+INFO 2026-02-03 11:51:15,698 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:51:15,703 log 9696 9208 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:51:16,479 log 9696 9208 "GET /api/admin-rb/organizations/pending/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:51:19,503 log 9696 9208 "GET /api/admin-rb/organizations/?page=1&page_size=20 HTTP/1.1" 200 971
+INFO 2026-02-03 11:51:22,304 log 9696 9208 "GET /api/admin-rb/news/ HTTP/1.1" 200 450
+INFO 2026-02-03 11:51:32,650 log 9696 9208 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:51:32,673 log 9696 11224 "GET /news/ HTTP/1.1" 200 13902
+INFO 2026-02-03 11:51:32,693 log 9696 11224 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,696 log 9696 9208 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,700 log 9696 8312 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,700 log 9696 10440 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,701 log 9696 11224 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,701 log 9696 13688 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,701 log 9696 5520 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,705 log 9696 9208 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,708 log 9696 8312 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,708 log 9696 10440 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,709 log 9696 11224 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,712 log 9696 5520 "GET /static/js/analytics.js HTTP/1.1" 304 0
+INFO 2026-02-03 11:51:32,762 log 9696 5520 "GET /api/core/news/ HTTP/1.1" 200 286
+WARNING 2026-02-03 11:51:32,771 log 9696 5520 Not Found: /media/news/1.jpg
+WARNING 2026-02-03 11:51:32,771 log 9696 5520 "GET /media/news/1.jpg HTTP/1.1" 404 15647
+INFO 2026-02-03 11:51:35,650 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:51:35,671 log 9696 11224 "GET /notifications/ HTTP/1.1" 200 17749
+INFO 2026-02-03 11:51:35,756 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:51:39,077 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:51:39,101 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-03 11:51:39,190 log 9696 5520 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:51:39,203 log 9696 11224 "GET /api/admin-rb/stats/ HTTP/1.1" 200 449
+INFO 2026-02-03 11:52:09,193 log 9696 5520 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:52:09,211 log 9696 11224 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:52:39,184 log 9696 11224 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:52:54,327 log 9696 11224 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:52:54,331 log 9696 11224 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-03 11:52:55,317 log 9696 11224 "GET /register/ HTTP/1.1" 200 25480
+INFO 2026-02-03 11:52:56,670 log 9696 11224 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-03 11:53:00,637 basehttp 9696 11224 - Broken pipe from ('127.0.0.1', 60703)
+INFO 2026-02-03 11:53:01,090 log 9696 5520 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-03 11:53:01,103 log 9696 5520 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:53:01,195 log 9696 5520 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:53:01,202 log 9696 10440 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:53:04,354 log 9696 10440 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:53:04,361 log 9696 5520 "GET /role-selection/new/ HTTP/1.1" 200 31094
+INFO 2026-02-03 11:53:04,453 log 9696 5520 "GET /api/sports/ HTTP/1.1" 200 1978
+INFO 2026-02-03 11:53:09,327 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:53:09,348 log 9696 10440 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:53:09,444 log 9696 10440 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:53:09,446 log 9696 5520 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:53:14,119 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:53:14,136 log 9696 10440 "GET /events/ HTTP/1.1" 200 24830
+ERROR 2026-02-03 11:53:14,223 log 9696 10440 Internal Server Error: /api/events/
+ERROR 2026-02-03 11:53:14,224 log 9696 10440 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-03 11:53:15,402 log 9696 10440 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:53:15,414 log 9696 5520 "GET /organizations/ HTTP/1.1" 200 28295
+INFO 2026-02-03 11:53:15,502 log 9696 5520 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1533
+INFO 2026-02-03 11:53:15,523 log 9696 5520 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1533
+INFO 2026-02-03 11:53:17,154 log 9696 5520 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-03 11:53:17,168 log 9696 10440 "GET /dashboard/ HTTP/1.1" 200 45674
+INFO 2026-02-03 11:53:17,269 log 9696 10440 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-03 11:53:17,273 log 9696 5520 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:35:52,256 autoreload 7808 9492 Watching for file changes with StatReloader
+INFO 2026-02-04 10:35:58,759 log 7808 748 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-04 10:35:58,807 log 7808 748 "GET /static/css/main.css HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,809 log 7808 15556 "GET /static/js/main.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,815 log 7808 748 "GET /static/js/favorites.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,815 log 7808 15556 "GET /static/js/lazy-loading.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,818 log 7808 748 "GET /static/js/dark-theme.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,818 log 7808 14420 "GET /static/js/cache-manager.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,822 log 7808 15556 "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,822 log 7808 9104 "GET /static/js/form-validation.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,823 log 7808 5100 "GET /static/js/toast.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,826 log 7808 748 "GET /static/js/performance.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,828 log 7808 3604 "GET /static/js/pagination.js HTTP/1.1" 304 0
+INFO 2026-02-04 10:35:58,829 log 7808 14420 "GET /static/js/analytics.js HTTP/1.1" 304 0
+WARNING 2026-02-04 10:35:59,194 log 7808 14420 Not Found: /favicon.ico
+WARNING 2026-02-04 10:35:59,196 log 7808 14420 "GET /favicon.ico HTTP/1.1" 404 15401
+INFO 2026-02-04 10:36:01,182 log 7808 14420 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-04 10:36:01,981 log 7808 14420 "GET /register/ HTTP/1.1" 200 25480
+INFO 2026-02-04 10:36:02,900 log 7808 14420 "GET /login/ HTTP/1.1" 200 15082
+INFO 2026-02-04 10:36:07,940 log 7808 14420 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-04 10:36:07,961 log 7808 14420 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-04 10:36:08,082 log 7808 14420 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:36:08,102 log 7808 3604 "GET /api/admin-rb/stats/ HTTP/1.1" 200 449
+INFO 2026-02-04 10:36:10,963 log 7808 3604 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:36:10,976 log 7808 14420 "GET /events/ HTTP/1.1" 200 24614
+ERROR 2026-02-04 10:36:11,113 log 7808 14420 Internal Server Error: /api/events/
+ERROR 2026-02-04 10:36:11,113 log 7808 14420 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-04 10:36:14,129 log 7808 14420 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:36:14,150 log 7808 14420 "GET /organizations/ HTTP/1.1" 200 28079
+INFO 2026-02-04 10:36:14,301 log 7808 14420 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:36:14,325 log 7808 14420 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:36:16,187 log 7808 14420 "GET /organizations/8/ HTTP/1.1" 200 31932
+WARNING 2026-02-04 10:36:26,451 log 7808 14420 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-02-04 10:36:26,455 log 7808 14420 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 15512
+INFO 2026-02-04 10:36:52,012 log 7808 14420 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:36:52,032 log 7808 3604 "GET /events/ HTTP/1.1" 200 24614
+WARNING 2026-02-04 10:36:52,075 log 7808 3604 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-02-04 10:36:52,076 log 7808 3604 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 15512
+ERROR 2026-02-04 10:36:52,160 log 7808 3604 Internal Server Error: /api/events/
+ERROR 2026-02-04 10:36:52,160 log 7808 3604 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-04 10:38:03,365 autoreload 7808 9492 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-02-04 10:38:04,575 autoreload 9004 9496 Watching for file changes with StatReloader
+INFO 2026-02-04 10:38:08,843 autoreload 9004 9496 C:\Users\Student\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-02-04 10:38:10,494 autoreload 2424 1392 Watching for file changes with StatReloader
+INFO 2026-02-04 10:38:33,912 autoreload 2424 1392 C:\Users\Student\PycharmProjects\Sport_rb\apps\organizations\api\serializers.py changed, reloading.
+INFO 2026-02-04 10:38:35,096 autoreload 7888 8656 Watching for file changes with StatReloader
+INFO 2026-02-04 10:39:02,134 autoreload 7888 8656 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-02-04 10:39:03,156 autoreload 12232 12468 Watching for file changes with StatReloader
+INFO 2026-02-04 10:42:48,127 log 12232 14332 "GET /events/ HTTP/1.1" 200 24614
+ERROR 2026-02-04 10:42:48,210 log 12232 14332 Internal Server Error: /api/events/
+ERROR 2026-02-04 10:42:48,210 log 12232 14332 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-04 10:42:48,783 log 12232 14332 "GET /events/ HTTP/1.1" 200 24614
+ERROR 2026-02-04 10:42:48,863 log 12232 14332 Internal Server Error: /api/events/
+ERROR 2026-02-04 10:42:48,863 log 12232 14332 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+INFO 2026-02-04 10:42:49,029 log 12232 14332 "GET /events/ HTTP/1.1" 200 24614
+ERROR 2026-02-04 10:42:49,110 log 12232 14332 Internal Server Error: /api/events/
+ERROR 2026-02-04 10:42:49,110 log 12232 14332 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 500 183
+WARNING 2026-02-04 10:42:52,258 log 12232 14332 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-02-04 10:42:52,271 log 12232 14332 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 15512
+INFO 2026-02-04 10:42:59,187 log 12232 14332 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:42:59,203 log 12232 8148 "GET /organizations/ HTTP/1.1" 200 28079
+INFO 2026-02-04 10:42:59,300 log 12232 8148 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:42:59,321 log 12232 8148 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:43:00,754 log 12232 8148 "GET /organizations/8/ HTTP/1.1" 200 31956
+INFO 2026-02-04 10:43:00,840 log 12232 8148 "GET /api/organizations/8/ HTTP/1.1" 200 414
+INFO 2026-02-04 10:43:37,811 autoreload 12232 12468 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-02-04 10:43:38,977 autoreload 5296 8160 Watching for file changes with StatReloader
+INFO 2026-02-04 10:43:42,737 autoreload 5296 8160 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-02-04 10:43:43,964 autoreload 13752 15204 Watching for file changes with StatReloader
+INFO 2026-02-04 10:44:08,369 autoreload 13752 15204 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\views.py changed, reloading.
+INFO 2026-02-04 10:44:09,574 autoreload 13456 7276 Watching for file changes with StatReloader
+INFO 2026-02-04 10:44:13,726 autoreload 13456 7276 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-02-04 10:44:14,907 autoreload 3352 2640 Watching for file changes with StatReloader
+INFO 2026-02-04 10:44:39,361 autoreload 3352 2640 C:\Users\Student\PycharmProjects\Sport_rb\apps\events\api\serializers.py changed, reloading.
+INFO 2026-02-04 10:44:40,990 autoreload 3124 5112 Watching for file changes with StatReloader
+INFO 2026-02-04 10:44:45,466 log 3124 15912 "GET /organizations/8/ HTTP/1.1" 200 31956
+INFO 2026-02-04 10:44:45,901 log 3124 15912 "GET /static/css/main.css HTTP/1.1" 200 68573
+INFO 2026-02-04 10:44:45,921 log 3124 15912 "GET /organizations/8/ HTTP/1.1" 200 31956
+INFO 2026-02-04 10:44:45,940 log 3124 5620 "GET /static/js/form-validation.js HTTP/1.1" 200 7761
+INFO 2026-02-04 10:44:45,949 basehttp 3124 11156 - Broken pipe from ('127.0.0.1', 55326)
+INFO 2026-02-04 10:44:45,952 log 3124 5620 "GET /static/js/main.js HTTP/1.1" 200 18354
+INFO 2026-02-04 10:44:45,952 log 3124 15912 "GET /static/css/main.css HTTP/1.1" 200 68573
+INFO 2026-02-04 10:44:45,956 log 3124 5620 "GET /static/js/lazy-loading.js HTTP/1.1" 200 2905
+INFO 2026-02-04 10:44:45,958 basehttp 3124 11856 - Broken pipe from ('127.0.0.1', 55327)
+INFO 2026-02-04 10:44:45,959 log 3124 15912 "GET /static/js/favorites.js HTTP/1.1" 200 3129
+INFO 2026-02-04 10:44:45,964 log 3124 15912 "GET /static/js/accessibility.js HTTP/1.1" 200 6997
+INFO 2026-02-04 10:44:45,965 log 3124 5620 "GET /static/js/dark-theme.js HTTP/1.1" 200 11163
+INFO 2026-02-04 10:44:45,966 basehttp 3124 12580 - Broken pipe from ('127.0.0.1', 55328)
+INFO 2026-02-04 10:44:45,969 log 3124 15912 "GET /static/js/performance.js HTTP/1.1" 200 5076
+INFO 2026-02-04 10:44:45,973 log 3124 5620 "GET /static/js/analytics.js HTTP/1.1" 200 5495
+INFO 2026-02-04 10:44:45,973 basehttp 3124 10012 - Broken pipe from ('127.0.0.1', 55329)
+INFO 2026-02-04 10:44:45,983 log 3124 6856 "GET /static/js/toast.js HTTP/1.1" 200 7293
+INFO 2026-02-04 10:44:45,986 log 3124 10688 "GET /static/js/form-validation.js HTTP/1.1" 200 7761
+INFO 2026-02-04 10:44:45,988 log 3124 13692 "GET /static/js/cache-manager.js HTTP/1.1" 200 4814
+INFO 2026-02-04 10:44:46,002 log 3124 14356 "GET /static/js/pagination.js HTTP/1.1" 200 4977
+INFO 2026-02-04 10:44:46,035 basehttp 3124 15340 - Broken pipe from ('127.0.0.1', 55323)
+INFO 2026-02-04 10:44:46,071 basehttp 3124 11964 - Broken pipe from ('127.0.0.1', 55319)
+INFO 2026-02-04 10:44:46,085 basehttp 3124 14956 - Broken pipe from ('127.0.0.1', 55321)
+WARNING 2026-02-04 10:44:46,155 log 3124 13692 Not Found: /favicon.ico
+INFO 2026-02-04 10:44:46,155 log 3124 14356 "GET /api/organizations/8/ HTTP/1.1" 200 414
+WARNING 2026-02-04 10:44:46,155 log 3124 13692 "GET /favicon.ico HTTP/1.1" 404 15401
+INFO 2026-02-04 10:44:46,163 basehttp 3124 5520 - Broken pipe from ('127.0.0.1', 55324)
+INFO 2026-02-04 10:44:46,244 log 3124 14356 "GET /organizations/8/ HTTP/1.1" 200 31956
+INFO 2026-02-04 10:44:46,264 log 3124 5620 "GET /static/js/cache-manager.js HTTP/1.1" 200 4814
+INFO 2026-02-04 10:44:46,264 log 3124 6856 "GET /static/js/form-validation.js HTTP/1.1" 200 7761
+INFO 2026-02-04 10:44:46,265 log 3124 15912 "GET /static/js/pagination.js HTTP/1.1" 200 4977
+INFO 2026-02-04 10:44:46,265 log 3124 10688 "GET /static/js/toast.js HTTP/1.1" 200 7293
+INFO 2026-02-04 10:44:46,266 log 3124 14356 "GET /static/css/main.css HTTP/1.1" 200 68573
+INFO 2026-02-04 10:44:46,266 log 3124 13692 "GET /static/js/main.js HTTP/1.1" 200 18354
+INFO 2026-02-04 10:44:46,273 log 3124 5620 "GET /static/js/lazy-loading.js HTTP/1.1" 200 2905
+INFO 2026-02-04 10:44:46,280 log 3124 6856 "GET /static/js/favorites.js HTTP/1.1" 200 3129
+INFO 2026-02-04 10:44:46,282 log 3124 10688 "GET /static/js/analytics.js HTTP/1.1" 200 5495
+INFO 2026-02-04 10:44:46,282 log 3124 14356 "GET /static/js/accessibility.js HTTP/1.1" 200 6997
+INFO 2026-02-04 10:44:46,282 log 3124 15912 "GET /static/js/performance.js HTTP/1.1" 200 5076
+INFO 2026-02-04 10:44:46,282 log 3124 13692 "GET /static/js/dark-theme.js HTTP/1.1" 200 11163
+WARNING 2026-02-04 10:44:46,471 log 3124 14356 Not Found: /favicon.ico
+INFO 2026-02-04 10:44:46,471 log 3124 13692 "GET /api/organizations/8/ HTTP/1.1" 200 414
+WARNING 2026-02-04 10:44:46,475 log 3124 14356 "GET /favicon.ico HTTP/1.1" 404 15401
+INFO 2026-02-04 10:44:47,072 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:44:47,084 log 3124 13692 "GET /events/ HTTP/1.1" 200 24614
+INFO 2026-02-04 10:44:47,181 log 3124 13692 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:44:49,459 log 3124 13692 "GET /events/18/ HTTP/1.1" 200 28820
+INFO 2026-02-04 10:44:49,543 log 3124 13692 "GET /api/events/18/ HTTP/1.1" 200 1105
+INFO 2026-02-04 10:44:51,289 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:44:51,311 log 3124 14356 "GET /events/ HTTP/1.1" 200 24614
+INFO 2026-02-04 10:44:51,408 log 3124 14356 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:44:52,977 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:44:53,000 log 3124 13692 "GET /organizations/ HTTP/1.1" 200 28079
+INFO 2026-02-04 10:44:53,099 log 3124 13692 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:44:53,125 log 3124 13692 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:44:53,625 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:44:53,646 log 3124 14356 "GET /events/ HTTP/1.1" 200 24614
+INFO 2026-02-04 10:44:53,737 log 3124 14356 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:44:54,278 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:44:54,303 log 3124 13692 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-04 10:44:54,396 log 3124 13692 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:44:54,414 log 3124 14356 "GET /api/admin-rb/stats/ HTTP/1.1" 200 449
+INFO 2026-02-04 10:45:02,415 log 3124 14356 "GET /api/admin-rb/users/?page=1&page_size=20 HTTP/1.1" 200 1447
+INFO 2026-02-04 10:45:11,008 log 3124 14356 "POST /api/admin-rb/users/16/toggle-status/ HTTP/1.1" 200 83
+INFO 2026-02-04 10:45:12,837 log 3124 14356 "GET /api/admin-rb/users/?page=1&page_size=20 HTTP/1.1" 200 1448
+INFO 2026-02-04 10:45:24,397 log 3124 13692 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:45:24,400 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:32,963 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:32,983 log 3124 13692 "GET /notifications/ HTTP/1.1" 200 17749
+INFO 2026-02-04 10:45:33,071 log 3124 13692 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:45:34,704 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:34,724 log 3124 14356 "GET / HTTP/1.1" 200 14380
+INFO 2026-02-04 10:45:37,873 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:37,893 log 3124 13692 "GET /events/ HTTP/1.1" 200 24614
+INFO 2026-02-04 10:45:37,981 log 3124 13692 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:45:38,870 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:38,893 log 3124 14356 "GET /dashboard/ HTTP/1.1" 200 135099
+INFO 2026-02-04 10:45:38,980 log 3124 14356 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:45:38,997 log 3124 13692 "GET /api/admin-rb/stats/ HTTP/1.1" 200 449
+INFO 2026-02-04 10:45:40,935 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:45:40,950 log 3124 14356 "GET / HTTP/1.1" 200 14380
+INFO 2026-02-04 10:45:44,215 log 3124 14356 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-02-04 10:45:44,219 log 3124 14356 "GET / HTTP/1.1" 200 13483
+INFO 2026-02-04 10:45:45,813 log 3124 14356 "GET /register/ HTTP/1.1" 200 25480
+WARNING 2026-02-04 10:46:02,733 log 3124 14356 Forbidden: /api/geography/cities/search/
+WARNING 2026-02-04 10:46:02,733 log 3124 14356 "GET /api/geography/cities/search/?q=%D0%A1%D0%B0%D0%BB%D0%B0%D0%B2%D0%B0%D1%82 HTTP/1.1" 403 82
+INFO 2026-02-04 10:46:09,062 log 3124 14356 "POST /api/auth/register/ HTTP/1.1" 201 179
+INFO 2026-02-04 10:46:11,353 log 3124 14356 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2026-02-04 10:46:11,362 log 3124 14356 "GET /dashboard/ HTTP/1.1" 302 0
+INFO 2026-02-04 10:46:11,372 log 3124 14356 "GET /role-selection/new/ HTTP/1.1" 200 30899
+INFO 2026-02-04 10:46:11,472 log 3124 14356 "GET /api/sports/ HTTP/1.1" 200 1996
+INFO 2026-02-04 10:46:30,036 log 3124 14356 "POST /api/users/select-role/ HTTP/1.1" 201 160
+INFO 2026-02-04 10:46:30,048 log 3124 13692 "POST /api/analytics/track/ HTTP/1.1" 201 15
+INFO 2026-02-04 10:46:31,072 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:31,098 log 3124 14356 "GET /dashboard/ HTTP/1.1" 200 59297
+INFO 2026-02-04 10:46:31,178 log 3124 14356 "GET /api/users/roles/athlete/id/ HTTP/1.1" 200 74
+INFO 2026-02-04 10:46:31,220 log 3124 13692 "GET /api/achievements/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:31,243 log 3124 10688 "GET /api/users/check-auto-link/ HTTP/1.1" 200 100
+INFO 2026-02-04 10:46:31,251 log 3124 15912 "GET /api/notifications/ HTTP/1.1" 200 2
+WARNING 2026-02-04 10:46:31,280 log 3124 14356 Not Found: /api/athletes/progress/
+WARNING 2026-02-04 10:46:31,280 log 3124 14356 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-02-04 10:46:43,310 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:43,325 log 3124 15912 "GET /events/ HTTP/1.1" 200 24606
+INFO 2026-02-04 10:46:43,415 log 3124 15912 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:46:44,358 log 3124 15912 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:44,379 log 3124 14356 "GET /dashboard/ HTTP/1.1" 200 59297
+INFO 2026-02-04 10:46:44,455 log 3124 14356 "GET /api/users/roles/athlete/id/ HTTP/1.1" 200 74
+INFO 2026-02-04 10:46:44,477 log 3124 14356 "GET /api/achievements/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:44,485 log 3124 10688 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:44,492 log 3124 13692 "GET /api/users/check-auto-link/ HTTP/1.1" 200 100
+WARNING 2026-02-04 10:46:44,494 log 3124 15912 Not Found: /api/athletes/progress/
+WARNING 2026-02-04 10:46:44,495 log 3124 15912 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-02-04 10:46:45,031 log 3124 15912 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:45,047 log 3124 13692 "GET /events/ HTTP/1.1" 200 24606
+INFO 2026-02-04 10:46:45,138 log 3124 13692 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343
+INFO 2026-02-04 10:46:46,143 log 3124 13692 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:46,157 log 3124 15912 "GET /dashboard/ HTTP/1.1" 200 59297
+INFO 2026-02-04 10:46:46,234 log 3124 15912 "GET /api/users/roles/athlete/id/ HTTP/1.1" 200 74
+WARNING 2026-02-04 10:46:46,257 log 3124 13692 Not Found: /api/athletes/progress/
+WARNING 2026-02-04 10:46:46,264 log 3124 13692 "GET /api/athletes/progress/ HTTP/1.1" 404 65
+INFO 2026-02-04 10:46:46,265 log 3124 15912 "GET /api/achievements/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:46,273 log 3124 10688 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:46,274 log 3124 14356 "GET /api/users/check-auto-link/ HTTP/1.1" 200 100
+INFO 2026-02-04 10:46:49,352 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:49,362 log 3124 10688 "GET /role-selection/new/ HTTP/1.1" 200 30886
+INFO 2026-02-04 10:46:49,451 log 3124 10688 "GET /api/sports/ HTTP/1.1" 200 1996
+INFO 2026-02-04 10:46:56,606 log 3124 14356 "POST /api/analytics/track/ HTTP/1.1" 201 15
+INFO 2026-02-04 10:46:56,631 log 3124 10688 "POST /api/users/select-role/ HTTP/1.1" 201 156
+INFO 2026-02-04 10:46:57,671 log 3124 10688 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:46:57,685 log 3124 14356 "GET /dashboard/ HTTP/1.1" 200 59615
+INFO 2026-02-04 10:46:57,787 log 3124 14356 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:46:57,791 log 3124 10688 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:47:04,858 log 3124 10688 "GET /api/users/roles/coach/id/ HTTP/1.1" 200 66
+INFO 2026-02-04 10:47:10,723 log 3124 14356 "GET /role-selection/new/ HTTP/1.1" 200 31110
+INFO 2026-02-04 10:47:10,737 log 3124 10688 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:47:10,818 log 3124 10688 "GET /api/sports/ HTTP/1.1" 200 1996
+INFO 2026-02-04 10:47:15,646 log 3124 10688 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:47:15,660 log 3124 14356 "GET /dashboard/ HTTP/1.1" 200 59615
+INFO 2026-02-04 10:47:15,747 log 3124 14356 "GET /api/notifications/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:47:15,756 log 3124 10688 "GET /api/achievements/coaches/achievements/ HTTP/1.1" 200 2
+INFO 2026-02-04 10:47:17,431 log 3124 10688 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:47:17,442 log 3124 14356 "GET /organizations/ HTTP/1.1" 200 28295
+INFO 2026-02-04 10:47:17,539 log 3124 14356 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:47:17,560 log 3124 14356 "GET /api/organizations/?page=1&page_size=12 HTTP/1.1" 200 1558
+INFO 2026-02-04 10:47:19,399 log 3124 14356 "POST /api/analytics/track-batch/ HTTP/1.1" 201 27
+INFO 2026-02-04 10:47:19,411 log 3124 10688 "GET /events/ HTTP/1.1" 200 24830
+INFO 2026-02-04 10:47:19,501 log 3124 10688 "GET /api/events/?page=1&page_size=12 HTTP/1.1" 200 10343

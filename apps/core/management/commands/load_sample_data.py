@@ -40,8 +40,7 @@ class Command(BaseCommand):
 
     def clear_data(self):
         """Очистка существующих данных (кроме суперпользователя)"""
-        from django.db import connection
-        from django.core.exceptions import OperationalError
+        from django.db.utils import OperationalError
         from apps.events.models import Event
         from apps.organizations.models import Organization
         from apps.athletes.models import AthleteProfile
@@ -119,7 +118,8 @@ class Command(BaseCommand):
         for city_name in cities_data:
             city, _ = City.objects.get_or_create(
                 name=city_name,
-                defaults={'region': region}
+                region=region,
+                defaults={'settlement_type': 'city'}
             )
             cities.append(city)
 
@@ -293,7 +293,6 @@ class Command(BaseCommand):
         from apps.organizations.models import Organization, SportDirection
         from apps.geography.models import City
         from apps.sports.models import Sport
-        from apps.users.models import UserRole
 
         cities = list(City.objects.all())
         sports = list(Sport.objects.all())
@@ -302,13 +301,23 @@ class Command(BaseCommand):
             ('ДЮСШ "Олимпиец"', 'state', 'Уфа', ['Футбол', 'Баскетбол', 'Волейбол']),
             ('Спортивный клуб "Чемпион"', 'private', 'Стерлитамак', ['Бокс', 'Дзюдо', 'Карате']),
             ('ДЮСШ по плаванию', 'state', 'Салават', ['Плавание', 'Водное поло']),
-            ('Центр развития спорта', 'state', 'Нефтекамск', ['Теннис', 'Легкая атлетика']),
+            ('Центр развития спорта', 'state', 'Нефтекамск', ['Теннис', 'Бег', 'Прыжки']),
             ('Спортивная школа "Юность"', 'state', 'Октябрьский', ['Художественная гимнастика', 'Спортивная гимнастика']),
         ]
 
         org_count = 0
+        used_inns = set()
         for name, org_type, city_name, sport_names in organizations_data:
             city = next((c for c in cities if c.name == city_name), cities[0] if cities else None)
+            if not city:
+                continue
+            
+            # Генерируем уникальный INN
+            while True:
+                inn = f'{random.randint(1000000000, 9999999999)}'
+                if inn not in used_inns and not Organization.objects.filter(inn=inn).exists():
+                    used_inns.add(inn)
+                    break
             
             org, created = Organization.objects.get_or_create(
                 name=name,
@@ -316,9 +325,12 @@ class Command(BaseCommand):
                     'org_type': org_type,
                     'city': city,
                     'address': f'{city.name}, ул. Спортивная, д. {random.randint(1, 100)}',
-                    'inn': f'{random.randint(1000000000, 9999999999)}',
+                    'inn': inn,
                     'status': 'approved',
                     'verified_at': timezone.now(),
+                    # Добавляем координаты (примерные координаты для городов РБ)
+                    'latitude': round(54.7 + random.uniform(-0.5, 0.5), 6),
+                    'longitude': round(55.9 + random.uniform(-0.5, 0.5), 6),
                 }
             )
             
@@ -374,7 +386,13 @@ class Command(BaseCommand):
             start_date = timezone.now() + timedelta(days=days_ahead)
             end_date = start_date + timedelta(days=1 if event_type != 'camp' else 7)
 
-            # Создаем категорию события
+            # Создаем категорию события (EventCategory использует choices)
+            # Проверяем, что event_type соответствует одному из допустимых значений
+            valid_event_types = ['competition', 'marathon', 'gto_festival', 'open_doors', 'camp']
+            if event_type not in valid_event_types:
+                self.stdout.write(self.style.WARNING(f'Неверный тип события: {event_type}, пропускаем'))
+                continue
+            
             try:
                 category, _ = EventCategory.objects.get_or_create(
                     name=event_type,
@@ -382,7 +400,7 @@ class Command(BaseCommand):
                 )
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f'Не удалось создать категорию: {e}'))
-                category = None
+                continue
 
             event, created = Event.objects.get_or_create(
                 title=title,

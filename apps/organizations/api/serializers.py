@@ -128,6 +128,8 @@ class OrganizationDetailSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     coaches = serializers.SerializerMethodField()
     org_type_display = serializers.CharField(source='get_org_type_display', read_only=True)
+    latitude = serializers.DecimalField(max_digits=9, decimal_places=6, allow_null=True, required=False, read_only=True)
+    longitude = serializers.DecimalField(max_digits=9, decimal_places=6, allow_null=True, required=False, read_only=True)
     
     class Meta:
         model = Organization

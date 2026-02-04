@@ -34,10 +34,16 @@ class EventSerializer(serializers.ModelSerializer):
         ]
     
     def get_category(self, obj):
-        # Возвращаем первую категорию, если есть связь
+        # Получаем категорию по event_type (EventCategory не связана с Event напрямую)
         try:
-            if hasattr(obj, 'categories') and obj.categories.exists():
-                category = obj.categories.first()
+            if obj.event_type:
+                # Используем предзагруженные категории из контекста, если доступны
+                categories_map = self.context.get('categories_map', {})
+                if categories_map and obj.event_type in categories_map:
+                    category = categories_map[obj.event_type]
+                    return EventCategorySerializer(category).data
+                # Fallback: запрос к БД если категории не предзагружены
+                category = EventCategory.objects.filter(name=obj.event_type).first()
                 if category:
                     return EventCategorySerializer(category).data
         except Exception as e:
@@ -46,16 +52,9 @@ class EventSerializer(serializers.ModelSerializer):
         return None
     
     def get_sport(self, obj):
-        # Проверяем наличие категории через related_name или прямое обращение
-        try:
-            # Если есть связь через EventCategory
-            if hasattr(obj, 'categories') and obj.categories.exists():
-                category = obj.categories.first()
-                if hasattr(category, 'sport') and category.sport:
-                    return category.sport.name
-        except Exception as e:
-            print(f"Error in get_sport: {e}")
-            pass
+        # Event не имеет прямой связи с Sport
+        # Можно попытаться извлечь из описания или вернуть None
+        # В будущем можно добавить связь Event -> Sport если потребуется
         return None
     
     def get_city(self, obj):
